@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'zakaz',
-    'users'
+    'users',
+    'smart_selects'
 ]
 
 MIDDLEWARE = [
