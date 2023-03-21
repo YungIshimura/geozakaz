@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+    <script src="/static/smart-selects/admin/js/chainedfk.js"></script>
+    <script src="/static/smart-selects/admin/js/bindfields.js"></script>
+    <link rel='stylesheet' href="{% static 'css/application.css'%}">
     <div class="mb-5 mt-5">
         <h1>Создайте заявку</h1>
     </div>
     <section>
+        <form action={% url 'zakaz:application' %} method='POST' enctype='multipart/form-data'>
+        {% csrf_token %}
         <div class="row">
             <div class="col-sm-6 mb-sm-0">
                 <div class="card">
@@ -13,8 +18,8 @@
                             <h5>Участок</h5>
                         </div>
                         <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">Кадастровый номер</label>
-                            <input type="email" class="form-control" id="exampleFormControlInput1">
+                            <label for="{{form.cadastral_number.id_for_label}}">Кадастровый номер</label>
+                            {{order_form.cadastral_number}}
                         </div>
                         <div>
                             <div class="card-title">
@@ -25,24 +30,13 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="mb-3">
-                                                <label for="exampleFormControlInput1"
+                                                <label for="{{form.length.id_for_label}}"
                                                        class="form-label">Длина</label>
-                                                <input type="email" class="form-control"
-                                                       id="exampleFormControlInput1">
+                                                       {{order_form.length}}
                                                 <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                     style="width: 110px; height: 35px">
+                                                     style="width: 110px; height: 35px;">
 
-                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
-                                                           autocomplete="off">
-                                                    <label class="btn btn-outline-primary border"
-                                                           for="btn-check-outlined"
-                                                           style="color: gray; border-top-left-radius:100px; border-bottom-left-radius: 100px">м</label><br>
-
-                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
-                                                           autocomplete="off">
-                                                    <label class="btn btn-outline-primary border"
-                                                           for="btn-check-outlined"
-                                                           style="color: gray; border-top-right-radius: 100px; border-bottom-right-radius: 100px;">км</label><br>
+                                                    {{order_form.length_unit}}
                                                 </div>
                                             </div>
 
@@ -53,24 +47,13 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="mb-3">
-                                                <label for="exampleFormControlInput1"
+                                                <label for="{{form.height.id_for_label}}"
                                                        class="form-label">Высота</label>
-                                                <input type="email" class="form-control"
-                                                       id="exampleFormControlInput1">
+                                                       {{order_form.height}}
                                                 <div class="btn-group mt-2" role="group" aria-label="Basic example"
                                                      style="width: 110px; height: 35px">
 
-                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
-                                                           autocomplete="off">
-                                                    <label class="btn btn-outline-primary border"
-                                                           for="btn-check-outlined"
-                                                           style="color: gray; border-top-left-radius:100px; border-bottom-left-radius: 100px">м</label><br>
-
-                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
-                                                           autocomplete="off">
-                                                    <label class="btn btn-outline-primary border"
-                                                           for="btn-check-outlined"
-                                                           style="color: gray; border-top-right-radius: 100px; border-bottom-right-radius: 100px;">этаж</label><br>
+                                                     {{order_form.height_unit}}
                                                 </div>
                                             </div>
                                         </div>
@@ -80,24 +63,13 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="mb-3">
-                                                <label for="exampleFormControlInput1"
+                                                <label for="{{form.width.id_for_label}}"
                                                        class="form-label">Ширина</label>
-                                                <input type="email" class="form-control"
-                                                       id="exampleFormControlInput1">
+                                                       {{order_form.width}}
                                                 <div class="btn-group mt-2" role="group" aria-label="Basic example"
                                                      style="width: 110px; height: 35px">
 
-                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
-                                                           autocomplete="off">
-                                                    <label class="btn btn-outline-primary border"
-                                                           for="btn-check-outlined"
-                                                           style="color: gray; border-top-left-radius:100px; border-bottom-left-radius: 100px">м</label><br>
-
-                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
-                                                           autocomplete="off">
-                                                    <label class="btn btn-outline-primary border"
-                                                           for="btn-check-outlined"
-                                                           style="color: gray; border-top-right-radius: 100px; border-bottom-right-radius: 100px;">км</label><br>
+                                                     {{order_form.width_unit}}
                                                 </div>
 
                                             </div>
@@ -110,51 +82,41 @@
                                 <div class="card-title">
                                     <h5>Адрес объекта</h5>
                                 </div>
-                                <label>Регион</label>
-                                <select class="form-select mb-4" aria-label="Default select example">
-                                    <option selected>Выберите регион</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                {{order_form.media.js}}
+                                <label for="{{form.region.id_for_label}}">Регион</label>
+                                {{order_form.region}}
+                                <br>
+                                <label for="{{form.area.id_for_label}}">Район</label>
+                                {{order_form.area}}
+                                <br>
+                                <label for="{{form.city.id_for_label}}">Населенный пункт</label>
+                                {{order_form.city}}
+                                <br>
                                 </select>
-                                <label>Область/район/округ</label>
-                                <select class="form-select mb-4" aria-label="Default select example">
-                                    <option selected>Выберите область/район/округ</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                                <label>Населенный пункт</label>
-                                <select class="form-select mb-4" aria-label="Default select example">
-                                    <option selected>Выберите населенный пункт</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
+
                                 <div class="mb-3">
-                                    <label for="exampleFormControlInput1" class="form-label">Улица</label>
-                                    <input type="email" class="form-control" id="exampleFormControlInput1">
+                                    <label for="{{form.street.id_for_label}}">Улица</label>
+                                    {{order_form.street}}
                                 </div>
+                                <br>
                                 <div class="row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
-                                                    <label for="exampleFormControlInput1" class="form-label">Дом</label>
-                                                    <input type="email" class="form-control"
-                                                           id="exampleFormControlInput1">
+                                                    <label class='house_label' for="{{form.house_number.id_for_label}}">Номер дома</label>
+                                                    {{order_form.house_number}}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <div class="col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
-                                                    <label for="exampleFormControlInput1"
-                                                           class="form-label">Корпус/строение</label>
-                                                    <input type="email" class="form-control"
-                                                           id="exampleFormControlInput1">
+                                                    <label class='building_label' for="{{form.building.id_for_label}}">Корпус/Строение</label>
+                                                    {{order_form.building}}     
                                                 </div>
                                             </div>
                                         </div>
@@ -164,26 +126,25 @@
                         </div>
                     </div>
                 </div>
+                <div class='files'>
+                    {{order_files_form.file}}
+                    <label class="common-label" for="{{order_files_form.file.id_for_label}}" style='display:flex; align-items:center; justify-content:center; gap:5px;'>
+                    </label>
+                </div>
             </div>
+            
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
                         <div class="mb-3" style="max-width: 200px">
-                            <label for="exampleFormControlInput1" class="form-label">Площадь участка</label>
-                            <input type="email" class="form-control" id="exampleFormControlInput1"
-                                   placeholder="0">
+                            <label for="{{form.square.id_for_label}}"
+                                class="form-label">Площадь</label>
+                                {{order_form.square}}
 
                             <div class="btn-group mt-2" role="group" aria-label="Basic example"
                                  style="width: 110px; height: 35px">
 
-                                <input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
-                                <label class="btn btn-outline-primary border" for="btn-check-outlined"
-                                       style="color: gray; border-top-left-radius:100px; border-bottom-left-radius: 100px">м²</label><br>
-
-                                <input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
-                                <label class="btn btn-outline-primary border"
-                                       for="btn-check-outlined"
-                                       style="color: gray; border-top-right-radius: 100px; border-bottom-right-radius: 100px;">га</label><br>
+                                 {{order_form.square_unit}}
                             </div>
 
                         </div>
@@ -204,92 +165,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-4 mb-3 mb-sm-0">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="form-check">
-                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
-                                                       value=""
-                                                       id="defaultCheck1">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Default checkbox
-                                                </label>
+                                    <div class="card" style='width: 600px;'>
+                                        <div class="card-body" style='display:grid; grid-template-columns: repeat(2, 1fr);'>
+                                            {% for type_work in order_form.type_work.field.queryset %}
+                                            <div class="form-check form-check-inline card-body" style='width:200px;'>
+                                                <input class="form-check-input" type="checkbox" id="inlineCheckbox{{type_work.id}}"
+                                                    value="{{type_work.id}}" name='type_work'>
+                                                <label class="form-check-label" for="inlineCheckbox{{type_work.id}}">{{type_work}}</label>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
-                                                       value=""
-                                                       id="defaultCheck1">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Default checkbox
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
-                                                       value=""
-                                                       id="defaultCheck1">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Default checkbox
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="form-check">
-                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
-                                                       value=""
-                                                       id="defaultCheck1">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Default checkbox
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
-                                                       value=""
-                                                       id="defaultCheck1">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Default checkbox
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
-                                                       value=""
-                                                       id="defaultCheck1">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Default checkbox
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="form-check">
-                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
-                                                       value=""
-                                                       id="defaultCheck1">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Default checkbox
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
-                                                       value=""
-                                                       id="defaultCheck1">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Default checkbox
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
-                                                       value=""
-                                                       id="defaultCheck1">
-                                                <label class="form-check-label" for="defaultCheck1">
-                                                    Default checkbox
-                                                </label>
-                                            </div>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </div>
@@ -308,11 +192,7 @@
                             <div>
                                 <div class="card-title">
                                     <h5>Комментарий</h5>
-                                </div>
-                                <div class="mb-3">
-                                        <textarea class="form-control" id="exampleFormControlTextarea1"
-                                                  rows="3"
-                                                  placeholder="Опишите задачу или оставьте комментарий"></textarea>
+                                    {{order_form.title}}
                                 </div>
                             </div>
                             <div>
@@ -321,10 +201,8 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
-                                                    <label for="exampleFormControlInput1"
-                                                           class="form-label">Имя</label>
-                                                    <input type="email" class="form-control"
-                                                           id="exampleFormControlInput1">
+                                                    <label for="{{form.name.id_for_label}}">Имя</label>
+                                                    {{order_form.name}}
                                                 </div>
                                             </div>
                                         </div>
@@ -333,10 +211,8 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
-                                                    <label for="exampleFormControlInput1"
-                                                           class="form-label">Фамилия</label>
-                                                    <input type="email" class="form-control"
-                                                           id="exampleFormControlInput1">
+                                                    <label for="{{form.surname.id_for_label}}">Фамилия</label>
+                                                    {{order_form.surname}}
                                                 </div>
 
 
@@ -348,10 +224,8 @@
                                             <div class="card-body">
 
                                                 <div class="mb-3">
-                                                    <label for="exampleFormControlInput1"
-                                                           class="form-label">Отчество</label>
-                                                    <input type="email" class="form-control"
-                                                           id="exampleFormControlInput1">
+                                                    <label for="{{form.father_name.id_for_label}}">Отчество</label>
+                                                    {{order_form.father_name}}
                                                 </div>
 
                                             </div>
@@ -363,10 +237,8 @@
                                         <div class="card ">
                                             <div class="card-body">
                                                 <div class="mb-3">
-                                                    <label for="exampleFormControlInput1"
-                                                           class="form-label">Номер телефона</label>
-                                                    <input type="email" class="form-control"
-                                                           id="exampleFormControlInput1">
+                                                    <label for="{{form.phone_number.id_for_label}}">Номер телефона</label>
+                                                    {{order_form.phone_number}}
                                                 </div>
 
                                             </div>
@@ -376,10 +248,8 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
-                                                    <label for="exampleFormControlInput1"
-                                                           class="form-label">Электронная почта</label>
-                                                    <input type="email" class="form-control"
-                                                           id="exampleFormControlInput1">
+                                                    <label for="{{form.email.id_for_label}}">Электронная почта</label>
+                                                    {{order_form.email}}
                                                 </div>
                                             </div>
                                         </div>
@@ -392,10 +262,11 @@
                 </div>
             </div>
             <div>
-                <button type="button" class="btn btn-secondary btn-lg"
-                        style="width: 700px; margin-left: 90px; background-color: #1C5CA4">ОТПРАВИТЬ ЗАЯВКУ
+                <button type="submit" class="btn btn-secondary btn-lg"
+                        style="width: 700px; background-color: #1C5CA4">ОТПРАВИТЬ ЗАЯВКУ
                 </button>
             </div>
         </div>
+        </form>
     </section>
 {% endblock %}
