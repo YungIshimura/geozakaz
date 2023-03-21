@@ -1,87 +1,132 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content%}
-    <div>
+{% block content %}
+
+    <div class="mb-5 mt-5">
         <h1>Создайте заявку</h1>
     </div>
     <section>
-        <div>
-            <div class="row">
-                <div class="col-sm-6 mb-3 mb-sm-0">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Участок</h5>
-                            <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Кадастровый номер</label>
-                                <input type="email" class="form-control" id="exampleFormControlInput1">
+        <div class="row">
+            <div class="col-sm-6 mb-sm-0">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h5>Участок</h5>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Кадастровый номер</label>
+                            <input type="email" class="form-control" id="exampleFormControlInput1">
+                        </div>
+                        <div>
+                            <div class="card-title">
+                                <h5>Габариты здания</h5>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4 mb-3 mb-sm-0">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput1"
+                                                       class="form-label">Длина</label>
+                                                <input type="email" class="form-control"
+                                                       id="exampleFormControlInput1">
+                                                <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                     style="width: 110px; height: 35px">
+
+                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
+                                                           autocomplete="off">
+                                                    <label class="btn btn-outline-primary border"
+                                                           for="btn-check-outlined"
+                                                           style="color: gray; border-top-left-radius:100px; border-bottom-left-radius: 100px">м</label><br>
+
+                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
+                                                           autocomplete="off">
+                                                    <label class="btn btn-outline-primary border"
+                                                           for="btn-check-outlined"
+                                                           style="color: gray; border-top-right-radius: 100px; border-bottom-right-radius: 100px;">км</label><br>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput1"
+                                                       class="form-label">Высота</label>
+                                                <input type="email" class="form-control"
+                                                       id="exampleFormControlInput1">
+                                                <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                     style="width: 110px; height: 35px">
+
+                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
+                                                           autocomplete="off">
+                                                    <label class="btn btn-outline-primary border"
+                                                           for="btn-check-outlined"
+                                                           style="color: gray; border-top-left-radius:100px; border-bottom-left-radius: 100px">м</label><br>
+
+                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
+                                                           autocomplete="off">
+                                                    <label class="btn btn-outline-primary border"
+                                                           for="btn-check-outlined"
+                                                           style="color: gray; border-top-right-radius: 100px; border-bottom-right-radius: 100px;">этаж</label><br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput1"
+                                                       class="form-label">Ширина</label>
+                                                <input type="email" class="form-control"
+                                                       id="exampleFormControlInput1">
+                                                <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                     style="width: 110px; height: 35px">
+
+                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
+                                                           autocomplete="off">
+                                                    <label class="btn btn-outline-primary border"
+                                                           for="btn-check-outlined"
+                                                           style="color: gray; border-top-left-radius:100px; border-bottom-left-radius: 100px">м</label><br>
+
+                                                    <input type="checkbox" class="btn-check" id="btn-check-outlined"
+                                                           autocomplete="off">
+                                                    <label class="btn btn-outline-primary border"
+                                                           for="btn-check-outlined"
+                                                           style="color: gray; border-top-right-radius: 100px; border-bottom-right-radius: 100px;">км</label><br>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div>
-                                <div>
-                                    <h5>Габариты здания</h5>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput1" class="form-label">Длина</label>
-                                    <input type="email" class="form-control" id="exampleFormControlInput1">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1"
-                                               value="option1">
-                                        <label class="form-check-label" for="inlineCheckbox1">м</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2"
-                                               value="option2">
-                                        <label class="form-check-label" for="inlineCheckbox2">км</label>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput1" class="form-label">Высота</label>
-                                    <input type="email" class="form-control" id="exampleFormControlInput1">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1"
-                                               value="option1">
-                                        <label class="form-check-label" for="inlineCheckbox1">м</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2"
-                                               value="option2">
-                                        <label class="form-check-label" for="inlineCheckbox2">этаж</label>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput1" class="form-label">Ширина</label>
-                                    <input type="email" class="form-control" id="exampleFormControlInput1">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1"
-                                               value="option1">
-                                        <label class="form-check-label" for="inlineCheckbox1">м</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2"
-                                               value="option2">
-                                        <label class="form-check-label" for="inlineCheckbox2">км</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div>
+                                <div class="card-title">
                                     <h5>Адрес объекта</h5>
                                 </div>
                                 <label>Регион</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select class="form-select mb-4" aria-label="Default select example">
                                     <option selected>Выберите регион</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
                                 </select>
                                 <label>Область/район/округ</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select class="form-select mb-4" aria-label="Default select example">
                                     <option selected>Выберите область/район/округ</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
                                 </select>
                                 <label>Населенный пункт</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select class="form-select mb-4" aria-label="Default select example">
                                     <option selected>Выберите населенный пункт</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
@@ -91,237 +136,29 @@
                                     <label for="exampleFormControlInput1" class="form-label">Улица</label>
                                     <input type="email" class="form-control" id="exampleFormControlInput1">
                                 </div>
-                                <div>
-                                    <div class="mb-3">
-                                        <label for="exampleFormControlInput1" class="form-label">Дом</label>
-                                        <input type="email" class="form-control" id="exampleFormControlInput1">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="exampleFormControlInput1" class="form-label">Корпус/строение</label>
-                                        <input type="email" class="form-control" id="exampleFormControlInput1">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Площадь участка</label>
-                                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="0">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1"
-                                           value="option1">
-                                    <label class="form-check-label" for="inlineCheckbox1">м²</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2"
-                                           value="option2">
-                                    <label class="form-check-label" for="inlineCheckbox2">га</label>
-                                </div>
-                            </div>
-                            <div>
-                                <div>
-                                    <h5>Назначение задания</h5>
-                                </div>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected>Выберите назначение здания</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                            </div>
-                            <div>
-                                <div>
-                                    <h5>Виды работ</h5>
-                                </div>
                                 <div class="row">
-                                    <div class="col-sm-4 mb-3 mb-sm-0">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios"
-                                                           id="exampleRadios1" value="option1" checked>
-                                                    <label class="form-check-label" for="exampleRadios1">
-                                                        Default radio
-                                                    </label>
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1" class="form-label">Дом</label>
+                                                    <input type="email" class="form-control"
+                                                           id="exampleFormControlInput1">
                                                 </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios"
-                                                           id="exampleRadios1" value="option1" checked>
-                                                    <label class="form-check-label" for="exampleRadios1">
-                                                        Default radio
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios"
-                                                           id="exampleRadios2" value="option2">
-                                                    <label class="form-check-label" for="exampleRadios2">
-                                                        Second default radio
-                                                    </label>
-                                                </div>
-
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios"
-                                                           id="exampleRadios1" value="option1" checked>
-                                                    <label class="form-check-label" for="exampleRadios1">
-                                                        Default radio
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios"
-                                                           id="exampleRadios1" value="option1" checked>
-                                                    <label class="form-check-label" for="exampleRadios1">
-                                                        Default radio
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios"
-                                                           id="exampleRadios2" value="option2">
-                                                    <label class="form-check-label" for="exampleRadios2">
-                                                        Second default radio
-                                                    </label>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios"
-                                                           id="exampleRadios1" value="option1" checked>
-                                                    <label class="form-check-label" for="exampleRadios1">
-                                                        Default radio
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios"
-                                                           id="exampleRadios1" value="option1" checked>
-                                                    <label class="form-check-label" for="exampleRadios1">
-                                                        Default radio
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios"
-                                                           id="exampleRadios2" value="option2">
-                                                    <label class="form-check-label" for="exampleRadios2">
-                                                        Second default radio
-                                                    </label>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <h5>Цель работ</h5>
-                                    </div>
-                                    <select class="form-select" aria-label="Default select example">
-                                        <option selected>Выберите цель работ</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <div>
-                                        <h5>Комментарий</h5>
-                                    </div>
-                                    <div class="mb-3">
-                                        <textarea class="form-control" id="exampleFormControlTextarea1"
-                                                  rows="3"
-                                                  placeholder="Опишите задачу или оставьте комментарий"></textarea>
-                                    </div>
-                                </div>
-                                <div>
-
-
-                                    <div class="row">
-                                        <div class="col-sm-3 mb-3 mb-sm-0">
-                                            <div class="card">
-                                                <div class="card-body">
-
-                                                    <div class="mb-3">
-                                                        <label for="exampleFormControlInput1"
-                                                               class="form-label">Имя</label>
-                                                        <input type="email" class="form-control"
-                                                               id="exampleFormControlInput1">
-                                                    </div>
-
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1"
+                                                           class="form-label">Корпус/строение</label>
+                                                    <input type="email" class="form-control"
+                                                           id="exampleFormControlInput1">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-3">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="exampleFormControlInput1"
-                                                               class="form-label">Фамилия</label>
-                                                        <input type="email" class="form-control"
-                                                               id="exampleFormControlInput1">
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="card">
-                                                <div class="card-body">
-
-                                                    <div class="mb-3">
-                                                        <label for="exampleFormControlInput1" class="form-label">Отчество</label>
-                                                        <input type="email" class="form-control"
-                                                               id="exampleFormControlInput1">
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-3 mb-3 mb-sm-0">
-                                            <div class="card">
-                                                <div class="card-body">
-
-                                                    <div class="mb-3">
-                                                        <label for="exampleFormControlInput1"
-                                                               class="form-label">номер телефона</label>
-                                                        <input type="email" class="form-control"
-                                                               id="exampleFormControlInput1">
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="exampleFormControlInput1"
-                                                               class="form-label">Электронная почта</label>
-                                                        <input type="email" class="form-control"
-                                                               id="exampleFormControlInput1">
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="btn btn-secondary btn-lg mt-5">Large button</button>
                                     </div>
                                 </div>
                             </div>
@@ -329,7 +166,237 @@
                     </div>
                 </div>
             </div>
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3" style="max-width: 200px">
+                            <label for="exampleFormControlInput1" class="form-label">Площадь участка</label>
+                            <input type="email" class="form-control" id="exampleFormControlInput1"
+                                   placeholder="0">
+
+                            <div class="btn-group mt-2" role="group" aria-label="Basic example" style="width: 110px; height: 35px">
+
+                                <input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+                                <label class="btn btn-outline-primary border" for="btn-check-outlined"
+                                       style="color: gray; border-top-left-radius:100px; border-bottom-left-radius: 100px">м²</label><br>
+
+                                <input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+                                <label class="btn btn-outline-primary border"
+                                       for="btn-check-outlined"
+                                       style="color: gray; border-top-right-radius: 100px; border-bottom-right-radius: 100px;">га</label><br>
+                            </div>
+
+                        </div>
+                        <div style="max-width: 500px">
+                            <div class="card-title">
+                                <h5>Назначение задания</h5>
+                            </div>
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Выберите назначение здания</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="card-title">
+                                <h5>Виды работ</h5>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4 mb-3 mb-sm-0">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
+                                                       value=""
+                                                       id="defaultCheck1">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
+                                                       value=""
+                                                       id="defaultCheck1">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
+                                                       value=""
+                                                       id="defaultCheck1">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
+                                                       value=""
+                                                       id="defaultCheck1">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
+                                                       value=""
+                                                       id="defaultCheck1">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
+                                                       value=""
+                                                       id="defaultCheck1">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
+                                                       value=""
+                                                       id="defaultCheck1">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
+                                                       value=""
+                                                       id="defaultCheck1">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input border-1 rounded-0" type="checkbox"
+                                                       value=""
+                                                       id="defaultCheck1">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="max-width: 500px">
+                                <div class="card-title">
+                                    <h5>Цель работ</h5>
+                                </div>
+                                <select class="form-select" aria-label="Default select example">
+                                    <option selected>Выберите цель работ</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="card-title">
+                                    <h5>Комментарий</h5>
+                                </div>
+                                <div class="mb-3">
+                                        <textarea class="form-control" id="exampleFormControlTextarea1"
+                                                  rows="3"
+                                                  placeholder="Опишите задачу или оставьте комментарий"></textarea>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="row mt-5">
+                                    <div class="col-sm-4 mb-3 mb-sm-0">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1"
+                                                           class="form-label">Имя</label>
+                                                    <input type="email" class="form-control"
+                                                           id="exampleFormControlInput1">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1"
+                                                           class="form-label">Фамилия</label>
+                                                    <input type="email" class="form-control"
+                                                           id="exampleFormControlInput1">
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="card">
+                                            <div class="card-body">
+
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1"
+                                                           class="form-label">Отчество</label>
+                                                    <input type="email" class="form-control"
+                                                           id="exampleFormControlInput1">
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin: 0 auto; padding: 10px; text-align: left;">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <div class="card ">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1"
+                                                           class="form-label">Номер телефона</label>
+                                                    <input type="email" class="form-control"
+                                                           id="exampleFormControlInput1">
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1"
+                                                           class="form-label">Электронная почта</label>
+                                                    <input type="email" class="form-control"
+                                                           id="exampleFormControlInput1">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button type="button" class="btn btn-secondary btn-lg"
+                        style="width: 700px; margin-left: 90px; background-color: #1C5CA4">ОТПРАВИТЬ ЗАЯВКУ
+                </button>
+            </div>
         </div>
     </section>
-</section>
-{% endblock%}
+
+{% endblock %}
