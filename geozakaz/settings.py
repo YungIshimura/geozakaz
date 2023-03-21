@@ -133,3 +133,10 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 USE_DJANGO_JQUERY = True
+
+AUTH_USER_MODEL = 'users.User'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'users.backends.EmailBackend',
+]
