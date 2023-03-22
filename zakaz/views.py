@@ -1,9 +1,9 @@
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
-from .forms import OrderForm, OrderFileForm
+from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm
 from .models import OrderFile
 from django.contrib import messages
-from .models import Order, TypeWork, Region, Area
+from .models import Order
 
 
 def view_order(request):
@@ -34,7 +34,7 @@ def view_order(request):
 def view_order_pages(request):
     orders = Order.objects.all()
     context = {
-        "orders": orders,
+        "orders": orders
     }
 
     return render(request, 'order_pages.html', context=context)
@@ -42,5 +42,12 @@ def view_order_pages(request):
 
 def change_order_status_view(request, pk):
     order = Order.objects.get(id=pk)
-    print(order)
-    return render(request, 'order.html')
+    if request.method == 'POST':
+        order_form = OrderChangeStatusForm(request.POST, instance=order)
+        if order_form.is_valid():
+            order = order_form.save()
+            order.save(commit=False)
+            return HttpResponseRedirect(reverse('zakaz:order_pages'))
+    else:
+        order_form = OrderChangeStatusForm(instance=order)
+    return render(request, 'order.html', {'order': order, 'order_form': order_form})
