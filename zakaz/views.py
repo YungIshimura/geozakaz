@@ -30,8 +30,9 @@ def view_application(request):
 
 
 def view_application_pages(request):
+    orders = Order.objects.all()
     context = {
-        "orders": Order.objects.all()
+        "orders": orders,
     }
 
     return render(request, 'application_pages.html', context=context)
