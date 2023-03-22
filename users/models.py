@@ -6,4 +6,5 @@ from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
 class User(AbstractUser):
     patronymic = models.CharField('Отчество', max_length=30)
-    phone = PhoneNumberField()
+    phone = PhoneNumberField('Телефон')
+    agreement = models.BooleanField('Принял условия соглашения', default=False)
