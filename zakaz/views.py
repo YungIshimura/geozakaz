@@ -2,6 +2,7 @@ from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from .forms import OrderForm, OrderFileForm
 from .models import OrderFile
+from django.contrib import messages
 from .models import Order, TypeWork, Region, Area
 
 
@@ -17,6 +18,8 @@ def view_order(request):
                 print(order_file)
 
             return HttpResponseRedirect(reverse('zakaz:order_pages'))
+        else:
+            messages.error(request, 'Проверьте правильность введённый данных')
 
     else:
         order_form = OrderForm()

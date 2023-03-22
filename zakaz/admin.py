@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import City, Region, Area, Order, TypeWork, OrderFile
+from .models import City, Region, Area, Order, TypeWork, OrderFile, PurposeBuilding, WorkObjective
 
 
 @admin.register(City)
@@ -29,4 +29,14 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(OrderFile)
 class OrderFileAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(PurposeBuilding)
+class PurposeBuildingAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(WorkObjective)
+class WorkObjectiveAdmin(admin.ModelAdmin):
     pass

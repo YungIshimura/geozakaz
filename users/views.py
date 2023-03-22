@@ -5,6 +5,7 @@ from .forms import UserRegistrationForm, UserLoginForm
 
 
 # Create your views here.
+# Авторизация пользователя
 def user_login(request):
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
@@ -33,6 +34,7 @@ def user_login(request):
     return render(request, 'auth/login.html', context)
 
 
+# Регистрация пользователя
 def user_register(request):
     form = UserRegistrationForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -47,6 +49,13 @@ def user_register(request):
     return render(request, 'auth/register.html', context)
 
 
+# Выход из аккаунта
 def user_logout(request):
     logout(request)
     return redirect('users:user_login')
+
+
+# Пользовательское соглашение
+def view_agreement(request):
+    return render(request, 'user_agreement.html', {'title': 'Пользовательское соглашение'})
+
