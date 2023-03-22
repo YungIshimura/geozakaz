@@ -1,6 +1,7 @@
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from .forms import OrderForm, OrderFileForm
+from .models import Order, TypeWork, Region, Area
 
 
 def view_application(request):
@@ -9,7 +10,7 @@ def view_application(request):
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
         if order_form.is_valid() and order_files_form.is_valid():
-            order=order_form.save()
+            order = order_form.save()
             order_files = order_files_form.save(commit=False)
             order_files.order = order
             order_files.save()
@@ -29,4 +30,8 @@ def view_application(request):
 
 
 def view_application_pages(request):
-    return render(request, 'application_pages.html')
+    context = {
+        "orders": Order.objects.all()
+    }
+
+    return render(request, 'application_pages.html', context=context)

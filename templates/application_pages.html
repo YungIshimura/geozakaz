@@ -14,43 +14,18 @@
         </tr>
         </thead>
         <tbody>
-        <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
-            <th>24:39:0101001:369</th>
-            <td>Инженерно-гидрометеорологические изыскания</td>
-            <td>Москва</td>
-            <td>Москва</td>
-            <td>Лефортово</td>
-            <td>01.01.2001</td>
-            <td><a href="#" class="link-primary">Подробнее</a></td>
+        {% for order in orders %}
+            <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
+                <th>{{ order.cadastral_number }}</th>
+                <td>{{ order.type_work }}</td>
+                <td>{{ order.region }}</td>
+                <td>{{ order.city }}</td>
+                <td>{{ order.area }}</td>
+                <td>01.01.2001</td>
+                <td><a href="#" class="link-primary">Подробнее</a></td>
+            </tr>
+        {% endfor %}
 
-        </tr>
-        <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
-            <th>24:39:0101001:369</th>
-            <td>Инженерно-гидрометеорологические изыскания</td>
-            <td>Москва</td>
-            <td>Москва</td>
-            <td>Лефортово</td>
-            <td>01.01.2001</td>
-            <td><a href="#" class="link-primary">Подробнее</a></td>
-        </tr>
-        <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
-            <th>24:39:0101001:369</th>
-            <td>Инженерно-гидрометеорологические изыскания</td>
-            <td>Москва</td>
-            <td>Москва</td>
-            <td>Лефортово</td>
-            <td>01.01.2001</td>
-            <td><a href="#" class="link-primary">Подробнее</a></td>
-        </tr>
-        <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
-            <th>24:39:0101001:369</th>
-            <td>Инженерно-гидрометеорологические изыскания</td>
-            <td>Москва</td>
-            <td>Москва</td>
-            <td>Лефортово</td>
-            <td>01.01.2001</td>
-            <td><a href="#" class="link-primary">Подробнее</a></td>
-        </tr>
 
         </tbody>
     </table>
