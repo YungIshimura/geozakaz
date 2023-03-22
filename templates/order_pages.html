@@ -21,12 +21,10 @@
                 <td>{{ order.region }}</td>
                 <td>{{ order.city }}</td>
                 <td>{{ order.area }}</td>
-                <td>01.01.2001</td>
-                <td><a href="/admin/zakaz/order/{{ order.pk }}/change/" class="link-primary">Подробнее</a></td>
+                <td>{{ order.date.date }}</td>
+                <td><a href="{% url 'zakaz:change_order_status_view' order.id %}" class="link-primary">Подробнее</a></td>
             </tr>
         {% endfor %}
-
-
         </tbody>
     </table>
 
