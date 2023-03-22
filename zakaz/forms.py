@@ -104,7 +104,7 @@ class OrderForm(forms.ModelForm):
 
 
 class OrderFileForm(forms.ModelForm):
-    file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True}))
+    file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True, 'name': 'file[]'}))
     class Meta:
         model = OrderFile
         fields = ('file', )

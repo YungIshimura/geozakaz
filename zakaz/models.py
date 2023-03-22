@@ -236,7 +236,7 @@ class OrderFile(models.Model):
     )
 
     def __str__(self):
-        return f'Файлы к заказу номер {self.id}'
+        return f'Файлы к заказу номер {self.order.id}'
 
     class Meta:
         verbose_name = 'Файлы к заказу'
