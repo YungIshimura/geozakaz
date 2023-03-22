@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from smart_selects.db_fields import ChainedForeignKey
 from phonenumber_field.modelfields import PhoneNumberField
+from users.models import User
 
 
 class TypeWork(models.Model):
@@ -76,6 +77,34 @@ class City(models.Model):
         verbose_name_plural = 'Города'
 
 
+class PurposeBuilding(models.Model):
+    purpose = models.CharField(
+        'Назначение',
+        max_length=150
+    )
+
+    def __str__(self):
+        return f'{self.purpose}'
+
+    class Meta:
+        verbose_name = 'Назначение здания'
+        verbose_name_plural = 'Назначения зданий'
+
+
+class WorkObjective(models.Model):
+    objective = models.CharField(
+        'Цель работы',
+        max_length=150
+    )
+
+    def __str__(self):
+        return f'{self.objective}'
+
+    class Meta:
+        verbose_name = 'Цель работы'
+        verbose_name_plural = 'Цели работ'
+
+
 class Order(models.Model):
     STATUS = (
         ('processed', 'Обработанная'),
@@ -93,6 +122,7 @@ class Order(models.Model):
         ('m', 'м'),
         ('floor', 'этаж')
     )
+
     name = models.CharField(
         'Имя заказчика',
         max_length=100,
@@ -205,8 +235,30 @@ class Order(models.Model):
         related_name='orders',
         verbose_name='Тип работы',
     )
-    title = models.TextField(
+    comment = models.TextField(
         'Навзание объекта'
+    )
+    date = models.DateTimeField(
+        'Дата заявки',
+        auto_now_add=True,
+        blank=True,
+        null=True
+    )
+    purpose_building = models.ForeignKey(
+        PurposeBuilding,
+        on_delete=models.CASCADE,
+        verbose_name='Назначение здания',
+        related_name='orders',
+        blank=True,
+        null=True
+    )
+    work_objective = models.ForeignKey(
+        WorkObjective,
+        on_delete=models.CASCADE,
+        verbose_name='Цель раоты',
+        related_name='orders',
+        blank=True,
+        null=True
     )
     status = models.CharField(
         'Статус заказа',
