@@ -1,5 +1,5 @@
 from django import forms
-from .models import TypeWork, Order, OrderFile
+from .models import TypeWork, Order, OrderFile, PurposeBuilding, WorkObjective
 from django.core.validators import MinValueValidator
 from .validators import validate_number
 
@@ -65,7 +65,7 @@ class OrderForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple()
     )
 
-    title = forms.CharField(
+    comment = forms.CharField(
         widget=forms.Textarea(attrs={'placeholder': 'Название объекта'})
     )
 
@@ -87,11 +87,20 @@ class OrderForm(forms.ModelForm):
 
     email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Введите номер телефона'}))
 
+    purpose_building = forms.ModelMultipleChoiceField(
+        queryset=PurposeBuilding.objects.all(), 
+        widget=forms.Select()
+    )
+    work_objective = forms.ModelMultipleChoiceField(
+        queryset=WorkObjective.objects.all(), 
+        widget=forms.Select()
+    )
+
     class Meta:
         model = Order
         fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
-                  'square', 'square_unit', 'length',  'length_unit', 'width', 'width_unit', 'height', 'height_unit','type_work','title', 'name', 'surname', 
-                  'father_name', 'phone_number', 'email')
+                  'square', 'square_unit', 'length',  'length_unit', 'width', 'width_unit', 'height', 'height_unit','type_work','comment', 'name', 'surname', 
+                  'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective')
 
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
@@ -102,6 +111,8 @@ class OrderForm(forms.ModelForm):
         self.fields['square_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['width_unit'].widget.attrs['class'] = 'custom-btn-check'
 
+        self.fields['purpose_building'].widget.attrs['class'] = 'form-select'
+        self.fields['work_objective'].widget.attrs['class'] = 'form-select'
 
 class OrderFileForm(forms.ModelForm):
     file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True, 'name': 'file[]'}))

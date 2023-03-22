@@ -156,12 +156,7 @@
                             <div class="card-title">
                                 <h5>Назначение задания</h5>
                             </div>
-                            <select class="form-select" aria-label="Default select example">
-                                <option selected>Выберите назначение здания</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                            </select>
+                            {{order_form.purpose_building}}
                         </div>
                         <div>
                             <div class="card-title">
@@ -186,12 +181,7 @@
                                 <div class="card-title">
                                     <h5>Цель работ</h5>
                                 </div>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected>Выберите цель работ</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
+                                {{order_form.work_objective}}
                             </div>
                             <div>
                                 <div class="card-title">
@@ -267,7 +257,7 @@
             </div>
             <div>
                 <button type="submit" class="btn btn-secondary btn-lg"
-                        style="width: 600px; background-color: #1C5CA4;">ОТПРАВИТЬ ЗАЯВКУ
+                        style="width: auto; background-color: #012970;">ОТПРАВИТЬ ЗАЯВКУ
                 </button>
             </div>
         </div>
