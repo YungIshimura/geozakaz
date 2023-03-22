@@ -7,7 +7,8 @@ from .validators import validate_number
 class OrderForm(forms.ModelForm):
     cadastral_number = forms.CharField(
         validators=[validate_number],
-        widget=forms.TextInput(attrs={'placeholder': 'Кадастровый номер'}))
+        widget=forms.TextInput()
+    )
 
     street = forms.CharField()
 
@@ -26,7 +27,7 @@ class OrderForm(forms.ModelForm):
 
     square_unit = forms.ChoiceField(
         choices=Order.SQUARE_UNIT,
-        widget=forms.Select()
+        widget=forms.RadioSelect()
     )
 
     length = forms.IntegerField(
@@ -36,7 +37,7 @@ class OrderForm(forms.ModelForm):
 
     length_unit = forms.ChoiceField(
         choices=Order.LENGTH_AND_WIDTH_UNIT,
-        widget=forms.Select()
+        widget=forms.RadioSelect()
     )
 
     width = forms.IntegerField(
@@ -46,7 +47,7 @@ class OrderForm(forms.ModelForm):
 
     width_unit = forms.ChoiceField(
         choices=Order.LENGTH_AND_WIDTH_UNIT,
-        widget=forms.Select()
+        widget=forms.RadioSelect()
     )
 
     height = forms.IntegerField(
@@ -56,7 +57,7 @@ class OrderForm(forms.ModelForm):
 
     height_unit = forms.ChoiceField(
         choices=Order.HEIGHT_UNIT,
-        widget=forms.Select()
+        widget=forms.RadioSelect()
     )
 
     type_work = forms.ModelMultipleChoiceField(
@@ -88,11 +89,22 @@ class OrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
+                  'square', 'square_unit', 'length',  'length_unit', 'width', 'width_unit', 'height', 'height_unit','type_work','title', 'name', 'surname', 
+                  'father_name', 'phone_number', 'email')
+
+    def __init__(self, *args, **kwargs):
+        super(OrderForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+        self.fields['length_unit'].widget.attrs['class'] = 'custom-btn-check'
+        self.fields['height_unit'].widget.attrs['class'] = 'custom-btn-check'
+        self.fields['square_unit'].widget.attrs['class'] = 'custom-btn-check'
+        self.fields['width_unit'].widget.attrs['class'] = 'custom-btn-check'
 
 
 class OrderFileForm(forms.ModelForm):
-    file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True}))
+    file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True, 'name': 'file[]'}))
     class Meta:
         model = OrderFile
         fields = ('file', )
