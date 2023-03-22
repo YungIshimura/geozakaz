@@ -26,3 +26,24 @@ function removeFilesItem(target){
 	}
 	input[0].files = dt.files;  
 }
+
+function DisableFloor() {
+	let floor = document.getElementById('id_height_unit_1');
+	let kmeter = document.getElementById('id_length_unit_1');
+	let meter = document.getElementById('id_length_unit_0')
+	let label = document.querySelector(`label[for=${floor.id}]`);
+
+	kmeter.onclick = function() { 
+		floor.disabled = true;
+		floor.style.cssText='display:none;';
+		label.style.cssText='display:none;';
+	}
+
+	meter.onclick = function() { 
+		floor.disabled = false;
+		floor.style.cssText='display: block;';
+		label.style.cssText='display: block;';
+	}
+}
+
+window.onload = DisableFloor()
