@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+    <script data-require="jquery" data-semver="3.1.1" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
     <script src="/static/smart-selects/admin/js/chainedfk.js"></script>
     <script src="/static/smart-selects/admin/js/bindfields.js"></script>
     <link rel='stylesheet' href="{% static 'css/application.css'%}">
@@ -126,11 +128,13 @@
                         </div>
                     </div>
                 </div>
-                <div class='files'>
-                    {{order_files_form.file}}
-                    <label class="common-label" for="{{order_files_form.file.id_for_label}}" style='display:flex; align-items:center; justify-content:center; gap:5px;'>
-                    </label>
-                </div>
+                <div class="input-file-row">
+                    <label class="input-file">
+                            {{order_files_form.file}}		
+                           <span>Выберите файл</span>
+                     </label>
+                    <div class="input-file-list"></div>  
+                </div>  
             </div>
             
             <div class="col-sm-6">
@@ -263,10 +267,11 @@
             </div>
             <div>
                 <button type="submit" class="btn btn-secondary btn-lg"
-                        style="width: 700px; background-color: #1C5CA4">ОТПРАВИТЬ ЗАЯВКУ
+                        style="width: 600px; background-color: #1C5CA4;">ОТПРАВИТЬ ЗАЯВКУ
                 </button>
             </div>
         </div>
         </form>
     </section>
+    <script src="{% static 'js/application.js' %}"></script>
 {% endblock %}
