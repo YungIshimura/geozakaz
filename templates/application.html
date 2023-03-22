@@ -12,6 +12,7 @@
     <section>
         <form action={% url 'zakaz:application' %} method='POST' enctype='multipart/form-data'>
         {% csrf_token %}
+        {% include 'inc/_alerts.html' %}
         <div class="row">
             <div class="col-sm-6 mb-sm-0">
                 <div class="card">

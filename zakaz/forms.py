@@ -90,11 +90,11 @@ class OrderForm(forms.ModelForm):
 
     email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Введите номер телефона'}))
 
-    purpose_building = forms.ModelMultipleChoiceField(
+    purpose_building = forms.ModelChoiceField(
         queryset=PurposeBuilding.objects.all(), 
         widget=forms.Select()
     )
-    work_objective = forms.ModelMultipleChoiceField(
+    work_objective = forms.ModelChoiceField(
         queryset=WorkObjective.objects.all(), 
         widget=forms.Select()
     )

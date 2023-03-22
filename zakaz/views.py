@@ -2,6 +2,7 @@ from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from .forms import OrderForm, OrderFileForm
 from .models import OrderFile
+from django.contrib import messages
 
 
 def view_application(request):
@@ -10,12 +11,14 @@ def view_application(request):
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
         if order_form.is_valid() and order_files_form.is_valid():
-            order=order_form.save()
+            order = order_form.save()
             for file in request.FILES.getlist('file'):
                 order_file = OrderFile.objects.create(order=order, file=file)
                 print(order_file)
 
             return HttpResponseRedirect(reverse('zakaz:application_pages'))
+        else:
+            messages.error(request, 'Проверьте правильность введённый данных')
 
     else:
         order_form = OrderForm()
