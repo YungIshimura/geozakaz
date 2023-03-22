@@ -7,22 +7,25 @@ from .validators import validate_number
 class OrderForm(forms.ModelForm):
     cadastral_number = forms.CharField(
         validators=[validate_number],
-        widget=forms.TextInput()
+        widget=forms.TextInput(attrs={'placeholder': 'Кадастровый номер'}),
+        
     )
 
-    street = forms.CharField()
+    street = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Улица'}))
 
     house_number = forms.IntegerField(
         validators=[MinValueValidator(1)],
-        widget=forms.NumberInput(attrs={'class':'border mr-2 application--form--input-group__house'})
+        widget=forms.NumberInput(attrs={'class':'border mr-2 application--form--input-group__house', 'placeholder': 'Номер дома'})
     )
 
     building = forms.IntegerField(
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(1)],
+        widget=forms.NumberInput(attrs={'placeholder': 'Корпус/Строение'})
     )
 
     square = forms.IntegerField(
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(1)],
+        widget=forms.NumberInput(attrs={'placeholder': 'Площадь'})
     )
 
     square_unit = forms.ChoiceField(
@@ -66,7 +69,7 @@ class OrderForm(forms.ModelForm):
     )
 
     comment = forms.CharField(
-        widget=forms.Textarea(attrs={'placeholder': 'Название объекта'})
+        widget=forms.Textarea(attrs={'placeholder': 'Комментарий к заказу'})
     )
 
     name = forms.CharField(
