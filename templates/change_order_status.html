@@ -11,7 +11,7 @@
         <h1>Создайте заявку</h1>
     </div>
     <section>
-        <form action={% url 'zakaz:order' %} method='POST' enctype='multipart/form-data'>
+        <form action={% url 'zakaz:change_order_status' order.pk %} method='POST' enctype='multipart/form-data'>
             {% csrf_token %}
             {% include 'inc/_alerts.html' %}
             <div class="row">
@@ -135,10 +135,9 @@
                         </div>
                     </div>
                     <div class="input-file-row">
-                        <label class="input-file">
-                            {{ order_files_form.file }}
-                            <span>Выберите файл</span>
-                        </label>
+                        {% for i in file %}
+                            <i class="bi bi-file-earmark-arrow-up" style="font-size: 23px; color: #0d6efd; font-family:Nunito, sans-serif;"> {{ i }} </i><br>
+                        {% endfor %}
                         <div class="input-file-list"></div>
                     </div>
                 </div>

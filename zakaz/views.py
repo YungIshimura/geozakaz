@@ -40,14 +40,20 @@ def view_order_pages(request):
     return render(request, 'order_pages.html', context=context)
 
 
-def change_order_status_view(request, pk):
+def view_change_order_status(request, pk):
+    context = {}
     order = Order.objects.get(id=pk)
+    file = OrderFile.objects.select_related('order').filter(order=pk)
     if request.method == 'POST':
         order_form = OrderChangeStatusForm(request.POST, instance=order)
         if order_form.is_valid():
             order = order_form.save()
-            order.save(commit=False)
+            order.save()
             return HttpResponseRedirect(reverse('zakaz:order_pages'))
     else:
         order_form = OrderChangeStatusForm(instance=order)
-    return render(request, 'order.html', {'order': order, 'order_form': order_form})
+
+    context['file'] = file
+    context['order_form'] = order_form
+    context['order'] = order
+    return render(request, 'change_order_status.html', context=context)
