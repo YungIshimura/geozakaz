@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from .forms import OrderForm, OrderFileForm
@@ -5,6 +6,7 @@ from .models import OrderFile
 from django.contrib import messages
 
 
+@login_required(login_url='users:user_login')
 def view_application(request):
     context = {}
     if request.method == 'POST':
@@ -30,5 +32,6 @@ def view_application(request):
     return render(request, 'application.html', context=context)
 
 
+@user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_application_pages(request):
     return render(request, 'application_pages.html')
