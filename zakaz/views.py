@@ -1,3 +1,4 @@
+from django.shortcuts import HttpResponseRedirect, render, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
@@ -42,9 +43,9 @@ def view_order_pages(request):
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_change_order_status(request, pk):
-    context = {}
-    order = Order.objects.get(id=pk)
-    file = OrderFile.objects.select_related('order').filter(order=pk)
+    order = get_object_or_404(Order, pk=pk)
+    files = OrderFile.objects.select_related('order').filter(order=pk)
+    type_works = TypeWork.objects.all().filter(orders=order)
     if request.method == 'POST':
         order_form = OrderChangeStatusForm(request.POST, instance=order)
         if order_form.is_valid():
@@ -54,7 +55,11 @@ def view_change_order_status(request, pk):
     else:
         order_form = OrderChangeStatusForm(instance=order)
 
-    context['file'] = file
-    context['order_form'] = order_form
-    context['order'] = order
+    context = {
+        'files': files,
+        'order_form': order_form,
+        'order': order,
+        'type_works': type_works
+    }
+
     return render(request, 'change_order_status.html', context=context)

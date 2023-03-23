@@ -118,7 +118,7 @@ class OrderForm(forms.ModelForm):
 
         self.fields['purpose_building'].widget.attrs['class'] = 'form-select'
         self.fields['work_objective'].widget.attrs['class'] = 'form-select'
-    
+
 
 class OrderFileForm(forms.ModelForm):
     file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True, 'name': 'file[]'}))
@@ -199,12 +199,6 @@ class OrderChangeStatusForm(forms.ModelForm):
 
     )
 
-    type_work = forms.ModelMultipleChoiceField(
-        queryset=TypeWork.objects.all(),
-        widget=forms.CheckboxSelectMultiple(),
-        disabled=True
-    )
-
     comment = forms.CharField(
         widget=forms.Textarea(attrs={'placeholder': 'Комментарий к заказу'}),
         disabled=True
@@ -264,7 +258,7 @@ class OrderChangeStatusForm(forms.ModelForm):
         model = Order
         fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
                   'square', 'square_unit', 'length', 'length_unit', 'width', 'width_unit', 'height', 'height_unit',
-                  'type_work', 'comment', 'name', 'surname',
+                  'comment', 'name', 'surname',
                   'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective', 'status')
 
     def __init__(self, *args, **kwargs):
