@@ -8,9 +8,9 @@ def view_index(request):
     user = request.user
     if user.is_authenticated:
         if user.is_staff:
-            return redirect('zakaz:application_pages')
+            return redirect('zakaz:order_pages')
         else:
-            return redirect('zakaz:application')
+            return redirect('zakaz:order')
     else:
         return redirect('users:user_login')
 
