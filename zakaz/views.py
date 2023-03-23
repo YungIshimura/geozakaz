@@ -1,10 +1,9 @@
-from django.shortcuts import HttpResponseRedirect, render
+from django.shortcuts import HttpResponseRedirect, render, get_object_or_404
 from django.urls import reverse
 from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm
 from .models import OrderFile, TypeWork
 from django.contrib import messages
 from .models import Order
-from django.http import FileResponse
 
 
 def view_order(request):
@@ -42,11 +41,9 @@ def view_order_pages(request):
 
 
 def view_change_order_status(request, pk):
-    order = Order.objects.get(id=pk)
+    order = get_object_or_404(Order, pk=pk)
     files = OrderFile.objects.select_related('order').filter(order=pk)
     type_works = TypeWork.objects.all().filter(orders=order)
-    print(files.values())
-    # response = FileResponse(files, 'r', encoding="utf-8")
     if request.method == 'POST':
         order_form = OrderChangeStatusForm(request.POST, instance=order)
         if order_form.is_valid():
