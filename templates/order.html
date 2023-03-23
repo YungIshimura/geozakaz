@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+{% load verbose_name %}
     <script data-require="jquery" data-semver="3.1.1"
             src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
@@ -13,6 +14,17 @@
     <section>
         <form action={% url 'zakaz:order' %} method='POST' enctype='multipart/form-data'>
             {% csrf_token %}
+
+            {% if order_form.errors %}
+                {% for field in order_form %}
+                    {% for error in field.errors %}
+                    <div class="alert alert-danger text-center">
+                        <span>{% verbose_name_tag order_model field.name %} {{error}} </span>
+                    </div>  
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
             {% include 'inc/_alerts.html' %}
             <div class="row">
                 <div class="col-sm-6 mb-sm-0">

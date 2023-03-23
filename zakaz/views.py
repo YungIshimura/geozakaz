@@ -1,7 +1,7 @@
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm
-from .models import OrderFile
+from .models import OrderFile, TypeWork
 from django.contrib import messages
 from .models import Order
 
@@ -14,19 +14,16 @@ def view_order(request):
         if order_form.is_valid() and order_files_form.is_valid():
             order = order_form.save()
             for file in request.FILES.getlist('file'):
-                order_file = OrderFile.objects.create(order=order, file=file)
-                print(order_file)
-
-            return HttpResponseRedirect(reverse('zakaz:order_pages'))
-        else:
-            messages.error(request, 'Проверьте правильность введённый данных')
-
+                OrderFile.objects.create(order=order, file=file)
+            messages.success(request, 'Ваша заявка отправлена')
+            return HttpResponseRedirect(reverse('zakaz:order'))
     else:
         order_form = OrderForm()
         order_files_form = OrderFileForm()
 
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
+    context['order_model'] = Order
 
     return render(request, 'order.html', context=context)
 
