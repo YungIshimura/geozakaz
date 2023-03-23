@@ -1,5 +1,5 @@
 from django import forms
-from .models import TypeWork, Order, OrderFile, PurposeBuilding, WorkObjective
+from .models import TypeWork, Order, OrderFile, PurposeBuilding, WorkObjective, Region, Area, City
 from django.core.validators import MinValueValidator
 from .validators import validate_number
 
@@ -8,14 +8,15 @@ class OrderForm(forms.ModelForm):
     cadastral_number = forms.CharField(
         validators=[validate_number],
         widget=forms.TextInput(attrs={'placeholder': 'Кадастровый номер'}),
-        
+
     )
 
     street = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Улица'}))
 
     house_number = forms.IntegerField(
         validators=[MinValueValidator(1)],
-        widget=forms.NumberInput(attrs={'class':'border mr-2 application--form--input-group__house', 'placeholder': 'Номер дома'})
+        widget=forms.NumberInput(
+            attrs={'class': 'border mr-2 application--form--input-group__house', 'placeholder': 'Номер дома'})
     )
 
     building = forms.IntegerField(
@@ -64,8 +65,8 @@ class OrderForm(forms.ModelForm):
     )
 
     type_work = forms.ModelMultipleChoiceField(
-        queryset=TypeWork.objects.all(), 
-        widget=forms.CheckboxSelectMultiple()
+        queryset=TypeWork.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={'required': 'true'})
     )
 
     comment = forms.CharField(
@@ -88,21 +89,22 @@ class OrderForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': 'Введите номер телефона'})
     )
 
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Введите номер телефона'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Введите адрес почты'}))
 
     purpose_building = forms.ModelChoiceField(
-        queryset=PurposeBuilding.objects.all(), 
+        queryset=PurposeBuilding.objects.all(),
         widget=forms.Select()
     )
     work_objective = forms.ModelChoiceField(
-        queryset=WorkObjective.objects.all(), 
+        queryset=WorkObjective.objects.all(),
         widget=forms.Select()
     )
 
     class Meta:
         model = Order
         fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
-                  'square', 'square_unit', 'length',  'length_unit', 'width', 'width_unit', 'height', 'height_unit','type_work','comment', 'name', 'surname', 
+                  'square', 'square_unit', 'length', 'length_unit', 'width', 'width_unit', 'height', 'height_unit',
+                  'type_work', 'comment', 'name', 'surname',
                   'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective')
 
     def __init__(self, *args, **kwargs):
@@ -116,9 +118,162 @@ class OrderForm(forms.ModelForm):
 
         self.fields['purpose_building'].widget.attrs['class'] = 'form-select'
         self.fields['work_objective'].widget.attrs['class'] = 'form-select'
+    
 
 class OrderFileForm(forms.ModelForm):
     file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True, 'name': 'file[]'}))
+
     class Meta:
         model = OrderFile
-        fields = ('file', )
+        fields = ('file',)
+
+
+class OrderChangeStatusForm(forms.ModelForm):
+    cadastral_number = forms.CharField(
+        validators=[validate_number],
+        widget=forms.TextInput(attrs={'placeholder': 'Кадастровый номер'}),
+        disabled=True
+    )
+
+    street = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Улица'}), disabled=True)
+
+    house_number = forms.IntegerField(
+        validators=[MinValueValidator(1)],
+        widget=forms.NumberInput(
+            attrs={'class': 'border mr-2 application--form--input-group__house', 'placeholder': 'Номер дома'}),
+        disabled=True
+    )
+
+    building = forms.IntegerField(
+        validators=[MinValueValidator(1)],
+        widget=forms.NumberInput(attrs={'placeholder': 'Корпус/Строение'}),
+        disabled=True
+    )
+
+    square = forms.IntegerField(
+        validators=[MinValueValidator(1)],
+        widget=forms.NumberInput(attrs={'placeholder': 'Площадь'}),
+        disabled=True
+    )
+
+    square_unit = forms.ChoiceField(
+        choices=Order.SQUARE_UNIT,
+        widget=forms.RadioSelect(),
+        disabled=True
+    )
+
+    length = forms.IntegerField(
+        validators=[MinValueValidator(1)],
+        widget=forms.NumberInput(attrs={'placeholder': 'Длина'}),
+        disabled=True
+    )
+
+    length_unit = forms.ChoiceField(
+        choices=Order.LENGTH_AND_WIDTH_UNIT,
+        widget=forms.RadioSelect(),
+        disabled=True
+    )
+
+    width = forms.IntegerField(
+        validators=[MinValueValidator(1)],
+        widget=forms.NumberInput(attrs={'placeholder': ' Ширина'}),
+        disabled=True
+    )
+
+    width_unit = forms.ChoiceField(
+        choices=Order.LENGTH_AND_WIDTH_UNIT,
+        widget=forms.RadioSelect(),
+        disabled=True
+    )
+
+    height = forms.IntegerField(
+        validators=[MinValueValidator(1)],
+        widget=forms.NumberInput(attrs={'placeholder': 'Высота'}),
+        disabled=True
+    )
+
+    height_unit = forms.ChoiceField(
+        choices=Order.HEIGHT_UNIT,
+        widget=forms.RadioSelect(),
+        disabled=True
+
+    )
+
+    type_work = forms.ModelMultipleChoiceField(
+        queryset=TypeWork.objects.all(),
+        widget=forms.CheckboxSelectMultiple(),
+        disabled=True
+    )
+
+    comment = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Комментарий к заказу'}),
+        disabled=True
+    )
+
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Ваше имя'}),
+        disabled=True
+    )
+
+    surname = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Ваша фамилия'}),
+        disabled=True
+    )
+
+    father_name = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Ваше отчество'}),
+        disabled=True
+    )
+
+    phone_number = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Введите номер телефона'}),
+        disabled=True
+    )
+
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Введите номер телефона'}),
+                             disabled=True)
+
+    purpose_building = forms.ModelChoiceField(
+        queryset=PurposeBuilding.objects.all(),
+        widget=forms.Select(),
+        disabled=True
+    )
+    work_objective = forms.ModelChoiceField(
+        queryset=WorkObjective.objects.all(),
+        widget=forms.Select(),
+        disabled=True
+    )
+
+    region = forms.ModelChoiceField(
+        queryset=Region.objects.all(),
+        widget=forms.Select(),
+        disabled=True
+    )
+    area = forms.ModelChoiceField(
+        queryset=Area.objects.all(),
+        widget=forms.Select(),
+        disabled=True
+    )
+    city = forms.ModelChoiceField(
+        queryset=City.objects.all(),
+        widget=forms.Select(),
+        disabled=True
+    )
+
+    class Meta:
+        model = Order
+        fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
+                  'square', 'square_unit', 'length', 'length_unit', 'width', 'width_unit', 'height', 'height_unit',
+                  'type_work', 'comment', 'name', 'surname',
+                  'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective', 'status')
+
+    def __init__(self, *args, **kwargs):
+        super(OrderChangeStatusForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+        self.fields['length_unit'].widget.attrs['class'] = 'custom-btn-check'
+        self.fields['height_unit'].widget.attrs['class'] = 'custom-btn-check'
+        self.fields['square_unit'].widget.attrs['class'] = 'custom-btn-check'
+        self.fields['width_unit'].widget.attrs['class'] = 'custom-btn-check'
+        self.fields['purpose_building'].widget.attrs['class'] = 'form-select'
+        self.fields['work_objective'].widget.attrs['class'] = 'form-select'

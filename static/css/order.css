@@ -22,6 +22,7 @@ input[type='radio'] {
   -moz-appearance: none;
   appearance: none;
   outline: none;
+  animation: DisableFloor 1s linear forwards;
 }
 
 input[type='radio']::before {
@@ -107,4 +108,13 @@ input[type='radio']:checked::after {
 	text-decoration: none;
 	display: inline-block;
 	margin-left: 5px;
+}
+
+@keyframes DisableFloor {
+	0% {
+	  opacity: 0;
+	}
+	70% {
+		opacity: 1;
+	}
 }

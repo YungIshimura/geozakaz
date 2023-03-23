@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import City, Region, Area, Order, TypeWork, OrderFile, PurposeBuilding, WorkObjective
+from .models import (City, Region, Area, Order, TypeWork,
+                     OrderFile, PurposeBuilding, WorkObjective)
 
 
 @admin.register(City)

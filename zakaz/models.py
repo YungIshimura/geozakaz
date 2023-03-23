@@ -233,7 +233,7 @@ class Order(models.Model):
     type_work = models.ManyToManyField(
         TypeWork,
         related_name='orders',
-        verbose_name='Тип работы',
+        verbose_name='Виды работ',
     )
     comment = models.TextField(
         'Навзание объекта'

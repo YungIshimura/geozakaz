@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <table class="table" style="color: grey">
+        <thead>
+        <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
+            <th scope="col">Кадастровый номер</th>
+            <th scope="col">Тип работ</th>
+            <th scope="col">Регион</th>
+            <th scope="col">Город</th>
+            <th scope="col">Район</th>
+            <th scope="col">Дата заявки</th>
+            <th scope="col">Ссылка на админку</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
+                <th>{{ order.cadastral_number }}</th>
+                <td>{{ order.type_work.get }}</td>
+                <td>{{ order.region }}</td>
+                <td>{{ order.city }}</td>
+                <td>{{ order.area }}</td>
+                <td>{{ order.date.date }}</td>
+                <td><a href="{% url 'zakaz:change_order_status' order.id %}" class="link-primary">Подробнее</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
