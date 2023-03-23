@@ -17,7 +17,10 @@
         {% for order in orders %}
             <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
                 <th>{{ order.cadastral_number }}</th>
-                <td>{{ order.type_work.get }}</td>
+                <td>
+                    {% for work in order.type_work.values %}
+                        {{ work.type }}<br>
+                        {% endfor %}</td>
                 <td>{{ order.region }}</td>
                 <td>{{ order.city }}</td>
                 <td>{{ order.area }}</td>

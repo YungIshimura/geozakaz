@@ -43,7 +43,7 @@ def view_order_pages(request):
 def view_change_order_status(request, pk):
     context = {}
     order = Order.objects.get(id=pk)
-    file = OrderFile.objects.select_related('order').filter(order=pk)
+    files = OrderFile.objects.select_related('order').filter(order=pk)
     if request.method == 'POST':
         order_form = OrderChangeStatusForm(request.POST, instance=order)
         if order_form.is_valid():
@@ -53,7 +53,7 @@ def view_change_order_status(request, pk):
     else:
         order_form = OrderChangeStatusForm(instance=order)
 
-    context['file'] = file
+    context['files'] = files
     context['order_form'] = order_form
     context['order'] = order
     return render(request, 'change_order_status.html', context=context)
