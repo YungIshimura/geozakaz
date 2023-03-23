@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <script data-require="jquery" data-semver="3.1.1"
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/static/smart-selects/admin/js/chainedfk.js"></script>
+    <script src="/static/smart-selects/admin/js/bindfields.js"></script>
+    <link rel='stylesheet' href="{% static 'css/order.css' %}">
+    <div class="mb-5 mt-5">
+        <h1>Создайте заявку</h1>
+    </div>
+    <section>
+        <form action={% url 'zakaz:order' %} method='POST' enctype='multipart/form-data'>
+            {% csrf_token %}
+            {% include 'inc/_alerts.html' %}
+            <div class="row">
+                <div class="col-sm-6 mb-sm-0">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h5>Участок</h5>
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.cadastral_number.id_for_label }}">Кадастровый номер</label>
+                                {{ order_form.cadastral_number }}
+                            </div>
+                            <div>
+                                <div class="card-title">
+                                    <h5>Габариты здания</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4 mb-3 mb-sm-0">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="{{ form.length.id_for_label }}"
+                                                           class="form-label">Длина</label>
+                                                    {{ order_form.length }}
+                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                         style="width: 110px; height: 35px;">
+
+                                                        {{ order_form.length_unit }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3" id='width'>
+                                                    <label for="{{ form.height.id_for_label }}"
+                                                           class="form-label">Высота</label>
+                                                    {{ order_form.height }}
+                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                         style="width: 110px; height: 35px">
+                                                        {{ order_form.height_unit }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="{{ form.width.id_for_label }}"
+                                                           class="form-label">Ширина</label>
+                                                    {{ order_form.width }}
+                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                         style="width: 110px; height: 35px">
+                                                        {{ order_form.width_unit }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="card-title">
+                                        <h5>Адрес объекта</h5>
+                                    </div>
+                                    {{ order_form.media.js }}
+                                    <label for="{{ form.region.id_for_label }}">Регион</label>
+                                    {{ order_form.region }}
+                                    <br>
+                                    <label for="{{ form.area.id_for_label }}">Район</label>
+                                    {{ order_form.area }}
+                                    <br>
+                                    <label for="{{ form.city.id_for_label }}">Населенный пункт</label>
+                                    {{ order_form.city }}
+                                    <br>
+                                    </select>
+                                    <div class="mb-3">
+                                        <label for="{{ form.street.id_for_label }}">Улица</label>
+                                        {{ order_form.street }}
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label class='house_label'
+                                                               for="{{ form.house_number.id_for_label }}">Номер
+                                                            дома</label>
+                                                        {{ order_form.house_number }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label class='building_label'
+                                                               for="{{ form.building.id_for_label }}">Корпус/Строение</label>
+                                                        {{ order_form.building }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-file-row">
+                        <label class="input-file">
+                            {{ order_files_form.file }}
+                            <span>Выберите файл</span>
+                        </label>
+                        <div class="input-file-list"></div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="col-sm-4">
+                                <div class="card" style='margin-top:14px;'>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="{{ form.square.id_for_label }}"
+                                                   class="form-label">Площадь</label>
+                                            {{ order_form.square }}
+                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                 style="width: 110px; height: 35px">
+                                                {{ order_form.square_unit }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="max-width: 500px">
+                                <div class="card-title">
+                                    <h5>Назначение здания</h5>
+                                </div>
+                                {{ order_form.purpose_building }}
+                            </div>
+                            <div>
+                                <div class="card-title">
+                                    <h5>Виды работ</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4 mb-3 mb-sm-0">
+                                        <div class="card" style='width: 600px;'>
+                                            <div class="card-body"
+                                                 style='display:grid; grid-template-columns: repeat(2, 1fr);'>
+                                                {% for type_work in order_form.type_work.field.queryset %}
+                                                    <div class="form-check form-check-inline card-body"
+                                                         style='width:200px;'>
+                                                        <input class="form-check-input" type="checkbox"
+                                                               id="inlineCheckbox{{ type_work.id }}"
+                                                               value="{{ type_work.id }}" name='type_work'>
+                                                        <label class="form-check-label"
+                                                               for="inlineCheckbox{{ type_work.id }}">{{ type_work }}</label>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="max-width: 500px">
+                                    <div class="card-title">
+                                        <h5>Цель работ</h5>
+                                    </div>
+                                    {{ order_form.work_objective }}
+                                </div>
+                                <div>
+                                    <div class="card-title">
+                                        <h5>Комментарий</h5>
+                                        {{ order_form.comment }}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row mt-5">
+                                        <div class="col-sm-4 mb-3 mb-sm-0">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label for="{{ form.name.id_for_label }}">Имя</label>
+                                                        {{ order_form.name }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label for="{{ form.surname.id_for_label }}">Фамилия</label>
+                                                        {{ order_form.surname }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="card">
+                                                <div class="card-body">
+
+                                                    <div class="mb-3">
+                                                        <label for="{{ form.father_name.id_for_label }}">Отчество</label>
+                                                        {{ order_form.father_name }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin: 0 auto; padding: 10px; text-align: left;">
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <div class="card ">
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label for="{{ form.phone_number.id_for_label }}">Номер
+                                                            телефона</label>
+                                                        {{ order_form.phone_number }}
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label for="{{ form.email.id_for_label }}">Электронная
+                                                            почта</label>
+                                                        {{ order_form.email }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-secondary btn-lg"
+                            style="width: auto; background-color: #012970;">ОТПРАВИТЬ ЗАЯВКУ
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+    <script src="{% static 'js/application.js' %}"></script>
+{% endblock %}

@@ -1,11 +1,12 @@
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
-from .forms import OrderForm, OrderFileForm
+from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm
 from .models import OrderFile
 from django.contrib import messages
+from .models import Order
 
 
-def view_application(request):
+def view_order(request):
     context = {}
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
@@ -16,7 +17,7 @@ def view_application(request):
                 order_file = OrderFile.objects.create(order=order, file=file)
                 print(order_file)
 
-            return HttpResponseRedirect(reverse('zakaz:application_pages'))
+            return HttpResponseRedirect(reverse('zakaz:order_pages'))
         else:
             messages.error(request, 'Проверьте правильность введённый данных')
 
@@ -27,8 +28,32 @@ def view_application(request):
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
 
-    return render(request, 'application.html', context=context)
+    return render(request, 'order.html', context=context)
 
 
-def view_application_pages(request):
-    return render(request, 'application_pages.html')
+def view_order_pages(request):
+    orders = Order.objects.all()
+    context = {
+        "orders": orders
+    }
+
+    return render(request, 'order_pages.html', context=context)
+
+
+def view_change_order_status(request, pk):
+    context = {}
+    order = Order.objects.get(id=pk)
+    file = OrderFile.objects.select_related('order').filter(order=pk)
+    if request.method == 'POST':
+        order_form = OrderChangeStatusForm(request.POST, instance=order)
+        if order_form.is_valid():
+            order = order_form.save()
+            order.save()
+            return HttpResponseRedirect(reverse('zakaz:order_pages'))
+    else:
+        order_form = OrderChangeStatusForm(instance=order)
+
+    context['file'] = file
+    context['order_form'] = order_form
+    context['order'] = order
+    return render(request, 'change_order_status.html', context=context)
