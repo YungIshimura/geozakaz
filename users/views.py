@@ -30,7 +30,7 @@ def login_user(request):
             if user is not None:
                 # Аутентификация прошла успешно
                 login(request, user)
-                return redirect('zakaz:application')
+                return redirect('zakaz:order')
             else:
                 # Аутентификация не удалась
                 messages.error(request, 'Пользователь с таким именем и паролем не найден.')
@@ -60,7 +60,7 @@ def login_company(request):
                 if user.is_staff:
                     # Аутентификация прошла успешно
                     login(request, user)
-                    return redirect('zakaz:application_pages')
+                    return redirect('zakaz:order_pages')
                 else:
                     messages.error(request, 'У Вас нет прав доступа.')
             else:
@@ -88,7 +88,7 @@ def register_user(request):
         login(request, user)
 
         messages.success(request, 'Вы успешно зарегистрировались')
-        return redirect('zakaz:application')
+        return redirect('zakaz:order')
 
     context = {
         'form': form,
@@ -102,7 +102,7 @@ def logout_account(request):
     user = request.user
     if user.is_staff:
         logout(request)
-        return redirect('users:login_company')
+        return redirect('users:company_login')
     else:
         logout(request)
         return redirect('users:user_login')
