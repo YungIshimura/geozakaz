@@ -118,7 +118,7 @@ class OrderForm(forms.ModelForm):
 
         self.fields['purpose_building'].widget.attrs['class'] = 'form-select'
         self.fields['work_objective'].widget.attrs['class'] = 'form-select'
-    
+
 
 class OrderFileForm(forms.ModelForm):
     file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True, 'name': 'file[]'}))
@@ -198,7 +198,6 @@ class OrderChangeStatusForm(forms.ModelForm):
         disabled=True
 
     )
-
 
     comment = forms.CharField(
         widget=forms.Textarea(attrs={'placeholder': 'Комментарий к заказу'}),
