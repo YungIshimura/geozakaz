@@ -46,7 +46,7 @@ def view_change_order_status(request, pk):
     files = OrderFile.objects.select_related('order').filter(order=pk)
     type_works = TypeWork.objects.all().filter(orders=order)
     print(files.values())
-    response = FileResponse(files, 'rb')
+    # response = FileResponse(files, 'r', encoding="utf-8")
     if request.method == 'POST':
         order_form = OrderChangeStatusForm(request.POST, instance=order)
         if order_form.is_valid():
@@ -57,7 +57,7 @@ def view_change_order_status(request, pk):
         order_form = OrderChangeStatusForm(instance=order)
 
     context = {
-        'files': response,
+        'files': files,
         'order_form': order_form,
         'order': order,
         'type_works': type_works
