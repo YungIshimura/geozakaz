@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm
@@ -6,6 +7,7 @@ from django.contrib import messages
 from .models import Order
 
 
+@login_required(login_url='users:user_login')
 def view_order(request):
     context = {}
     if request.method == 'POST':
@@ -28,6 +30,7 @@ def view_order(request):
     return render(request, 'order.html', context=context)
 
 
+@user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_order_pages(request):
     orders = Order.objects.all()
     context = {
@@ -37,6 +40,7 @@ def view_order_pages(request):
     return render(request, 'order_pages.html', context=context)
 
 
+@user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_change_order_status(request, pk):
     context = {}
     order = Order.objects.get(id=pk)
