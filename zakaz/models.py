@@ -252,6 +252,12 @@ class Order(models.Model):
         blank=True,
         null=True
     )
+    user_purpose_building = models.CharField(
+        'Пользовательское назначение здания',
+        max_length=200,
+        blank=True,
+        null=True
+    )
     work_objective = models.ForeignKey(
         WorkObjective,
         on_delete=models.CASCADE,

@@ -25,6 +25,7 @@
                     {% for error in field.errors %}
                     <div class="alert alert-danger text-center">
                         <span>{% verbose_name_tag order_model field.name %} {{error|lower}} </span>
+                        <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>
                     </div>  
                     {% endfor %}
                 {% endfor %}
@@ -174,6 +175,20 @@
                                     <h5>Назначение здания</h5>
                                 </div>
                                 {{ order_form.purpose_building }}
+                            </div>
+                            <div class="card-title" id='user-purpose-title'>
+                                <h5>Если нет то своё назначение здания</h5>
+                            </div>
+                            <div class="col-sm-6" id='user-purpose'>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class='building_label'
+                                                   for="{{ form.building.id_for_label }}">Назначение здания</label>
+                                            {{ order_form.user_purpose_building }}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <div class="card-title">

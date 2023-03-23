@@ -66,7 +66,8 @@ class OrderForm(forms.ModelForm):
 
     type_work = forms.ModelMultipleChoiceField(
         queryset=TypeWork.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={'required': 'true'})
+        widget=forms.CheckboxSelectMultiple(),
+        required=True
     )
 
     comment = forms.CharField(
@@ -93,7 +94,12 @@ class OrderForm(forms.ModelForm):
 
     purpose_building = forms.ModelChoiceField(
         queryset=PurposeBuilding.objects.all(),
-        widget=forms.Select()
+        widget=forms.Select(),
+        required=False
+    )
+    user_purpose_building = forms.CharField(
+        widget=forms.TextInput(),
+        required=False
     )
     work_objective = forms.ModelChoiceField(
         queryset=WorkObjective.objects.all(),
@@ -104,8 +110,8 @@ class OrderForm(forms.ModelForm):
         model = Order
         fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
                   'square', 'square_unit', 'length', 'length_unit', 'width', 'width_unit', 'height', 'height_unit',
-                  'type_work', 'comment', 'name', 'surname',
-                  'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective')
+                  'type_work', 'comment', 'name', 'surname', 'father_name', 'phone_number', 'email', 
+                  'purpose_building', 'user_purpose_building', 'work_objective')
 
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
