@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
 {% block content %}
 {% load verbose_name %}
     <script data-require="jquery" data-semver="3.1.1"
@@ -13,11 +18,11 @@
 {#    </div>#}
     <div class="d-flex py-4">
         <a class="logo d-flex align-items-center w-auto">
-            <span class="d-none d-lg-block">Создайте заявку</span>
+            <span class="d-none d-lg-block">Заявка для компании {{ user_company.company_name }}</span>
         </a>
     </div>
     <section>
-        <form action={% url 'zakaz:order' %} method='POST' enctype='multipart/form-data'>
+        <form action={% url 'zakaz:order' user_company.pk %} method='POST' enctype='multipart/form-data'>
             {% csrf_token %}
 
             {% if order_form.errors %}

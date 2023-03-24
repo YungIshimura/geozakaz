@@ -8,3 +8,4 @@ class User(AbstractUser):
     patronymic = models.CharField('Отчество', max_length=30)
     phone = PhoneNumberField('Телефон')
     agreement = models.BooleanField('Принял условия соглашения', default=False)
+    company_name = models.CharField('Название компании', max_length=150, null=True, blank=True)
