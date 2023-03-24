@@ -2,7 +2,9 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from smart_selects.db_fields import ChainedForeignKey
 from phonenumber_field.modelfields import PhoneNumberField
-from users.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class TypeWork(models.Model):
@@ -236,7 +238,7 @@ class Order(models.Model):
         verbose_name='Виды работ',
     )
     comment = models.TextField(
-        'Навзание объекта'
+        'Название объекта'
     )
     date = models.DateTimeField(
         'Дата заявки',
@@ -261,7 +263,7 @@ class Order(models.Model):
     work_objective = models.ForeignKey(
         WorkObjective,
         on_delete=models.CASCADE,
-        verbose_name='Цель раоты',
+        verbose_name='Цель работы',
         related_name='orders',
         blank=True,
         null=True
@@ -273,6 +275,7 @@ class Order(models.Model):
         blank=True,
         default='not processed'
     )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', null=True, blank=True)
 
     def __str__(self):
         return f'Заказ номер {self.id}'
