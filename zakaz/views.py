@@ -27,6 +27,7 @@ def view_order(request):
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
     context['order_model'] = Order
+    context['title'] = 'Создание заявки'
 
     return render(request, 'order.html', context=context)
 
@@ -35,7 +36,8 @@ def view_order(request):
 def view_order_pages(request):
     orders = Order.objects.all()
     context = {
-        "orders": orders
+        "orders": orders,
+        "title": "Заказы"
     }
 
     return render(request, 'order_pages.html', context=context)

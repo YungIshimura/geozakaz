@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
 {% block content %}
 {% load verbose_name %}
     <script data-require="jquery" data-semver="3.1.1"

@@ -1,0 +1,724 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "username": "user1",
+      "password": "pbkdf2_sha256$260000$OlyzV74VTHMherPLQoZNTY$qXfpZzxlKCLBRjmkJ4y1qXIMFgTTdm4laW7UPbnEE18=",
+      "first_name": "Сергей",
+      "last_name": "Гареев",
+      "patronymic": "Наумович",
+      "email": "gareev@gmail.com",
+      "phone": "+7 (971) 382-88-87",
+      "agreement": true,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:34:56.789Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "username": "user2",
+      "password": "pbkdf2_sha256$260000$Jtm8IKJzxHow8lsxUfHkDr$DlmDCReilTZ2Une0P5CgsqdoHHU7FZxdUEmrJjV3RT4=",
+      "first_name": "Ника",
+      "last_name": "Муратова",
+      "patronymic": "Леонидовна",
+      "email": "nika87@gmail.com",
+      "phone": "+7 (992) 445-47-99",
+      "agreement": true,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:31:56.789Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "username": "user3",
+      "password": "pbkdf2_sha256$260000$gcmHqRCGifh77PfcuTtRCl$mrEuUgBdafJFPWWy/jgRuKudV9o783ByhcwGkfpQqUg=",
+      "first_name": "Тарас",
+      "last_name": "Шурша",
+      "patronymic": "Феоктистович",
+      "email": "taras1962@ya.ru",
+      "phone": "+7 (931) 975-41-18",
+      "agreement": true,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:34:52.789Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "username": "user4",
+      "password": "pbkdf2_sha256$260000$l0dYT3q6PNFQUvOYSJC9vH$yD2J9t9+rt5EeLWK7ooQHrKMLpXCLKNyVaofiL5uIB8=",
+      "first_name": "Антонина",
+      "last_name": "Зубока",
+      "patronymic": "Аркадивна",
+      "email": "antonina1973@yandex.ru",
+      "phone": "+7 (996) 429-22-88",
+      "agreement": true,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:34:55.789Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+      "username": "user5",
+      "password": "pbkdf2_sha256$260000$bFUb6wGWfFF8KkTH1B6epC$GMJKQkEXkxrj6FQsqHdFgRd/KtvZ2i14CXqtXmJrkN0=",
+      "first_name": "Василий",
+      "last_name": "Сиян",
+      "patronymic": "Валерьевич",
+      "email": "vasiliy.siyan@mail.ru",
+      "phone": "+7 (924) 853-95-96",
+      "agreement": true,
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:32:56.789Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 6,
+    "fields": {
+      "username": "user6",
+      "password": "pbkdf2_sha256$260000$GMGV4mV2V6PC7hO1g2PEPB$UndZsCm+U/p9Z2Aj1X6zPdXs5768SaEo1UsLERohLqs=",
+      "first_name": "Семен",
+      "last_name": "Ягренев",
+      "patronymic": "Артемович",
+      "email": "semen1997@outlook.com",
+      "phone": "+7 (920) 972-93-38",
+      "agreement": true,
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:34:36.789Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 7,
+    "fields": {
+      "username": "user7",
+      "password": "pbkdf2_sha256$260000$uNfTmjLhFRyQkdHLErBraf$bh3BT9HiDDo0lJ68AFwL7HtSAb4s4UJmA7gig/J41w4=",
+      "first_name": "Савин",
+      "last_name": "Ягренев",
+      "patronymic": "Себастьянович",
+      "email": "taras.savin@outlook.com",
+      "phone": "+7 (937) 100-51-50",
+      "agreement": true,
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:37:56.789Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 8,
+    "fields": {
+      "username": "user8",
+      "password": "pbkdf2_sha256$260000$e6KW78Vxfc4cU8eIjN84xU$xiNcczw3Iw9cjvnaBxDqwXV5Jp8U+S+JocIF/3Q0wJ8=",
+      "first_name": "Валентин",
+      "last_name": "Сафошкин",
+      "patronymic": "Александрович",
+      "email": "valentin.safoshkin@hotmail.com",
+      "phone": "+7 (999) 222-70-45",
+      "agreement": true,
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:31:56.789Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 9,
+    "fields": {
+      "username": "user9",
+      "password": "pbkdf2_sha256$260000$4scbZZePKuJjYxXjKeXq0o$9Q+rDmr2jimUPTYOrEoOmdSisVcFxM3BogPmW+ep6AE=",
+      "first_name": "Валерий",
+      "last_name": "Ясин",
+      "patronymic": "Павлович",
+      "email": "valeriy.yasin@mail.ru",
+      "phone": "+7 (936) 780-75-94",
+      "agreement": true,
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:39:56.789Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 10,
+    "fields": {
+      "username": "user10",
+      "password": "pbkdf2_sha256$260000$f3HGgPKMYAGTsSupJAfyBn$vLVZlOPEPxz5GPg49hwIYkxSAEf08bNUmOXkcRZqlUM=",
+      "first_name": "Александр",
+      "last_name": "Ильюшин",
+      "patronymic": "Ростиславович",
+      "email": "aleksandr1986@ya.ru",
+      "phone": "+7 (966) 399-52-44",
+      "agreement": true,
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2023-03-24T08:34:26.789Z"
+    }
+  },
+  {
+    "model": "zakaz.typework",
+    "pk": 1,
+    "fields": {
+      "type": "Геодезические"
+    }
+  },
+  {
+    "model": "zakaz.typework",
+    "pk": 2,
+    "fields": {
+      "type": "Геологические"
+    }
+  },
+  {
+    "model": "zakaz.typework",
+    "pk": 3,
+    "fields": {
+      "type": "Гидрометеорологические"
+    }
+  },
+  {
+    "model": "zakaz.typework",
+    "pk": 4,
+    "fields": {
+      "type": "Экологические"
+    }
+  },
+  {
+    "model": "zakaz.typework",
+    "pk": 5,
+    "fields": {
+      "type": "Геотехнические"
+    }
+  },
+  {
+    "model": "zakaz.typework",
+    "pk": 6,
+    "fields": {
+      "type": "Геофизические"
+    }
+  },
+  {
+    "model": "zakaz.region",
+    "pk": 1,
+    "fields": {
+      "name": "Свердловская область"
+    }
+  },
+  {
+    "model": "zakaz.region",
+    "pk": 2,
+    "fields": {
+      "name": "Республика Татарстан"
+    }
+  },
+  {
+    "model": "zakaz.region",
+    "pk": 3,
+    "fields": {
+      "name": "Краснодарский край"
+    }
+  },
+  {
+    "model": "zakaz.region",
+    "pk": 4,
+    "fields": {
+      "name": "Нижегородская область"
+    }
+  },
+  {
+    "model": "zakaz.region",
+    "pk": 5,
+    "fields": {
+      "name": "Республика Башкортостан"
+    }
+  },
+  {
+    "model": "zakaz.region",
+    "pk": 6,
+    "fields": {
+      "name": "Московская область"
+    }
+  },
+  {
+    "model": "zakaz.region",
+    "pk": 7,
+    "fields": {
+      "name": "Самарская область"
+    }
+  },
+  {
+    "model": "zakaz.region",
+    "pk": 8,
+    "fields": {
+      "name": "Республика Крым"
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 1,
+    "fields": {
+      "name": "Кировградский район",
+      "region": 1
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 2,
+    "fields": {
+      "name": "Режевский район",
+      "region": 1
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 3,
+    "fields": {
+      "name": "Нижнекамский район",
+      "region": 2
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 4,
+    "fields": {
+      "name": "Арской район",
+      "region": 2
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 5,
+    "fields": {
+      "name": "Абинский район",
+      "region": 3
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 6,
+    "fields": {
+      "name": "Геленджикский район",
+      "region": 3
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 7,
+    "fields": {
+      "name": "Арзамасский район",
+      "region": 4
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 8,
+    "fields": {
+      "name": "Богородский район",
+      "region": 4
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 9,
+    "fields": {
+      "name": "Дюртюлинский район",
+      "region": 5
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 10,
+    "fields": {
+      "name": "Кушнаренковский район",
+      "region": 5
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 11,
+    "fields": {
+      "name": "Ленинский район",
+      "region": 6
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 12,
+    "fields": {
+      "name": "Наро-Фоминский район",
+      "region": 6
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 13,
+    "fields": {
+      "name": "Кинель-Черкасский район",
+      "region": 7
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 14,
+    "fields": {
+      "name": "Большечерниговский район",
+      "region": 7
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 15,
+    "fields": {
+      "name": "Бахчисарайский район",
+      "region": 8
+    }
+  },
+  {
+    "model": "zakaz.area",
+    "pk": 16,
+    "fields": {
+      "name": "Раздольненский район",
+      "region": 8
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 1,
+    "fields": {
+      "name": "Кировград",
+      "area": 1
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 2,
+    "fields": {
+      "name": "Кирово-Чепецк",
+      "area": 1
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 3,
+    "fields": {
+      "name": "Реж",
+      "area": 2
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 4,
+    "fields": {
+      "name": "Кунашак",
+      "area": 2
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 5,
+    "fields": {
+      "name": "Нижнекамск",
+      "area": 3
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 6,
+    "fields": {
+      "name": "Мензелинск",
+      "area": 3
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 7,
+    "fields": {
+      "name": "Арск",
+      "area": 4
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 8,
+    "fields": {
+      "name": "Тетюши",
+      "area": 4
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 9,
+    "fields": {
+      "name": "Абинск",
+      "area": 5
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 10,
+    "fields": {
+      "name": "Крымск",
+      "area": 5
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 11,
+    "fields": {
+      "name": "Геленджик",
+      "area": 6
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 12,
+    "fields": {
+      "name": "Новороссийск",
+      "area": 6
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 13,
+    "fields": {
+      "name": "Арзамас",
+      "area": 7
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 14,
+    "fields": {
+      "name": "Тонкино",
+      "area": 7
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 15,
+    "fields": {
+      "name": "Богородск",
+      "area": 8
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 16,
+    "fields": {
+      "name": "Семенов",
+      "area": 8
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 17,
+    "fields": {
+      "name": "Дюртюли",
+      "area": 9
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 18,
+    "fields": {
+      "name": "Кушнаренково",
+      "area": 9
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 19,
+    "fields": {
+      "name": "Ульяновск",
+      "area": 10
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 20,
+    "fields": {
+      "name": "Димитровград",
+      "area": 10
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 21,
+    "fields": {
+      "name": "Самара",
+      "area": 11
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 22,
+    "fields": {
+      "name": "Новокуйбышевск",
+      "area": 11
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 23,
+    "fields": {
+      "name": "Кинель",
+      "area": 12
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 24,
+    "fields": {
+      "name": "Кинель-Черкасы",
+      "area": 12
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 25,
+    "fields": {
+      "name": "Белогорск",
+      "area": 13
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 26,
+    "fields": {
+      "name": "Черкассы",
+      "area": 13
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 27,
+    "fields": {
+      "name": "Большой Чернигов",
+      "area": 14
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 28,
+    "fields": {
+      "name": "Козелец",
+      "area": 14
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 27,
+    "fields": {
+      "name": "Брянск",
+      "area": 15
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 28,
+    "fields": {
+      "name": "Бахчисарай",
+      "area": 15
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 27,
+    "fields": {
+      "name": "Черкассы",
+      "area": 16
+    }
+  },
+  {
+    "model": "zakaz.city",
+    "pk": 28,
+    "fields": {
+      "name": "Кинель",
+      "area": 16
+    }
+  },
+  {
+    "model": "zakaz.workobjective",
+    "pk": 1,
+    "fields": {
+      "objective": "Актуализация отчетов / Устранение замечаний"
+    }
+  },
+  {
+    "model": "zakaz.workobjective",
+    "pk": 2,
+    "fields": {
+      "objective": "Получение разрешения на строительство"
+    }
+  },
+  {
+    "model": "zakaz.workobjective",
+    "pk": 3,
+    "fields": {
+      "objective": "Архитектурно-строительное проектирование"
+    }
+  },
+  {
+    "model": "zakaz.workobjective",
+    "pk": 4,
+    "fields": {
+      "objective": "Капитальный ремонт / Реконструкция"
+    }
+  },
+  {
+    "model": "zakaz.workobjective",
+    "pk": 5,
+    "fields": {
+      "objective": "Территориальное планирование / зонирование"
+    }
+  },
+  {
+    "model": "zakaz.workobjective",
+    "pk": 6,
+    "fields": {
+      "objective": "Планировка территории"
+    }
+  },
+  {
+    "model": "zakaz.purposebuilding",
+    "pk": 1,
+    "fields": {
+      "purpose": "Трубопровод"
+    }
+  },
+  {
+    "model": "zakaz.purposebuilding",
+    "pk": 2,
+    "fields": {
+      "purpose": "Полигон ТБО"
+    }
+  },
+  {
+    "model": "zakaz.purposebuilding",
+    "pk": 3,
+    "fields": {
+      "purpose": "Школа"
+    }
+  },
+  {
+    "model": "zakaz.purposebuilding",
+    "pk": 4,
+    "fields": {
+      "purpose": "Жилой многоэтажный дом"
+    }
+  }
+]
