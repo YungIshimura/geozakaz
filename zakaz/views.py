@@ -14,9 +14,8 @@ User = get_user_model()
 
 @login_required(login_url='users:user_login')
 def view_order(request, company_id):
-    user_company = User.objects.get(id=company_id)
+    user_company = get_object_or_404(User, id=company_id)
     context = {}
-    print(request.user.pk)
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)

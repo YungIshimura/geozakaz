@@ -1,6 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.urls import reverse
+
 from .forms import UserRegistrationForm, UserLoginForm
 
 
@@ -30,7 +33,7 @@ def login_user(request):
             if user is not None:
                 # Аутентификация прошла успешно
                 login(request, user)
-                return redirect('zakaz:order')
+                return HttpResponseRedirect(reverse('zakaz:order'))
             else:
                 # Аутентификация не удалась
                 messages.error(request, 'Пользователь с таким именем и паролем не найден.')
