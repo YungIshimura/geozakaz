@@ -15,7 +15,9 @@ def view_order(request):
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
         if order_form.is_valid() and order_files_form.is_valid():
-            order = order_form.save()
+            order = order_form.save(commit=False)
+            order.user = request.user
+            order.save()
             for file in request.FILES.getlist('file'):
                 OrderFile.objects.create(order=order, file=file)
             messages.success(request, 'Ваша заявка отправлена')
