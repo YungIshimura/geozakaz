@@ -1,4 +1,4 @@
-from django.shortcuts import HttpResponseRedirect, render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
@@ -33,7 +33,7 @@ def view_order(request):
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_order_pages(request):
-    orders = Order.objects.all()
+    orders = Order.objects.all().filter(status="not processed")
     context = {
         "orders": orders
     }

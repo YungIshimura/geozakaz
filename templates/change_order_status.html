@@ -7,9 +7,6 @@
     <script src="/static/smart-selects/admin/js/chainedfk.js"></script>
     <script src="/static/smart-selects/admin/js/bindfields.js"></script>
     <link rel='stylesheet' href="{% static 'css/order.css' %}">
-    <div class="mb-5 mt-5">
-        <h1>Создайте заявку</h1>
-    </div>
     <section>
         <form action={% url 'zakaz:change_order_status' order.pk %} method='POST' enctype='multipart/form-data'>
             {% csrf_token %}
@@ -177,15 +174,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 mb-3 mb-sm-0">
-                                        <div class="card" style='max-width: 500px;'>
-                                            <div class="card-body"
-                                                 style='display:grid; grid-template-columns: repeat(2, 1fr);'>
+                                        <div class="card">
+                                            <div class="card-body grid">
                                                 {% for type_work in type_works %}
                                                     <div class="form-check form-check-inline card-body"
                                                          style='width:200px;'>
                                                         <p class="form-check-label"
                                                         >{{ type_work }}</p>
-                                                    </div><br>
+                                                    </div>
                                                 {% endfor %}
                                             </div>
                                         </div>
