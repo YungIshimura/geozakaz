@@ -4,6 +4,7 @@ from smart_selects.db_fields import ChainedForeignKey
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth import get_user_model
 
+
 User = get_user_model()
 
 
@@ -45,8 +46,6 @@ class Area(models.Model):
         related_name='areas',
         on_delete=models.CASCADE,
         verbose_name='Регион',
-        blank=True,
-        null=True
     )
 
     def __str__(self):
@@ -67,8 +66,6 @@ class City(models.Model):
         related_name='citys',
         on_delete=models.CASCADE,
         verbose_name='Район',
-        blank=True,
-        null=True
     )
 
     def __str__(self):
@@ -108,10 +105,6 @@ class WorkObjective(models.Model):
 
 
 class Order(models.Model):
-    STATUS = (
-        ('processed', 'Обработанная'),
-        ('not processed', 'Не обработанная')
-    )
     SQUARE_UNIT = (
         ('sq_m', 'м²'),
         ('hectometer', 'га')
@@ -124,16 +117,19 @@ class Order(models.Model):
         ('m', 'м'),
         ('floor', 'этаж')
     )
-
+    slug = models.SlugField(
+        'Уникальный номер заказа',
+        max_length=8,
+        unique=True,
+        db_index=True,
+    )
     name = models.CharField(
         'Имя заказчика',
         max_length=100,
-        blank=True
     )
     surname = models.CharField(
         'Фамилия заказчика',
         max_length=250,
-        blank=True
     )
     father_name = models.CharField(
         'Отчество заказчика',
@@ -142,7 +138,7 @@ class Order(models.Model):
         null=True
     )
     phone_number = PhoneNumberField(
-        blank=True
+        'Номер телефона'
     )
     email = models.EmailField(
         "Электронная почта заказчика",
@@ -161,8 +157,6 @@ class Order(models.Model):
     )
     area = ChainedForeignKey(
         Area,
-        blank=True,
-        null=True,
         chained_field='region',
         chained_model_field='region',
         show_all=False,
@@ -199,8 +193,6 @@ class Order(models.Model):
         'Еденица площади',
         max_length=10,
         choices=SQUARE_UNIT,
-        blank=True,
-        null=True
     )
     length = models.PositiveIntegerField(
         'Длина',
@@ -210,8 +202,6 @@ class Order(models.Model):
         'Еденица длины',
         max_length=10,
         choices=LENGTH_AND_WIDTH_UNIT,
-        blank=True,
-        null=True
     )
     width = models.PositiveIntegerField(
         'Ширина',
@@ -221,8 +211,6 @@ class Order(models.Model):
         'Еденица ширины',
         max_length=10,
         choices=LENGTH_AND_WIDTH_UNIT,
-        blank=True,
-        null=True
     )
     height = models.PositiveIntegerField(
         'Высота',
@@ -232,8 +220,6 @@ class Order(models.Model):
         'Еденица высота',
         max_length=10,
         choices=HEIGHT_UNIT,
-        blank=True,
-        null=True
     )
     type_work = models.ManyToManyField(
         TypeWork,
@@ -241,13 +227,12 @@ class Order(models.Model):
         verbose_name='Виды работ',
     )
     comment = models.TextField(
-        'Название объекта'
+        'Комментарий',
+        blank=True
     )
     date = models.DateTimeField(
         'Дата заявки',
         auto_now_add=True,
-        blank=True,
-        null=True
     )
     purpose_building = models.ForeignKey(
         PurposeBuilding,
@@ -268,20 +253,12 @@ class Order(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Цель работы',
         related_name='orders',
-        blank=True,
-        null=True
     )
-    status = models.CharField(
-        'Статус заказа',
-        max_length=100,
-        choices=STATUS,
-        blank=True,
-        default='not processed'
-    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', null=True, blank=True)
 
     def __str__(self):
-        return f'Заказ номер {self.id}'
+        return f'Заказ номер {self.slug}'
 
     class Meta:
         verbose_name = 'Заказ'
@@ -300,7 +277,7 @@ class OrderFile(models.Model):
     )
 
     def __str__(self):
-        return f'Файлы к заказу номер {self.order.id}'
+        return f'Файлы к заказу номер {self.order.slug}'
 
     class Meta:
         verbose_name = 'Файлы к заказу'

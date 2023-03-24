@@ -7,5 +7,5 @@ app_name = 'zakaz'
 urlpatterns = [
     path('order/<int:company_id>/', view_order, name='order'),
     path('order_pages/', view_order_pages, name='order_pages'),
-    path('change_order_status/<int:pk>/', view_change_order_status, name="change_order_status")
+    path('change_order_status/<slug:slug>/', view_change_order_status, name="change_order_status")
 ]

@@ -137,7 +137,6 @@ class OrderForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
-        self.fields['house_number'].widget.attrs['class'] = 'border mr-2 application--form--input-group__house'
         self.fields['length_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['height_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['square_unit'].widget.attrs['class'] = 'custom-btn-check'
@@ -262,6 +261,11 @@ class OrderChangeStatusForm(forms.ModelForm):
         widget=forms.Select(),
         disabled=True
     )
+    user_purpose_building = forms.ModelChoiceField(
+        queryset=PurposeBuilding.objects.all(),
+        widget=forms.Select(),
+        disabled=True
+    )
     work_objective = forms.ModelChoiceField(
         queryset=WorkObjective.objects.all(),
         widget=forms.Select(),
@@ -288,8 +292,8 @@ class OrderChangeStatusForm(forms.ModelForm):
         model = Order
         fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
                   'square', 'square_unit', 'length', 'length_unit', 'width', 'width_unit', 'height', 'height_unit',
-                  'comment', 'name', 'surname',
-                  'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective', 'status')
+                  'comment', 'name', 'surname', 'user_purpose_building',
+                  'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective')
 
     def __init__(self, *args, **kwargs):
         super(OrderChangeStatusForm, self).__init__(*args, **kwargs)

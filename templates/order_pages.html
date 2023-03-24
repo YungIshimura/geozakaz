@@ -30,7 +30,7 @@
                 <td>{{ order.city }}</td>
                 <td>{{ order.area }}</td>
                 <td>{{ order.date.date }}</td>
-                <td><a href="{% url 'zakaz:change_order_status' order.id %}" class="link-primary">Подробнее</a></td>
+                <td><a href="{% url 'zakaz:change_order_status' order.slug %}" class="link-primary">Подробнее</a></td>
             </tr>
         {% endfor %}
         </tbody>

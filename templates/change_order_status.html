@@ -168,23 +168,34 @@
                                 </div>
                                 {{ order_form.purpose_building }}
                             </div>
+                            <div class="col-sm-6" id='user-purpose' style='margin-top:20px;'>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class='building_label'
+                                                   for="{{ form.building.id_for_label }}">Назначение здания</label>
+                                            {{ order_form.user_purpose_building }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div>
                                 <div class="card-title">
                                     <h5>Виды работ</h5>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 mb-3 mb-sm-0">
-                                        <div class="card">
+                                        
                                             <div class="card-body grid">
                                                 {% for type_work in type_works %}
                                                     <div class="form-check form-check-inline card-body"
-                                                         style='width:200px;'>
+                                                         style='width:280px;'>
                                                         <p class="form-check-label"
                                                         >{{ type_work }}</p>
                                                     </div>
                                                 {% endfor %}
                                             </div>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                                 <div style="max-width: 500px">
