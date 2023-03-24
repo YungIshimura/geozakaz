@@ -459,7 +459,7 @@ h6 {
 }
 
 .header-nav .nav-icon {
-  font-size: 22px;
+  font-size: 14px;
   color: #012970;
   margin-right: 25px;
   position: relative;
@@ -1272,4 +1272,14 @@ h6 {
   top: 0;
   right: 0;
   cursor: pointer;
+}
+
+@media only screen and (max-width: 768px) {
+  .hide-on-mobile {
+    display: none;
+  }
+
+  .nav-link.nav-icon i {
+    font-size: 34px; /* Увеличение размера иконки на мобильных устройствах */
+  }
 }

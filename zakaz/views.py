@@ -15,7 +15,9 @@ def view_order(request):
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
         if order_form.is_valid() and order_files_form.is_valid():
-            order = order_form.save()
+            order = order_form.save(commit=False)
+            order.user = request.user
+            order.save()
             for file in request.FILES.getlist('file'):
                 OrderFile.objects.create(order=order, file=file)
             messages.success(request, 'Ваша заявка отправлена')
@@ -27,6 +29,7 @@ def view_order(request):
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
     context['order_model'] = Order
+    context['title'] = 'Создание заявки'
 
     return render(request, 'order.html', context=context)
 
@@ -35,7 +38,8 @@ def view_order(request):
 def view_order_pages(request):
     orders = Order.objects.all()
     context = {
-        "orders": orders
+        "orders": orders,
+        "title": "Заказы"
     }
 
     return render(request, 'order_pages.html', context=context)
