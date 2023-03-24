@@ -112,7 +112,7 @@ class Order(models.Model):
     )
     SQUARE_UNIT = (
         ('sq_m', 'м²'),
-        ('hectometer', 'Га')
+        ('hectometer', 'га')
     )
     LENGTH_AND_WIDTH_UNIT = (
         ('m', 'м'),
@@ -136,7 +136,8 @@ class Order(models.Model):
     father_name = models.CharField(
         'Отчество заказчика',
         max_length=250,
-        blank=True
+        blank=True,
+        null=True
     )
     phone_number = PhoneNumberField(
         blank=True
@@ -184,14 +185,16 @@ class Order(models.Model):
     )
     building = models.PositiveBigIntegerField(
         'Строение/Корпус',
-        validators=[MinValueValidator(0)]
+        validators=[MinValueValidator(0)],
+        blank=True,
+        null=True,
     )
     square = models.PositiveIntegerField(
         'Площадь участка',
         validators=[MinValueValidator(0)],
     )
     square_unit = models.CharField(
-        '',
+        'Еденица площади',
         max_length=10,
         choices=SQUARE_UNIT,
         blank=True,
@@ -202,7 +205,7 @@ class Order(models.Model):
         validators=[MinValueValidator(0)]
     )
     length_unit = models.CharField(
-        '',
+        'Еденица длины',
         max_length=10,
         choices=LENGTH_AND_WIDTH_UNIT,
         blank=True,
@@ -213,7 +216,7 @@ class Order(models.Model):
         validators=[MinValueValidator(0)]
     )
     width_unit = models.CharField(
-        '',
+        'Еденица ширины',
         max_length=10,
         choices=LENGTH_AND_WIDTH_UNIT,
         blank=True,
@@ -224,7 +227,7 @@ class Order(models.Model):
         validators=[MinValueValidator(0)]
     )
     height_unit = models.CharField(
-        '',
+        'Еденица высота',
         max_length=10,
         choices=HEIGHT_UNIT,
         blank=True,

@@ -8,35 +8,41 @@ class OrderForm(forms.ModelForm):
     cadastral_number = forms.CharField(
         validators=[validate_number],
         widget=forms.TextInput(attrs={'placeholder': 'Кадастровый номер'}),
-
+        required=True
     )
 
-    street = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Улица'}))
+    street = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Улица'}),
+        required=True
+    )
 
     house_number = forms.IntegerField(
         validators=[MinValueValidator(1)],
-        widget=forms.NumberInput(
-            attrs={'class': 'border mr-2 application--form--input-group__house', 'placeholder': 'Номер дома'})
+        widget=forms.NumberInput(attrs={'placeholder': 'Номер дома'}),
+        required=True
     )
 
     building = forms.IntegerField(
         validators=[MinValueValidator(1)],
-        widget=forms.NumberInput(attrs={'placeholder': 'Корпус/Строение'})
+        widget=forms.NumberInput(attrs={'placeholder': 'Корпус/Строение'}),
+        required=False
     )
 
     square = forms.IntegerField(
         validators=[MinValueValidator(1)],
-        widget=forms.NumberInput(attrs={'placeholder': 'Площадь'})
+        widget=forms.NumberInput(attrs={'placeholder': 'Площадь'}),
+        required=True
     )
 
     square_unit = forms.ChoiceField(
         choices=Order.SQUARE_UNIT,
-        widget=forms.RadioSelect()
+        widget=forms.RadioSelect(),
     )
 
     length = forms.IntegerField(
         validators=[MinValueValidator(1)],
-        widget=forms.NumberInput(attrs={'placeholder': 'Длина'})
+        widget=forms.NumberInput(attrs={'placeholder': 'Длина'}),
+        required=True
     )
 
     length_unit = forms.ChoiceField(
@@ -46,7 +52,8 @@ class OrderForm(forms.ModelForm):
 
     width = forms.IntegerField(
         validators=[MinValueValidator(1)],
-        widget=forms.NumberInput(attrs={'placeholder': ' Ширина'})
+        widget=forms.NumberInput(attrs={'placeholder': ' Ширина'}),
+        required=True
     )
 
     width_unit = forms.ChoiceField(
@@ -56,7 +63,8 @@ class OrderForm(forms.ModelForm):
 
     height = forms.IntegerField(
         validators=[MinValueValidator(1)],
-        widget=forms.NumberInput(attrs={'placeholder': 'Высота'})
+        widget=forms.NumberInput(attrs={'placeholder': 'Высота'}),
+        required=True
     )
 
     height_unit = forms.ChoiceField(
@@ -71,26 +79,34 @@ class OrderForm(forms.ModelForm):
     )
 
     comment = forms.CharField(
-        widget=forms.Textarea(attrs={'placeholder': 'Комментарий к заказу'})
+        widget=forms.Textarea(attrs={'placeholder': 'Комментарий к заказу'}),
+        required=False
     )
 
     name = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Ваше имя'})
+        widget=forms.TextInput(attrs={'placeholder': 'Ваше имя'}),
+        required=True
     )
 
     surname = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Ваша фамилия'})
+        widget=forms.TextInput(attrs={'placeholder': 'Ваша фамилия'}),
+        required=True
     )
 
     father_name = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Ваше отчество'})
+        widget=forms.TextInput(attrs={'placeholder': 'Ваше отчество'}),
+        required=False
     )
 
     phone_number = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Введите номер телефона'})
+        widget=forms.TextInput(attrs={'placeholder': 'Введите номер телефона'}),
+        required=True
     )
 
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Введите адрес почты'}))
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'placeholder': 'Введите адрес почты'}),
+        required=True
+    )
 
     purpose_building = forms.ModelChoiceField(
         queryset=PurposeBuilding.objects.all(),
@@ -103,7 +119,8 @@ class OrderForm(forms.ModelForm):
     )
     work_objective = forms.ModelChoiceField(
         queryset=WorkObjective.objects.all(),
-        widget=forms.Select()
+        widget=forms.Select(),
+        required=True
     )
 
     class Meta:
@@ -117,6 +134,8 @@ class OrderForm(forms.ModelForm):
         super(OrderForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+        self.fields['house_number'].widget.attrs['class'] = 'border mr-2 application--form--input-group__house'
         self.fields['length_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['height_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['square_unit'].widget.attrs['class'] = 'custom-btn-check'
@@ -127,7 +146,10 @@ class OrderForm(forms.ModelForm):
 
 
 class OrderFileForm(forms.ModelForm):
-    file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True, 'name': 'file[]'}))
+    file = forms.FileField(
+        widget=forms.FileInput(attrs={'multiple': True, 'name': 'file[]'}),
+        required=False
+    )
 
     class Meta:
         model = OrderFile

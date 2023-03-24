@@ -133,7 +133,7 @@
                                                 <div class="card-body">
                                                     <div class="mb-3">
                                                         <label class='building_label'
-                                                               for="{{ form.building.id_for_label }}">Корпус/Строение</label>
+                                                               for="{{ form.building.id_for_label }}">* Корпус/Строение</label>
                                                         {{ order_form.building }}
                                                     </div>
                                                 </div>
@@ -146,8 +146,11 @@
                     </div>
                     <div class="input-file-row">
                         <label class="input-file">
+                            <div class="card-title">
+                                <h5>* Добавьте файл/файлы</h5>
+                            </div>
                             {{ order_files_form.file }}
-                            <span>Выберите файл</span>
+                            <span>Выбрать</span>
                         </label>
                         <div class="input-file-list"></div>
                     </div>
@@ -177,7 +180,7 @@
                                 {{ order_form.purpose_building }}
                             </div>
                             <div class="card-title" id='user-purpose-title'>
-                                <h5>Если нет то своё назначение здания</h5>
+                                <h5>Напишите, если не нашли подходящее</h5>
                             </div>
                             <div class="col-sm-6" id='user-purpose'>
                                 <div class="card">
@@ -196,19 +199,17 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 mb-3 mb-sm-0">
-                                        <div class="card">
-                                            <div class="card-body grid">
-                                                {% for type_work in order_form.type_work.field.queryset %}
-                                                    <div class="form-check form-check-inline card-body"
-                                                         style='width:200px;'>
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="inlineCheckbox{{ type_work.id }}"
-                                                               value="{{ type_work.id }}" name='type_work'>
-                                                        <label class="form-check-label"
-                                                               for="inlineCheckbox{{ type_work.id }}">{{ type_work }}</label>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
+                                        <div class="card-body grid">
+                                            {% for type_work in order_form.type_work.field.queryset %}
+                                                <div class="form-check form-check-inline card-body"
+                                                        style='width:200px;'>
+                                                    <input class="form-check-input" type="checkbox"
+                                                            id="inlineCheckbox{{ type_work.id }}"
+                                                            value="{{ type_work.id }}" name='type_work'>
+                                                    <label class="form-check-label"
+                                                            for="inlineCheckbox{{ type_work.id }}">{{ type_work }}</label>
+                                                </div>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </div>
@@ -251,7 +252,7 @@
                                                 <div class="card-body">
 
                                                     <div class="mb-3">
-                                                        <label for="{{ form.father_name.id_for_label }}">Отчество</label>
+                                                        <label for="{{ form.father_name.id_for_label }}">* Отчество</label>
                                                         {{ order_form.father_name }}
                                                     </div>
                                                 </div>
