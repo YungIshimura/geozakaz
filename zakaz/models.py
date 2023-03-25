@@ -185,36 +185,40 @@ class Order(models.Model):
         blank=True,
         null=True,
     )
-    square = models.PositiveIntegerField(
+    square = models.DecimalField(
         'Площадь участка',
-        validators=[MinValueValidator(0)],
+        max_digits=8,
+        decimal_places=3
     )
     square_unit = models.CharField(
         'Еденица площади',
         max_length=10,
         choices=SQUARE_UNIT,
     )
-    length = models.PositiveIntegerField(
+    length = models.DecimalField(
         'Длина',
-        validators=[MinValueValidator(0)]
+        max_digits=8,
+        decimal_places=3
     )
     length_unit = models.CharField(
         'Еденица длины',
         max_length=10,
         choices=LENGTH_AND_WIDTH_UNIT,
     )
-    width = models.PositiveIntegerField(
+    width = models.DecimalField(
         'Ширина',
-        validators=[MinValueValidator(0)]
+        max_digits=8,
+        decimal_places=3
     )
     width_unit = models.CharField(
         'Еденица ширины',
         max_length=10,
         choices=LENGTH_AND_WIDTH_UNIT,
     )
-    height = models.PositiveIntegerField(
+    height = models.DecimalField(
         'Высота',
-        validators=[MinValueValidator(0)]
+        max_digits=8,
+        decimal_places=3
     )
     height_unit = models.CharField(
         'Еденица высота',

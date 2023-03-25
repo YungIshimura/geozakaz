@@ -30,7 +30,7 @@ class OrderForm(forms.ModelForm):
         required=False
     )
 
-    square = forms.IntegerField(
+    square = forms.DecimalField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Площадь'}),
         required=True
@@ -41,7 +41,7 @@ class OrderForm(forms.ModelForm):
         widget=forms.RadioSelect(),
     )
 
-    length = forms.IntegerField(
+    length = forms.DecimalField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Длина'}),
         required=True
@@ -52,7 +52,7 @@ class OrderForm(forms.ModelForm):
         widget=forms.RadioSelect()
     )
 
-    width = forms.IntegerField(
+    width = forms.DecimalField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': ' Ширина'}),
         required=True
@@ -63,7 +63,7 @@ class OrderForm(forms.ModelForm):
         widget=forms.RadioSelect()
     )
 
-    height = forms.IntegerField(
+    height = forms.DecimalField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Высота'}),
         required=True
