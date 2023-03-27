@@ -8,6 +8,10 @@ from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm
 from .models import OrderFile, TypeWork, Order
 from django.contrib import messages
 from django.utils.crypto import get_random_string
+from rosreestr2coord import Area
+import folium
+
+
 
 
 User = get_user_model()
@@ -59,6 +63,15 @@ def view_order_pages(request):
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_change_order_status(request, slug):
     order = get_object_or_404(Order, slug=slug)
+    area = Area(order.cadastral_number)
+    area.get_coord()
+    print(area)
+
+    m = folium.Map(location=[64.6863136, 97.7453061], zoom_start=14)
+    # m.get_root().width = "800px"
+    # m.get_root().height = "600px"
+    body_html = m._repr_html_()
+
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     type_works = TypeWork.objects.all().filter(orders=order)
     if request.method == 'POST':
@@ -74,7 +87,8 @@ def view_change_order_status(request, slug):
         'files': files,
         'order_form': order_form,
         'order': order,
-        'type_works': type_works
+        'type_works': type_works,
+        'm': body_html
     }
 
     return render(request, 'change_order_status.html', context=context)
