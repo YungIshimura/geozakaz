@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+
+        <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+                        {% include 'inc/_alerts.html' %}
+
+                        <div class="d-flex justify-content-center py-4">
+                            <a href="#" class="logo d-flex align-items-center w-auto">
+                                <img src="{% static 'img/logo.png' %}" alt="">
+                                <span class="d-none d-lg-block">Геозаказ</span>
+                            </a>
+                        </div><!-- End Logo -->
+
+                        <div class="card mb-3">
+
+                            <div class="card-body">
+
+                                <div class="pt-4 pb-2">
+                                    <p class="text-center small">Введите кадастровый номер участка или войдите в свой
+                                        аккаунт</p>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="search-bar">
+                                        <form class="search-form d-flex align-items-center" method="POST"
+                                              action="#">
+                                            <input type="text" name="query"
+                                                   placeholder="Введите кадастровый номер участка"
+                                                   title="Enter search keyword">
+                                            <button type="submit" title="Search"><i class="bi bi-search"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <a href="{% url 'users:user_login' %}" class="btn btn-bd-primary w-100">Войти</a>
+                                </div>
+                                <div class="col-12">
+                                    <p class="small mb-0">Нет учетной записи? <a
+                                            href="{% url 'users:user_register' %}">Создать</a></p>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+{% endblock %}

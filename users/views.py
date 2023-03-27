@@ -20,32 +20,32 @@ from .forms import UserRegistrationForm, UserLoginForm
 
 # Create your views here.
 # Авторизация пользователя
-# def login_user(request):
-#     if request.method == 'POST':
-#         form = UserLoginForm(request.POST)
-#         if form.is_valid():
-#             username_or_email = form.cleaned_data.get('username_or_email')
-#             password = form.cleaned_data.get('password')
+def login_user(request):
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            username_or_email = form.cleaned_data.get('username_or_email')
+            password = form.cleaned_data.get('password')
 
-#             # Аутентификация пользователя
-#             user = authenticate(request, username=username_or_email, password=password)
+            # Аутентификация пользователя
+            user = authenticate(request, username=username_or_email, password=password)
 
-#             if user is not None:
-#                 # Аутентификация прошла успешно
-#                 login(request, user)
-#                 return HttpResponseRedirect(reverse('zakaz:order'))
-#             else:
-#                 # Аутентификация не удалась
-#                 messages.error(request, 'Пользователь с таким именем и паролем не найден.')
-#     else:
-#         form = UserLoginForm()
+            if user is not None:
+                # Аутентификация прошла успешно
+                login(request, user)
+                return HttpResponseRedirect(reverse('zakaz:order'))
+            else:
+                # Аутентификация не удалась
+                messages.error(request, 'Пользователь с таким именем и паролем не найден.')
+    else:
+        form = UserLoginForm()
 
-#     context = {
-#         'form': form,
-#         'title': 'Авторизация'
-#     }
+    context = {
+        'form': form,
+        'title': 'Авторизация'
+    }
 
-#     return render(request, 'auth/login.html', context)
+    return render(request, 'auth/login.html', context)
 
 
 # Вход длә организаций
@@ -114,3 +114,7 @@ def logout_account(request):
 # Пользовательское соглашение
 def view_agreement(request):
     return render(request, 'user_agreement.html', {'title': 'Пользовательское соглашение'})
+
+
+def view_customer_home(request):
+    return render(request, 'customer_home.html')
