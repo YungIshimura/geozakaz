@@ -31,9 +31,8 @@
                                     <div class="search-bar">
                                         <form class="search-form d-flex align-items-center" method="POST"
                                               action="#">
-                                            <input type="text" name="query"
-                                                   placeholder="Введите кадастровый номер участка"
-                                                   title="Enter search keyword">
+                                              {% csrf_token %}
+                                            {{form.cadastral_number}}
                                             <button type="submit" title="Search"><i class="bi bi-search"></i>
                                             </button>
                                         </form>

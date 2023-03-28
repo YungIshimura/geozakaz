@@ -1,6 +1,7 @@
 from django.urls import path
+
 from .views import register_user, logout_account, view_agreement, login_company, \
-    view_customer_home, login_user  # ,view_index
+    login_user # ,view_index
 
 app_name = 'users'
 
@@ -11,5 +12,4 @@ urlpatterns = [
     path('login_company', login_company, name='company_login'),
     path('logout/', logout_account, name='user_logout'),
     path('agreement/', view_agreement, name='agreement'),
-    path('customer_home/', view_customer_home, name='view_customer_home')
 ]

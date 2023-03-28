@@ -1,9 +1,16 @@
 from django import forms
 
-from users.models import User
 from .models import TypeWork, Order, OrderFile, PurposeBuilding, WorkObjective, Region, Area, City
 from django.core.validators import MinValueValidator
 from .validators import validate_number
+
+
+
+class CadastralNumberForm(forms.Form):
+    cadastral_number = forms.CharField(
+        validators=[validate_number],
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Введите кадастровый номер', 'name': 'query'}))
 
 
 class OrderForm(forms.ModelForm):
@@ -101,7 +108,8 @@ class OrderForm(forms.ModelForm):
     )
 
     phone_number = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Введите номер телефона'}),
+        widget=forms.TextInput(
+            attrs={'placeholder': 'Введите номер телефона'}),
         required=True
     )
 
@@ -129,7 +137,7 @@ class OrderForm(forms.ModelForm):
         model = Order
         fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
                   'square', 'square_unit', 'length', 'length_unit', 'width', 'width_unit', 'height', 'height_unit',
-                  'type_work', 'comment', 'name', 'surname', 'father_name', 'phone_number', 'email', 
+                  'type_work', 'comment', 'name', 'surname', 'father_name', 'phone_number', 'email',
                   'purpose_building', 'user_purpose_building', 'work_objective')
 
     def __init__(self, *args, **kwargs):
@@ -164,7 +172,8 @@ class OrderChangeStatusForm(forms.ModelForm):
         disabled=True
     )
 
-    street = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Улица'}), disabled=True)
+    street = forms.CharField(widget=forms.TextInput(
+        attrs={'placeholder': 'Улица'}), disabled=True)
 
     house_number = forms.IntegerField(
         validators=[MinValueValidator(1)],
@@ -249,7 +258,8 @@ class OrderChangeStatusForm(forms.ModelForm):
     )
 
     phone_number = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Введите номер телефона'}),
+        widget=forms.TextInput(
+            attrs={'placeholder': 'Введите номер телефона'}),
         disabled=True
     )
 

@@ -33,7 +33,7 @@ def login_user(request):
             if user is not None:
                 # Аутентификация прошла успешно
                 login(request, user)
-                return HttpResponseRedirect(reverse('zakaz:order'))
+                return HttpResponseRedirect(reverse('users:stub_page'))
             else:
                 # Аутентификация не удалась
                 messages.error(request, 'Пользователь с таким именем и паролем не найден.')
@@ -91,7 +91,7 @@ def register_user(request):
         login(request, user)
 
         messages.success(request, 'Вы успешно зарегистрировались')
-        return redirect('zakaz:order')
+        return redirect('users:stub_page')
 
     context = {
         'form': form,
@@ -114,7 +114,3 @@ def logout_account(request):
 # Пользовательское соглашение
 def view_agreement(request):
     return render(request, 'user_agreement.html', {'title': 'Пользовательское соглашение'})
-
-
-def view_customer_home(request):
-    return render(request, 'customer_home.html')

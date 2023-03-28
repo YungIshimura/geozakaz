@@ -117,12 +117,6 @@ class Order(models.Model):
         ('m', 'м'),
         ('floor', 'этаж')
     )
-    slug = models.SlugField(
-        'Уникальный номер заказа',
-        max_length=8,
-        unique=True,
-        db_index=True,
-    )
     name = models.CharField(
         'Имя заказчика',
         max_length=100,
@@ -262,7 +256,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', null=True, blank=True)
 
     def __str__(self):
-        return f'Заказ номер {self.slug}'
+        return f'Заказ для {self.user.company_name}'
 
     class Meta:
         verbose_name = 'Заказ'
@@ -281,7 +275,7 @@ class OrderFile(models.Model):
     )
 
     def __str__(self):
-        return f'Файлы к заказу номер {self.order.slug}'
+        return f'Файлы к заказу номер {self.order}'
 
     class Meta:
         verbose_name = 'Файлы к заказу'
