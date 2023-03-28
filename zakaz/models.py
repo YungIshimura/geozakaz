@@ -5,7 +5,6 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 
-
 User = get_user_model()
 
 
@@ -292,3 +291,41 @@ class OrderFile(models.Model):
     class Meta:
         verbose_name = 'Файлы к заказу'
         verbose_name_plural = 'Файлы к заказам'
+
+
+# Модели необходимые для выгрузки DOCX
+# class Department(models.Model):
+#     name = models.CharField(
+#         'Название ведомства',
+#         max_length=250
+#     )
+#     director_position = models.CharField(
+#         'Должность руководителя ведомства',
+#         max_length=150
+#     )
+#     director_name = models.CharField(
+#         'Имя руководителя',
+#         max_length=20
+#     )
+#     director_surname = models.CharField(
+#         'Фамилия руководителя',
+#         max_length=50
+#     )
+#     director_patronymic = models.CharField(
+#         'Отчество руководителя',
+#         max_length=30
+#     )
+#     phone_number = PhoneNumberField(
+#         'Телефон ведомства'
+#     )
+#     email = models.EmailField(
+#         "Электронная почта ведомства",
+#         max_length=254
+#     )
+#
+#     def __str__(self):
+#         return f"{self.name}"
+#
+#     class Meta:
+#         verbose_name = 'Ведомство'
+#         verbose_name_plural = 'Ведомства'

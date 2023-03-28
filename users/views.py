@@ -63,7 +63,8 @@ def login_company(request):
                 if user.is_staff:
                     # Аутентификация прошла успешно
                     login(request, user)
-                    return redirect('zakaz:order_pages')
+                    company_number_slug = user.company_number_slug
+                    return redirect(reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
                 else:
                     messages.error(request, 'У Вас нет прав доступа.')
             else:
