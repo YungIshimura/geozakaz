@@ -142,7 +142,7 @@ def download_igdi_docx(request):
     document_name = 'igdi'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
     placeholders = {
-        '_шифр-игди': 'Какой-то шифр',
+        '_шифр-игди': 'Какой-то шифр ИГДИ',
         '_должность_руководителя_ведомства': 'Директор',
         '_название_ведомства': 'Ведомство всех ведомств',
         '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
@@ -163,7 +163,7 @@ def download_igi_docx(request):
     document_name = 'igi'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
     placeholders = {
-        '_шифр-иги': 'Какой-то шифр',
+        '_шифр-иги': 'Какой-то шифр ИГИ',
         '_должность_руководителя_ведомства': 'Директор',
         '_название_ведомства': 'Ведомство всех ведомств',
         '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
