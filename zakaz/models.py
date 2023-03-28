@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator
 from smart_selects.db_fields import ChainedForeignKey
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
 
 
 User = get_user_model()
@@ -27,7 +28,12 @@ class Region(models.Model):
         'Название региона',
         max_length=180
     )
-
+    cadastral_region_number = models.CharField(
+        'Кадастровый номер',
+        max_length=2,
+        blank=True,
+        null=True
+    )
     def __str__(self):
         return self.name
 
@@ -40,6 +46,12 @@ class Area(models.Model):
     name = models.CharField(
         'Название района',
         max_length=200
+    )
+    cadastral_area_number = models.CharField(
+        'Кадастровый номер',
+        max_length=2,
+        blank=True,
+        null=True
     )
     region = models.ForeignKey(
         Region,
@@ -139,10 +151,10 @@ class Order(models.Model):
         max_length=254,
         blank=True
     )
-    cadastral_number = models.CharField(
+    cadastral_number = ArrayField(models.CharField(
         'Кадастровый номер',
         max_length=50,
-    )
+    ),blank=True, null=True)
     region = models.ForeignKey(
         Region,
         related_name='orders',
