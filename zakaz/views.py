@@ -69,9 +69,9 @@ def view_order(request, company_slug, company_number_slug):
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
-def view_order_pages(request):
-    orders = Order.objects.all().filter(
-        user_id=request.user.pk
+def view_order_pages(request, company_number_slug):
+    orders = Order.objects.filter(
+        user__company_number_slug=company_number_slug
     )
     context = {
         "orders": orders,
@@ -81,8 +81,8 @@ def view_order_pages(request):
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
-def view_change_order_status(request, slug):
-    order = get_object_or_404(Order, slug=slug)
+def view_change_order_status(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     type_works = TypeWork.objects.all().filter(orders=order)
     if request.method == 'POST':
