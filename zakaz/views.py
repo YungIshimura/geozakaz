@@ -87,17 +87,20 @@ def get_map(number):
     points = []
     area = Area(number, with_proxy=False)
     coordinates = area.get_coord()
-    for coordinate in coordinates:
-        for addresses in coordinate:
-            m = folium.Map((addresses[0][1], addresses[0][0]), zoom_start=16)
-            for pt in addresses:
-                place_lat = [pt[1] for pt in addresses]
-                place_lng = [pt[0] for pt in addresses]
+    if coordinates:
+        for coordinate in coordinates:
+            for addresses in coordinate:
+                m = folium.Map((addresses[0][1], addresses[0][0]), zoom_start=16)
+                for pt in addresses:
+                    place_lat = [pt[1] for pt in addresses]
+                    place_lng = [pt[0] for pt in addresses]
 
-                for i in range(len(place_lat)):
-                    points.append([place_lat[i], place_lng[i]])
-                folium.PolyLine(points, color='red').add_to(m)
+                    for i in range(len(place_lat)):
+                        points.append([place_lat[i], place_lng[i]])
+                    folium.PolyLine(points, color='red').add_to(m)
 
-    folium.PolyLine(points, color='red').add_to(m)
+        folium.PolyLine(points, color='red').add_to(m)
+    else:
+        m = folium.Map(location=[5976857.455632876, 4331295.852266274], zoom_start=16)
     map_html = m._repr_html_()
     return map_html
