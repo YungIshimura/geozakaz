@@ -10,12 +10,14 @@ from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm, CadastralNum
 from .models import OrderFile, TypeWork, Order
 from django.contrib import messages
 from django.utils.crypto import get_random_string
-
+from rosreestr2coord import Area
+import folium
 import io
 import os
 from docx import Document
 from django.http import HttpResponse
 from django.conf import settings
+
 
 User = get_user_model()
 
@@ -85,6 +87,7 @@ def view_change_order_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     type_works = TypeWork.objects.all().filter(orders=order)
+    map_html = get_map(order.cadastral_number)
     if request.method == 'POST':
         order_form = OrderChangeStatusForm(request.POST, instance=order)
         if order_form.is_valid():
@@ -98,11 +101,34 @@ def view_change_order_status(request, order_id):
         'files': files,
         'order_form': order_form,
         'order': order,
-        'type_works': type_works
+        'type_works': type_works,
+        'map_html': map_html
     }
 
     return render(request, 'change_order_status.html', context=context)
 
+
+def get_map(number):
+    points = []
+    area = Area(number, with_proxy=False)
+    coordinates = area.get_coord()
+    if coordinates:
+        for coordinate in coordinates:
+            for addresses in coordinate:
+                m = folium.Map((addresses[0][1], addresses[0][0]), zoom_start=16)
+                for pt in addresses:
+                    place_lat = [pt[1] for pt in addresses]
+                    place_lng = [pt[0] for pt in addresses]
+
+                    for i in range(len(place_lat)):
+                        points.append([place_lat[i], place_lng[i]])
+                    folium.PolyLine(points, color='red').add_to(m)
+
+        folium.PolyLine(points, color='red').add_to(m)
+    else:
+        m = folium.Map(location=[5976857.455632876, 4331295.852266274], zoom_start=16)
+    map_html = m._repr_html_()
+    return map_html
 
 def view_download(request):
     return render(request, 'download.html')

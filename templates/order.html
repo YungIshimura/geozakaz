@@ -6,19 +6,24 @@
 {% endblock %}
 
 {% block content %}
-{% load verbose_name %}
+    {% load verbose_name %}
     <script data-require="jquery" data-semver="3.1.1"
             src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
     <script src="/static/smart-selects/admin/js/chainedfk.js"></script>
     <script src="/static/smart-selects/admin/js/bindfields.js"></script>
     <link rel='stylesheet' href="{% static 'css/order.css' %}">
-{#    <div class="mb-5 mt-5">#}
-{#        <h1>Создайте заявку</h1>#}
-{#    </div>#}
+    {#    <div class="mb-5 mt-5">#}
+    {#        <h1>Создайте заявку</h1>#}
+    {#    </div>#}
     <div class="d-flex py-4">
         <a class="logo d-flex align-items-center w-auto">
-            <span class="d-none d-lg-block">Заявка для компании {{ user_company.company_name }}</span>
+            {% if user_company.company_name %}
+                <span class="d-none d-lg-block">Заявка для компании {{ user_company.company_name }}</span>
+            {% else %}
+                <span class="d-none d-lg-block">Заявка</span>
+
+            {% endif %}
         </a>
     </div>
     <section>
@@ -28,10 +33,10 @@
             {% if order_form.errors %}
                 {% for field in order_form %}
                     {% for error in field.errors %}
-                    <div class="alert alert-danger text-center">
-                        <span>{% verbose_name_tag order_model field.name %} {{error|lower}} </span>
-                        <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>
-                    </div>  
+                        <div class="alert alert-danger text-center">
+                            <span>{% verbose_name_tag order_model field.name %} {{ error|lower }} </span>
+                            <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>
+                        </div>
                     {% endfor %}
                 {% endfor %}
             {% endif %}
@@ -138,7 +143,8 @@
                                                 <div class="card-body">
                                                     <div class="mb-3">
                                                         <label class='building_label'
-                                                               for="{{ form.building.id_for_label }}">* Корпус/Строение</label>
+                                                               for="{{ form.building.id_for_label }}">*
+                                                            Корпус/Строение</label>
                                                         {{ order_form.building }}
                                                     </div>
                                                 </div>
@@ -207,12 +213,12 @@
                                         <div class="card-body grid">
                                             {% for type_work in order_form.type_work.field.queryset %}
                                                 <div class="form-check form-check-inline card-body"
-                                                        style='width:200px;'>
+                                                     style='width:200px;'>
                                                     <input class="form-check-input" type="checkbox"
-                                                            id="inlineCheckbox{{ type_work.id }}"
-                                                            value="{{ type_work.id }}" name='type_work'>
+                                                           id="inlineCheckbox{{ type_work.id }}"
+                                                           value="{{ type_work.id }}" name='type_work'>
                                                     <label class="form-check-label"
-                                                            for="inlineCheckbox{{ type_work.id }}">{{ type_work }}</label>
+                                                           for="inlineCheckbox{{ type_work.id }}">{{ type_work }}</label>
                                                 </div>
                                             {% endfor %}
                                         </div>
@@ -257,7 +263,8 @@
                                                 <div class="card-body">
 
                                                     <div class="mb-3">
-                                                        <label for="{{ form.father_name.id_for_label }}">* Отчество</label>
+                                                        <label for="{{ form.father_name.id_for_label }}">*
+                                                            Отчество</label>
                                                         {{ order_form.father_name }}
                                                     </div>
                                                 </div>
