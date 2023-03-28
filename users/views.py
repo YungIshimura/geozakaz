@@ -114,7 +114,3 @@ def logout_account(request):
 # Пользовательское соглашение
 def view_agreement(request):
     return render(request, 'user_agreement.html', {'title': 'Пользовательское соглашение'})
-
-
-def view_customer_home(request):
-    return render(request, 'customer_home.html')

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-{{ title }}
+Создание
 {% endblock %}
 
 {% block content %}
@@ -22,7 +22,7 @@
         </a>
     </div>
     <section>
-        <form action={% url 'zakaz:order' user_company.pk %} method='POST' enctype='multipart/form-data'>
+        <form action='#' method='POST' enctype='multipart/form-data'>
             {% csrf_token %}
 
             {% if order_form.errors %}
