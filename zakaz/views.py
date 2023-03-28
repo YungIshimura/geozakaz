@@ -18,7 +18,6 @@ from docx import Document
 from django.http import HttpResponse
 from django.conf import settings
 
-
 User = get_user_model()
 
 
@@ -57,7 +56,7 @@ def view_order(request, company_slug, company_number_slug):
             messages.success(request, 'Ваша заявка отправлена')
 
             # return HttpResponseRedirect(reverse('zakaz:order', args=[company_id]))
-            
+
     else:
         order_form = OrderForm()
         order_form.fields['cadastral_number'].initial = request.COOKIES.get('cadastral_number')
@@ -130,9 +129,6 @@ def get_map(number):
     map_html = m._repr_html_()
     return map_html
 
-def view_download(request):
-    return render(request, 'download.html')
-
 
 # Выгрузка DOCX
 def replace_placeholders(paragraph, placeholders):
@@ -202,20 +198,29 @@ def download_igdi_docx(request):
 
 
 # Скачиваем ШИФР-ИГИ
-def download_igi_docx(request):
+def download_igi_docx(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    department = order.region.region_department.first()
+    location = f"{order.region}, {order.area}, {order.city}, {order.street}, д.{order.house_number}"
+    if order.building:
+        location += f" {order.building}"
+
+    date = datetime.datetime.now()
+
     document_name = 'igi'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
     placeholders = {
-        '_шифр-иги': 'Какой-то шифр ИГИ',
-        '_должность_руководителя_ведомства': 'Директор',
-        '_название_ведомства': 'Ведомство всех ведомств',
-        '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
-        '_тел_ведомства': '8 900 000 00 00',
-        '_почта_ведомства': 'vedomstvo@example.com',
-        '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
-        '_имя_руководителя_ведомства': 'Иван',
+        '_шифр-иги': f"{date.strftime('%Y%m%d')}-{order.pk:03d}",
+        '_должность_руководителя_ведомства': department.director_position,
+        '_название_ведомства': department.name,
+        '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
+        '_тел_ведомства': f'{department.phone_number}',
+        '_почта_ведомства': department.email,
+        '_дата_текущая': date.strftime("%Y-%m-%d"),
+        '_имя_руководителя_ведомства': department.director_name,
         '_название_объекта_полное': 'Объект какой-то там',
-        '_кадастровый_номер': '47:23:0604008:451',
+        '_местоположение_объекта': location,
+        '_кадастровый_номер': order.cadastral_number,
         '_обзорная_схема': 'схема',
         '_таблица_координат': 'координаты'
     }

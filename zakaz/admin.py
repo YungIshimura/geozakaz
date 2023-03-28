@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (City, Region, Area, Order, TypeWork,
-                     OrderFile, PurposeBuilding, WorkObjective)
+                     OrderFile, PurposeBuilding, WorkObjective, Department)
 
 
 @admin.register(City)
@@ -40,4 +40,9 @@ class PurposeBuildingAdmin(admin.ModelAdmin):
 
 @admin.register(WorkObjective)
 class WorkObjectiveAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
     pass

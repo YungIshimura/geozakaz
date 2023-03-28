@@ -282,38 +282,44 @@ class OrderFile(models.Model):
 
 
 # Модели необходимые для выгрузки DOCX
-# class Department(models.Model):
-#     name = models.CharField(
-#         'Название ведомства',
-#         max_length=250
-#     )
-#     director_position = models.CharField(
-#         'Должность руководителя ведомства',
-#         max_length=150
-#     )
-#     director_name = models.CharField(
-#         'Имя руководителя',
-#         max_length=20
-#     )
-#     director_surname = models.CharField(
-#         'Фамилия руководителя',
-#         max_length=50
-#     )
-#     director_patronymic = models.CharField(
-#         'Отчество руководителя',
-#         max_length=30
-#     )
-#     phone_number = PhoneNumberField(
-#         'Телефон ведомства'
-#     )
-#     email = models.EmailField(
-#         "Электронная почта ведомства",
-#         max_length=254
-#     )
-#
-#     def __str__(self):
-#         return f"{self.name}"
-#
-#     class Meta:
-#         verbose_name = 'Ведомство'
-#         verbose_name_plural = 'Ведомства'
+class Department(models.Model):
+    region = models.ForeignKey(
+        Region,
+        related_name='region_department',
+        on_delete=models.CASCADE,
+        verbose_name='Регион ведомства',
+    )
+    name = models.CharField(
+        'Название ведомства',
+        max_length=250
+    )
+    director_position = models.CharField(
+        'Должность руководителя ведомства',
+        max_length=150
+    )
+    director_name = models.CharField(
+        'Имя руководителя',
+        max_length=20
+    )
+    director_surname = models.CharField(
+        'Фамилия руководителя',
+        max_length=50
+    )
+    director_patronymic = models.CharField(
+        'Отчество руководителя',
+        max_length=30
+    )
+    phone_number = PhoneNumberField(
+        'Телефон ведомства'
+    )
+    email = models.EmailField(
+        "Электронная почта ведомства",
+        max_length=254
+    )
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = 'Ведомство'
+        verbose_name_plural = 'Ведомства'
