@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <section class="section">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Выгрузка документов</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn btn-bd-primary w-100"
+                                        onclick="location.href='{% url 'zakaz:download_igi_docx' %}'">Загрузить igi
+                                    DOCX
+                                </button>
+                            </div>
+
+                            <div class="col-6">
+                                <button class="btn btn-bd-primary w-100"
+                                        onclick="location.href='{% url 'zakaz:download_igdi_docx' %}'">Загрузить igdi
+                                    DOCX
+                                </button>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
