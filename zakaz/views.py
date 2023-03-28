@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
@@ -9,6 +11,11 @@ from .models import OrderFile, TypeWork, Order
 from django.contrib import messages
 from django.utils.crypto import get_random_string
 
+import io
+import os
+from docx import Document
+from django.http import HttpResponse
+from django.conf import settings
 
 User = get_user_model()
 
@@ -95,3 +102,95 @@ def view_change_order_status(request, slug):
     }
 
     return render(request, 'change_order_status.html', context=context)
+
+
+def view_download(request):
+    return render(request, 'download.html')
+
+
+# Выгрузка DOCX
+def replace_placeholders(paragraph, placeholders):
+    for placeholder, value in placeholders.items():
+        if placeholder in paragraph.text:
+            for run in paragraph.runs:
+                if placeholder in run.text:
+                    run.text = run.text.replace(placeholder, value)
+
+
+# Замена слов по ключам в параграфах, заголовках и таблицах
+def replace_placeholders_in_document(document, placeholders):
+    for paragraph in document.paragraphs:
+        replace_placeholders(paragraph, placeholders)
+
+    for table in document.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    replace_placeholders(paragraph, placeholders)
+
+    return document
+
+
+# Генерация нового документа
+def generate_docx(document_path, placeholders):
+    document = Document(document_path)
+    replace_placeholders_in_document(document, placeholders)
+    return document
+
+
+# Скачивание DOCX
+def download_docx(request, document_name, document_path, placeholders):
+    document = generate_docx(document_path, placeholders)
+
+    output = io.BytesIO()
+    document.save(output)
+    output.seek(0)
+
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    )
+    response['Content-Disposition'] = f'attachment; filename="{document_name}.docx"'
+    return response
+
+
+# Скачиваем ШИФР-ИГДИ
+def download_igdi_docx(request):
+    document_name = 'igdi'
+    document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
+    placeholders = {
+        '_шифр-игди': 'Какой-то шифр ИГДИ',
+        '_должность_руководителя_ведомства': 'Директор',
+        '_название_ведомства': 'Ведомство всех ведомств',
+        '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
+        '_тел_ведомства': '8 900 000 00 00',
+        '_почта_ведомства': 'vedomstvo@example.com',
+        '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
+        '_имя_руководителя_ведомства': 'Иван',
+        '_название_объекта_полное': 'Объект какой-то там',
+        '_кадастровый_номер': '47:23:0604008:451',
+        '_обзорная_схема': 'схема',
+        '_таблица_координат': 'координаты'
+    }
+    return download_docx(request, document_name, document_path, placeholders)
+
+
+# Скачиваем ШИФР-ИГИ
+def download_igi_docx(request):
+    document_name = 'igi'
+    document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
+    placeholders = {
+        '_шифр-иги': 'Какой-то шифр ИГИ',
+        '_должность_руководителя_ведомства': 'Директор',
+        '_название_ведомства': 'Ведомство всех ведомств',
+        '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
+        '_тел_ведомства': '8 900 000 00 00',
+        '_почта_ведомства': 'vedomstvo@example.com',
+        '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
+        '_имя_руководителя_ведомства': 'Иван',
+        '_название_объекта_полное': 'Объект какой-то там',
+        '_кадастровый_номер': '47:23:0604008:451',
+        '_обзорная_схема': 'схема',
+        '_таблица_координат': 'координаты'
+    }
+    return download_docx(request, document_name, document_path, placeholders)
