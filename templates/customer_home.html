@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <div class="container">
 
         <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
@@ -30,11 +30,13 @@
                                     <div class="search-bar">
                                         <form class="search-form  align-items-center" method="POST"
                                               action="#">
-                                              {% csrf_token %}
-                                              <input type="text" name="cadastral_number" placeholder="Введите кадастровый номер" id="id_cadastral_number">
-                                              <select multiple name='select' style='overflow:hidden; display: none;' required='' id='select'>
-                                                </select>
-                                                <br>
+                                            {% csrf_token %}
+                                            <input type="text" name="cadastral_number"
+                                                   placeholder="Введите кадастровый номер" id="id_cadastral_number">
+                                            <select multiple name='select' style='overflow:hidden; display: none;'
+                                                    required='' id='select'>
+                                            </select>
+                                            <br>
                                             <button type="submit" title="Search">Отправить</button>
                                         </form>
                                         {% comment %} <div class='out-kod'>
@@ -45,15 +47,24 @@
                                         </div> {% endcomment %}
                                     </div>
                                 </div>
-                                <button title="Search" style='border:1px solid black;' id='btn' disabled class='btn'>+</button>
-                                <p class="text-center">или войдите в свой аккаунт</p></p>
-                                <div class="col-12 mb-3">
-                                    <a type='submit' class="btn btn-bd-primary w-100">Войти</a>
-                                </div>
-                                <div class="col-12">
-                                    <p class="small mb-0">Нет учетной записи? <a
-                                            href="{% url 'users:user_register' %}">Создать</a></p>
-                                </div>
+                                <button title="Search" style='border:1px solid black;' id='btn' disabled
+                                        class='btn'>+
+                                </button>
+
+                                {% if not request.user.is_authenticated %}
+
+                                    <p class="text-center">или войдите в свой аккаунт</p></p>
+                                    <div class="col-12 mb-3">
+                                        <a href="{% url 'users:user_login' %}"
+                                           class="btn btn-bd-primary w-100">Войти</a>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="small mb-0">Нет учетной записи? <a
+                                                href="{% url 'users:user_register' %}">Создать</a></p>
+                                    </div>
+
+                                {% endif %}
+
 
                             </div>
 
@@ -64,45 +75,44 @@
             </div>
 
         </section>
-    <script>
-        let addAudit = function() {
-            let cadastral_number = document.getElementById("id_cadastral_number");
-            let option = document.createElement('option');
-            option.text = cadastral_number.value;
-            option.selected=true;
-            document.querySelector('#select').add(option);
-        };
-        
-        document.onclick = function() {
-            let elem = window.event.srcElement;
-            if (elem.className === "btn") {
-                addAudit();
-                document.getElementById('id_cadastral_number').value = ''
-            }
-        };
+        <script>
+            let addAudit = function () {
+                let cadastral_number = document.getElementById("id_cadastral_number");
+                let option = document.createElement('option');
+                option.text = cadastral_number.value;
+                option.selected = true;
+                document.querySelector('#select').add(option);
+            };
 
-        $('#id_cadastral_number').keyup(function () {
-            button = document.getElementById('btn');
-            select = document.getElementById('select');
-            $.ajax({
-                data: $(this).serialize(),
-                url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
-                success: function (response) {
-                    if (response.is_valid == true) {
-                       button.disabled=false;
-                       select.style.cssText='display:block; overflow:hidden';
-                    }
-                    else {
-                        button.disabled=true;
-                    }
-                },
-                error: function (response) {
-                    console.log(response.responseJSON.errors)
+            document.onclick = function () {
+                let elem = window.event.srcElement;
+                if (elem.className === "btn") {
+                    addAudit();
+                    document.getElementById('id_cadastral_number').value = ''
                 }
+            };
+
+            $('#id_cadastral_number').keyup(function () {
+                button = document.getElementById('btn');
+                select = document.getElementById('select');
+                $.ajax({
+                    data: $(this).serialize(),
+                    url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
+                    success: function (response) {
+                        if (response.is_valid == true) {
+                            button.disabled = false;
+                            select.style.cssText = 'display:block; overflow:hidden';
+                        } else {
+                            button.disabled = true;
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response.responseJSON.errors)
+                    }
+                });
+                return false;
             });
-            return false;
-        });
-    </script>
+        </script>
     </div>
 
 {% endblock %}

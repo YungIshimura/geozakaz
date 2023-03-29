@@ -1,7 +1,7 @@
 import datetime
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
@@ -110,13 +110,15 @@ def view_change_order_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     type_works = TypeWork.objects.all().filter(orders=order)
-    map_html = get_map(order.cadastral_number)
+    # map_html = get_map(order.cadastral_number)
     if request.method == 'POST':
         order_form = OrderChangeStatusForm(request.POST, instance=order)
         if order_form.is_valid():
             order = order_form.save()
-            order.save()
-            return HttpResponseRedirect(reverse('zakaz:order_pages'))
+
+            company_number_slug = order.user.company_number_slug
+            return redirect(reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
+            # return HttpResponseRedirect(reverse('zakaz:order_pages'))
     else:
         order_form = OrderChangeStatusForm(instance=order)
 
@@ -125,7 +127,7 @@ def view_change_order_status(request, order_id):
         'order_form': order_form,
         'order': order,
         'type_works': type_works,
-        'map_html': map_html
+        # 'map_html': map_html
     }
 
     return render(request, 'change_order_status.html', context=context)
@@ -154,10 +156,6 @@ def get_map(number):
                        4331295.852266274], zoom_start=16)
     map_html = m._repr_html_()
     return map_html
-
-
-def view_download(request):
-    return render(request, 'download.html')
 
 
 # Выгрузка DOCX
@@ -207,42 +205,54 @@ def download_docx(request, document_name, document_path, placeholders):
 
 
 # Скачиваем ШИФР-ИГДИ
-def download_igdi_docx(request):
-    document_name = 'igdi'
-    document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
-    placeholders = {
-        '_шифр-игди': 'Какой-то шифр ИГДИ',
-        '_должность_руководителя_ведомства': 'Директор',
-        '_название_ведомства': 'Ведомство всех ведомств',
-        '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
-        '_тел_ведомства': '8 900 000 00 00',
-        '_почта_ведомства': 'vedomstvo@example.com',
-        '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
-        '_имя_руководителя_ведомства': 'Иван',
-        '_название_объекта_полное': 'Объект какой-то там',
-        '_кадастровый_номер': '47:23:0604008:451',
-        '_обзорная_схема': 'схема',
-        '_таблица_координат': 'координаты'
-    }
-    return download_docx(request, document_name, document_path, placeholders)
+# def download_igdi_docx(request):
+#     document_name = 'igdi'
+#     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
+#     placeholders = {
+#         '_шифр-игди': 'Какой-то шифр ИГДИ',
+#         '_должность_руководителя_ведомства': 'Директор',
+#         '_название_ведомства': 'Ведомство всех ведомств',
+#         '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
+#         '_тел_ведомства': '8 900 000 00 00',
+#         '_почта_ведомства': 'vedomstvo@example.com',
+#         '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
+#         '_имя_руководителя_ведомства': 'Иван',
+#         '_название_объекта_полное': 'Объект какой-то там',
+#         '_кадастровый_номер': '47:23:0604008:451',
+#         '_обзорная_схема': 'схема',
+#         '_таблица_координат': 'координаты'
+#     }
+#     return download_docx(request, document_name, document_path, placeholders)
 
 
 # Скачиваем ШИФР-ИГИ
-def download_igi_docx(request):
+def download_igi_docx(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    department = order.region.region_department.first()
+    location = f"{order.region}, {order.area}, {order.city}, {order.street}, д.{order.house_number}"
+    if order.building:
+        location += f" {order.building}"
+
+    date = datetime.datetime.now()
+
     document_name = 'igi'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
-    placeholders = {
-        '_шифр-иги': 'Какой-то шифр ИГИ',
-        '_должность_руководителя_ведомства': 'Директор',
-        '_название_ведомства': 'Ведомство всех ведомств',
-        '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
-        '_тел_ведомства': '8 900 000 00 00',
-        '_почта_ведомства': 'vedomstvo@example.com',
-        '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
-        '_имя_руководителя_ведомства': 'Иван',
-        '_название_объекта_полное': 'Объект какой-то там',
-        '_кадастровый_номер': '47:23:0604008:451',
-        '_обзорная_схема': 'схема',
-        '_таблица_координат': 'координаты'
-    }
+    if department:
+        placeholders = {
+            '_шифр-иги': f"{date.strftime('%Y%m%d')}-{order.pk:03d}",
+            '_должность_руководителя_ведомства': department.director_position,
+            '_название_ведомства': department.name,
+            '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
+            '_тел_ведомства': f'{department.phone_number}',
+            '_почта_ведомства': department.email,
+            '_дата_текущая': date.strftime("%Y-%m-%d"),
+            '_имя_руководителя_ведомства': department.director_name,
+            '_название_объекта_полное': order.object_name,
+            '_местоположение_объекта': location,
+            '_кадастровый_номер': order.cadastral_number,
+            '_обзорная_схема': 'схема',
+            '_таблица_координат': 'координаты'
+        }
+    else:
+        placeholders = {}
     return download_docx(request, document_name, document_path, placeholders)
