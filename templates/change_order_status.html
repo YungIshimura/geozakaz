@@ -205,6 +205,12 @@
                                     </div>
                                     {{ order_form.work_objective }}
                                 </div>
+                                <div style="max-width: 500px">
+                                    <div class="card-title">
+                                        <h5>Название объекта</h5>
+                                    </div>
+                                    {{ order_form.object_name }}
+                                </div>
                                 <div>
                                     <div class="card-title">
                                         <h5>Комментарий</h5>
@@ -283,24 +289,34 @@
                     </button>
                 </div>
                 <div class="col-sm-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Выгрузка документов</h5>
-                <div class="row">
-                    <div class="col-6">
-                        <a href="{% url 'zakaz:download_igi_docx' order.pk %}" class="btn btn-bd-primary w-100">Загрузить igi
-                            DOCX</a>
-                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Выгрузка документов</h5>
+                            <p class="small">Для загрузки документа вы должны заполнить поле "Название объекта" в
+                                форме</p>
+                            <div class="row">
+                                {% if order.object_name %}
+                                    <div class="col-6">
+                                        <a href="{% url 'zakaz:download_igi_docx' order.pk %}"
+                                           class="btn btn-bd-primary w-100">Загрузить DOCX</a>
+                                    </div>
+                                {% else %}
+                                    <div class="col-6">
+                                        <a class="btn btn-bd-primary w-100 disabled">Загрузить DOCX</a>
+                                    </div>
 
-                    <div class="col-6">
-                        <a href="{% url 'zakaz:download_igdi_docx' %}" class="btn btn-bd-primary w-100">Загрузить igdi
-                            DOCX
-                        </a>
+                                {% endif %}
+
+                                {#                                <div class="col-6">#}
+                                {#                                    <a href="{% url 'zakaz:download_igdi_docx' %}" class="btn btn-bd-primary w-100">Загрузить#}
+                                {#                                        igdi#}
+                                {#                                        DOCX#}
+                                {#                                    </a>#}
+                                {#                                </div>#}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
             </div>
         </form>

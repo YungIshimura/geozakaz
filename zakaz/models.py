@@ -251,6 +251,12 @@ class Order(models.Model):
         verbose_name='Цель работы',
         related_name='orders',
     )
+    object_name = models.CharField(
+        'Название объекта',
+        max_length=200,
+        blank=True,
+        null=True
+    )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', null=True, blank=True)
 
