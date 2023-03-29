@@ -35,7 +35,7 @@ def login_user(request):
             if user is not None:
                 # Аутентификация прошла успешно
                 login(request, user)
-                return HttpResponseRedirect(reverse('zakaz:order', args=[company_slug, company_number_slug]))
+                return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
             else:
                 # Аутентификация не удалась
                 messages.error(request, 'Пользователь с таким именем и паролем не найден.')
