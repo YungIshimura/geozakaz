@@ -6,17 +6,15 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from django.core.exceptions import ValidationError
+
+from .rosreestr2 import GetArea
 from .validators import validate_number
 from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm, CadastralNumberForm
 from .models import OrderFile, TypeWork, Order, Region, Area as area
 from django.contrib import messages
-from rosreestr2coord import Area
 import folium
-import io
-import os
-from docx import Document
-from django.http import HttpResponse
-from django.conf import settings
+# from docx import Document
+
 
 
 User = get_user_model()
@@ -133,8 +131,9 @@ def view_change_order_status(request, order_id):
 
 def get_map(number):
     points = []
-    area = Area(number, with_proxy=False)
-    coordinates = area.get_coord()
+    areas = GetArea(code=number[0], timeout=15)
+    coordinates = areas.get_coord()
+    print(coordinates)
     if coordinates:
         for coordinate in coordinates:
             for addresses in coordinate:
@@ -150,6 +149,7 @@ def get_map(number):
 
         folium.PolyLine(points, color='red').add_to(m)
     else:
+
         m = folium.Map(location=[5976857.455632876,
                        4331295.852266274], zoom_start=16)
     map_html = m._repr_html_()
@@ -184,65 +184,65 @@ def replace_placeholders_in_document(document, placeholders):
 
 
 # Генерация нового документа
-def generate_docx(document_path, placeholders):
-    document = Document(document_path)
-    replace_placeholders_in_document(document, placeholders)
-    return document
+# def generate_docx(document_path, placeholders):
+#     document = Document(document_path)
+#     replace_placeholders_in_document(document, placeholders)
+#     return document
 
 
 # Скачивание DOCX
-def download_docx(request, document_name, document_path, placeholders):
-    document = generate_docx(document_path, placeholders)
-
-    output = io.BytesIO()
-    document.save(output)
-    output.seek(0)
-
-    response = HttpResponse(
-        output,
-        content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    )
-    response['Content-Disposition'] = f'attachment; filename="{document_name}.docx"'
-    return response
+# def download_docx(request, document_name, document_path, placeholders):
+#     document = generate_docx(document_path, placeholders)
+#
+#     output = io.BytesIO()
+#     document.save(output)
+#     output.seek(0)
+#
+#     response = HttpResponse(
+#         output,
+#         content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+#     )
+#     response['Content-Disposition'] = f'attachment; filename="{document_name}.docx"'
+#     return response
 
 
 # Скачиваем ШИФР-ИГДИ
-def download_igdi_docx(request):
-    document_name = 'igdi'
-    document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
-    placeholders = {
-        '_шифр-игди': 'Какой-то шифр ИГДИ',
-        '_должность_руководителя_ведомства': 'Директор',
-        '_название_ведомства': 'Ведомство всех ведомств',
-        '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
-        '_тел_ведомства': '8 900 000 00 00',
-        '_почта_ведомства': 'vedomstvo@example.com',
-        '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
-        '_имя_руководителя_ведомства': 'Иван',
-        '_название_объекта_полное': 'Объект какой-то там',
-        '_кадастровый_номер': '47:23:0604008:451',
-        '_обзорная_схема': 'схема',
-        '_таблица_координат': 'координаты'
-    }
-    return download_docx(request, document_name, document_path, placeholders)
+# def download_igdi_docx(request):
+#     document_name = 'igdi'
+#     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
+#     placeholders = {
+#         '_шифр-игди': 'Какой-то шифр ИГДИ',
+#         '_должность_руководителя_ведомства': 'Директор',
+#         '_название_ведомства': 'Ведомство всех ведомств',
+#         '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
+#         '_тел_ведомства': '8 900 000 00 00',
+#         '_почта_ведомства': 'vedomstvo@example.com',
+#         '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
+#         '_имя_руководителя_ведомства': 'Иван',
+#         '_название_объекта_полное': 'Объект какой-то там',
+#         '_кадастровый_номер': '47:23:0604008:451',
+#         '_обзорная_схема': 'схема',
+#         '_таблица_координат': 'координаты'
+#     }
+#     return download_docx(request, document_name, document_path, placeholders)
 
 
 # Скачиваем ШИФР-ИГИ
-def download_igi_docx(request):
-    document_name = 'igi'
-    document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
-    placeholders = {
-        '_шифр-иги': 'Какой-то шифр ИГИ',
-        '_должность_руководителя_ведомства': 'Директор',
-        '_название_ведомства': 'Ведомство всех ведомств',
-        '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
-        '_тел_ведомства': '8 900 000 00 00',
-        '_почта_ведомства': 'vedomstvo@example.com',
-        '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
-        '_имя_руководителя_ведомства': 'Иван',
-        '_название_объекта_полное': 'Объект какой-то там',
-        '_кадастровый_номер': '47:23:0604008:451',
-        '_обзорная_схема': 'схема',
-        '_таблица_координат': 'координаты'
-    }
-    return download_docx(request, document_name, document_path, placeholders)
+# def download_igi_docx(request):
+#     document_name = 'igi'
+#     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
+#     placeholders = {
+#         '_шифр-иги': 'Какой-то шифр ИГИ',
+#         '_должность_руководителя_ведомства': 'Директор',
+#         '_название_ведомства': 'Ведомство всех ведомств',
+#         '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
+#         '_тел_ведомства': '8 900 000 00 00',
+#         '_почта_ведомства': 'vedomstvo@example.com',
+#         '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
+#         '_имя_руководителя_ведомства': 'Иван',
+#         '_название_объекта_полное': 'Объект какой-то там',
+#         '_кадастровый_номер': '47:23:0604008:451',
+#         '_обзорная_схема': 'схема',
+#         '_таблица_координат': 'координаты'
+#     }
+#     return download_docx(request, document_name, document_path, placeholders)
