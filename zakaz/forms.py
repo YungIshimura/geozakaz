@@ -1,5 +1,5 @@
 from django import forms
-
+from django.contrib.postgres.forms import SimpleArrayField
 from .models import TypeWork, Order, OrderFile, PurposeBuilding, WorkObjective, Region, Area, City
 from django.core.validators import MinValueValidator
 from .validators import validate_number
@@ -9,16 +9,16 @@ from .validators import validate_number
 class CadastralNumberForm(forms.Form):
     cadastral_number = forms.CharField(
         validators=[validate_number],
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={'placeholder': 'Введите кадастровый номер', 'name': 'query'}))
 
 
 class OrderForm(forms.ModelForm):
-    cadastral_number = forms.CharField(
+    cadastral_number = SimpleArrayField(forms.CharField(
         validators=[validate_number],
         widget=forms.TextInput(attrs={'placeholder': 'Кадастровый номер'}),
         required=True
-    )
+    ))
 
     street = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Улица'}),
