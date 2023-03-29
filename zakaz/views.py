@@ -1,15 +1,15 @@
 import datetime
-
+from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
-
+from django.core.exceptions import ValidationError
+from .validators import validate_number
 from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm, CadastralNumberForm
-from .models import OrderFile, TypeWork, Order
+from .models import OrderFile, TypeWork, Order, Region, Area as area
 from django.contrib import messages
-from django.utils.crypto import get_random_string
 from rosreestr2coord import Area
 import folium
 import io
@@ -18,20 +18,39 @@ from docx import Document
 from django.http import HttpResponse
 from django.conf import settings
 
+
 User = get_user_model()
 
 
+def ajax_validate_cadastral_number(request):
+    cadastral_number = request.GET.get('cadastral_number', None)
+
+    try:
+        validate_number(cadastral_number)
+        response = {
+            'is_valid': True
+        }
+
+    except ValidationError:
+        response = {
+            'is_valid': False
+        }
+
+    return JsonResponse(response)
+
 def view_order_cadastral(request, company_slug, company_number_slug):
     context = {}
+    print(request.POST)
     if request.method == 'POST':
         form = CadastralNumberForm(request.POST)
         if form.is_valid():
             cadastral_number = request.POST.get('cadastral_number')
-            response = HttpResponseRedirect(reverse('zakaz:order', args=[company_slug, company_number_slug]))
+            response = HttpResponseRedirect(
+                reverse('zakaz:order', args=[company_slug, company_number_slug]))
             response.set_cookie('cadastral_number', cadastral_number)
             return response
     else:
-        form = CadastralNumberForm
+        form = CadastralNumberForm()
 
     context['form'] = form
 
@@ -40,10 +59,16 @@ def view_order_cadastral(request, company_slug, company_number_slug):
 
 @login_required(login_url='users:user_login')
 def view_order(request, company_slug, company_number_slug):
-    user_company = get_object_or_404(User, company_number_slug=company_number_slug)
-    context = {
-        'cadastral_number': request.COOKIES.get('cadastral_number')
-    }
+    user_company = get_object_or_404(
+        User, company_number_slug=company_number_slug)
+    context = {}
+
+    cadastral_number = request.COOKIES.get('cadastral_number')
+    cadastral_region = Region.objects.get(
+        cadastral_region_number=cadastral_number.split(':')[0])
+    cadastral_area = area.objects.get(
+        cadastral_area_number=cadastral_number.split(':')[1])
+
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
@@ -56,10 +81,9 @@ def view_order(request, company_slug, company_number_slug):
             messages.success(request, 'Ваша заявка отправлена')
 
             # return HttpResponseRedirect(reverse('zakaz:order', args=[company_id]))
-
     else:
-        order_form = OrderForm()
-        order_form.fields['cadastral_number'].initial = request.COOKIES.get('cadastral_number')
+        order_form = OrderForm(initial={'cadastral_number': cadastral_number,
+                               'region': cadastral_region.id, 'area': cadastral_area.id})
         order_files_form = OrderFileForm()
 
     context['user_company'] = user_company
@@ -86,7 +110,7 @@ def view_change_order_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     type_works = TypeWork.objects.all().filter(orders=order)
-    map_html = get_map(order.cadastral_number)
+    # map_html = get_map(order.cadastral_number)
     if request.method == 'POST':
         order_form = OrderChangeStatusForm(request.POST, instance=order)
         if order_form.is_valid():
@@ -103,7 +127,7 @@ def view_change_order_status(request, order_id):
         'order_form': order_form,
         'order': order,
         'type_works': type_works,
-        'map_html': map_html
+        # 'map_html': map_html
     }
 
     return render(request, 'change_order_status.html', context=context)
@@ -116,7 +140,8 @@ def get_map(number):
     if coordinates:
         for coordinate in coordinates:
             for addresses in coordinate:
-                m = folium.Map((addresses[0][1], addresses[0][0]), zoom_start=16)
+                m = folium.Map(
+                    (addresses[0][1], addresses[0][0]), zoom_start=16)
                 for pt in addresses:
                     place_lat = [pt[1] for pt in addresses]
                     place_lng = [pt[0] for pt in addresses]
@@ -127,7 +152,8 @@ def get_map(number):
 
         folium.PolyLine(points, color='red').add_to(m)
     else:
-        m = folium.Map(location=[5976857.455632876, 4331295.852266274], zoom_start=16)
+        m = folium.Map(location=[5976857.455632876,
+                       4331295.852266274], zoom_start=16)
     map_html = m._repr_html_()
     return map_html
 
@@ -211,19 +237,22 @@ def download_igi_docx(request, pk):
 
     document_name = 'igi'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
-    placeholders = {
-        '_шифр-иги': f"{date.strftime('%Y%m%d')}-{order.pk:03d}",
-        '_должность_руководителя_ведомства': department.director_position,
-        '_название_ведомства': department.name,
-        '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
-        '_тел_ведомства': f'{department.phone_number}',
-        '_почта_ведомства': department.email,
-        '_дата_текущая': date.strftime("%Y-%m-%d"),
-        '_имя_руководителя_ведомства': department.director_name,
-        '_название_объекта_полное': order.object_name,
-        '_местоположение_объекта': location,
-        '_кадастровый_номер': order.cadastral_number,
-        '_обзорная_схема': 'схема',
-        '_таблица_координат': 'координаты'
-    }
+    if department:
+        placeholders = {
+            '_шифр-иги': f"{date.strftime('%Y%m%d')}-{order.pk:03d}",
+            '_должность_руководителя_ведомства': department.director_position,
+            '_название_ведомства': department.name,
+            '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
+            '_тел_ведомства': f'{department.phone_number}',
+            '_почта_ведомства': department.email,
+            '_дата_текущая': date.strftime("%Y-%m-%d"),
+            '_имя_руководителя_ведомства': department.director_name,
+            '_название_объекта_полное': order.object_name,
+            '_местоположение_объекта': location,
+            '_кадастровый_номер': order.cadastral_number,
+            '_обзорная_схема': 'схема',
+            '_таблица_координат': 'координаты'
+        }
+    else:
+        placeholders = {}
     return download_docx(request, document_name, document_path, placeholders)
