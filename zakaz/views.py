@@ -22,7 +22,6 @@ User = get_user_model()
 
 def ajax_validate_cadastral_number(request):
     cadastral_number = request.GET.get('cadastral_number', None)
-
     try:
         validate_number(cadastral_number)
         response = {
@@ -36,17 +35,19 @@ def ajax_validate_cadastral_number(request):
 
     return JsonResponse(response)
 
+
 def view_order_cadastral(request, company_slug, company_number_slug):
     context = {}
-    print(request.POST)
     if request.method == 'POST':
         form = CadastralNumberForm(request.POST)
         if form.is_valid():
-            cadastral_number = request.POST.get('cadastral_number')
+            cadastral_number = request.POST.getlist('select')
             response = HttpResponseRedirect(
                 reverse('zakaz:order', args=[company_slug, company_number_slug]))
             response.set_cookie('cadastral_number', cadastral_number)
             return response
+        else:
+            print(form.errors)
     else:
         form = CadastralNumberForm()
 
@@ -61,11 +62,11 @@ def view_order(request, company_slug, company_number_slug):
         User, company_number_slug=company_number_slug)
     context = {}
 
-    cadastral_number = request.COOKIES.get('cadastral_number')
+    cadastral_number = eval(request.COOKIES.get('cadastral_number'))
     cadastral_region = Region.objects.get(
-        cadastral_region_number=cadastral_number.split(':')[0])
+        cadastral_region_number=cadastral_number[0].split(':')[0])
     cadastral_area = area.objects.get(
-        cadastral_area_number=cadastral_number.split(':')[1])
+        cadastral_area_number=cadastral_number[0].split(':')[1])
 
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
@@ -78,7 +79,6 @@ def view_order(request, company_slug, company_number_slug):
                 OrderFile.objects.create(order=order, file=file)
             messages.success(request, 'Ваша заявка отправлена')
 
-            # return HttpResponseRedirect(reverse('zakaz:order', args=[company_id]))
     else:
         order_form = OrderForm(initial={'cadastral_number': cadastral_number,
                                'region': cadastral_region.id, 'area': cadastral_area.id})
