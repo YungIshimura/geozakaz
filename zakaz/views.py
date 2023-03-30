@@ -48,8 +48,7 @@ def view_order_cadastral(request, company_slug, company_number_slug):
                 reverse('zakaz:order', args=[company_slug, company_number_slug]))
             response.set_cookie('cadastral_number', cadastral_number)
             return response
-        else:
-            print(form.errors)
+
     else:
         form = CadastralNumberForm()
 
@@ -63,7 +62,6 @@ def view_order(request, company_slug, company_number_slug):
     user_company = get_object_or_404(
         User, company_number_slug=company_number_slug)
     context = {}
-
     cadastral_number = eval(request.COOKIES.get('cadastral_number'))
     cadastral_region = Region.objects.get(
         cadastral_region_number=cadastral_number[0].split(':')[0])
