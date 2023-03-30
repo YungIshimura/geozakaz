@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-
+from urllib.parse import urlparse
 from .forms import UserRegistrationForm, UserLoginForm
 
 
@@ -26,6 +26,8 @@ def login_user(request):
         if form.is_valid():
             username_or_email = form.cleaned_data.get('username_or_email')
             password = form.cleaned_data.get('password')
+            company_slug = request.session.get('company_slug', None)
+            company_number_slug = request.session.get('company_number_slug', None)
 
             # Аутентификация пользователя
             user = authenticate(request, username=username_or_email, password=password)
@@ -33,12 +35,19 @@ def login_user(request):
             if user is not None:
                 # Аутентификация прошла успешно
                 login(request, user)
-                return HttpResponseRedirect(reverse('users:stub_page'))
+                return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
             else:
                 # Аутентификация не удалась
                 messages.error(request, 'Пользователь с таким именем и паролем не найден.')
     else:
         form = UserLoginForm()
+
+        previous_url = request.META.get('HTTP_REFERER')
+        path_parts = urlparse(previous_url).path.split('/')
+        company_slug = path_parts[2]
+        company_number_slug = path_parts[3]
+        request.session['company_slug'] = company_slug
+        request.session['company_number_slug'] = company_number_slug
 
     context = {
         'form': form,

@@ -185,7 +185,8 @@ class OrderChangeStatusForm(forms.ModelForm):
     building = forms.IntegerField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Корпус/Строение'}),
-        disabled=True
+        disabled=True,
+        required=False
     )
 
     square = forms.IntegerField(
@@ -227,7 +228,8 @@ class OrderChangeStatusForm(forms.ModelForm):
     height = forms.IntegerField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Высота'}),
-        disabled=True
+        disabled=True,
+        required=False
     )
 
     height_unit = forms.ChoiceField(
@@ -239,7 +241,8 @@ class OrderChangeStatusForm(forms.ModelForm):
 
     comment = forms.CharField(
         widget=forms.Textarea(attrs={'placeholder': 'Комментарий к заказу'}),
-        disabled=True
+        disabled=True,
+        required=False
     )
 
     name = forms.CharField(
@@ -274,7 +277,8 @@ class OrderChangeStatusForm(forms.ModelForm):
     user_purpose_building = forms.ModelChoiceField(
         queryset=PurposeBuilding.objects.all(),
         widget=forms.Select(),
-        disabled=True
+        disabled=True,
+        required=False
     )
     work_objective = forms.ModelChoiceField(
         queryset=WorkObjective.objects.all(),
@@ -303,7 +307,7 @@ class OrderChangeStatusForm(forms.ModelForm):
         fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
                   'square', 'square_unit', 'length', 'length_unit', 'width', 'width_unit', 'height', 'height_unit',
                   'comment', 'name', 'surname', 'user_purpose_building',
-                  'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective')
+                  'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective', 'object_name')
 
     def __init__(self, *args, **kwargs):
         super(OrderChangeStatusForm, self).__init__(*args, **kwargs)
