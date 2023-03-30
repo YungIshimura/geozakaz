@@ -21,7 +21,11 @@
         <tbody>
         {% for order in orders %}
             <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
-                <th>{{ order.cadastral_number }}</th>
+                <th style='max-width:260px;'>
+                    {% for cadastral_number in order.cadastral_number %}
+                        | {{ cadastral_number }} |
+                    {% endfor %}
+                </th>
                 <td>
                     {% for work in order.type_work.values %}
                         {{ work.type }}<br>
