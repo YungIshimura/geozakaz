@@ -1345,3 +1345,8 @@ h6 {
 .search-form button i {
   color: #012970;
 }
+
+.disabled {
+  pointer-events: none;
+  background-color: lightgray;
+}

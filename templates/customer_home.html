@@ -33,23 +33,19 @@
                                             {% csrf_token %}
                                             <input type="text" name="cadastral_number"
                                                    placeholder="Введите кадастровый номер" id="id_cadastral_number">
-                                            <select multiple name='select' style='overflow:hidden; display: none;'
+                                            <select multiple  class='select form-select disabled' name='select' style='overflow:hidden; display: none;'
                                                     required='' id='select'>
                                             </select>
                                             <br>
-                                            <button type="submit" title="Search">Отправить</button>
-                                        </form>
-                                        {% comment %} <div class='out-kod'>
-                                            <form>
-                                                {% csrf_token %}
-                                                <input type='text' name='test' id='test' class='test'></input>
-                                            </form>
-                                        </div> {% endcomment %}
+                                            <br>
+                                            <div style='display:flex; justify-content: space-evenly;'>
+                                                <button type="submit" style='background-color: #012970;' class='btn btn-primary'>Отправить</button>
+                                                <button type='button' style='width: 25px; color: white; background-color: #012970;' onclick='AddCadastralNumber()' id='btn' disabled
+                                                class='btn'>+</button>
+                                            </div>
+                                        </form> 
                                     </div>
                                 </div>
-                                <button title="Search" style='border:1px solid black;' id='btn' disabled
-                                        class='btn'>+
-                                </button>
 
                                 {% if not request.user.is_authenticated %}
 
@@ -75,33 +71,34 @@
 
         </section>
         <script>
-            let addAudit = function () {
+            function GetSelectOption () {
                 let cadastral_number = document.getElementById("id_cadastral_number");
                 let option = document.createElement('option');
+                let button = document.getElementById('btn')
+                button.disabled = true;
                 option.text = cadastral_number.value;
                 option.selected = true;
                 document.querySelector('#select').add(option);
             };
 
-            document.onclick = function () {
-                let elem = window.event.srcElement;
-                if (elem.className === "btn") {
-                    addAudit();
-                    document.getElementById('id_cadastral_number').value = ''
-                }
+            function AddCadastralNumber() {
+                GetSelectOption();
+                select.style.cssText = 'display:block; overflow:hidden';
+                document.getElementById('id_cadastral_number').value = ''
+                
             };
 
             $('#id_cadastral_number').keyup(function () {
-                button = document.getElementById('btn');
-                select = document.getElementById('select');
+                button = document.getElementById('btn');    
+                select = document.getElementById('select');;
                 $.ajax({
                     data: $(this).serialize(),
                     url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
                     success: function (response) {
                         if (response.is_valid == true) {
                             button.disabled = false;
-                            select.style.cssText = 'display:block; overflow:hidden';
-                        } else {
+                        } 
+                        else {
                             button.disabled = true;
                         }
                     },

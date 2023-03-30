@@ -144,6 +144,15 @@
                         {% endfor %}
                         <div class="input-file-list"></div>
                     </div>
+                    <div class="card">
+
+                        <div class="card-body">
+                            <h5 class="card-title" style="padding: 0 0 15px 0;"></h5>
+                            {{ map_html | safe }}
+                        </div>
+
+                    </div>
+
                 </div>
                 <div class="col-sm-6">
                     <div class="card">
@@ -209,7 +218,7 @@
                                     <div class="card-title">
                                         <h5>Название объекта</h5>
                                     </div>
-                                    {{ order_form.object_name }}
+                                    {{ objectname_form.object_name }}
                                 </div>
                                 <div>
                                     <div class="card-title">
@@ -282,49 +291,48 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-6 mb-sm-0">
-                    <button type="submit" class="btn btn-secondary btn-lg"
-                            style="width: auto; background-color: #012970;">СОХРАНИТЬ
-                    </button>
-                </div>
+            <div class="row justify-content-end">
                 <div class="col-sm-6">
                     <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Выгрузка документов</h5>
-                            <p class="small">Для загрузки документа вы должны заполнить поле "Название объекта" в
-                                форме</p>
-                            <div class="row">
-                                {% if order.object_name %}
+                        {% if order.object_name %}
+                            <div class="card-body">
+                                <h5 class="card-title">Выгрузка документов</h5>
+                                <div class="row">
                                     <div class="col-6">
                                         <a href="{% url 'zakaz:download_igi_docx' order.pk %}"
                                            class="btn btn-bd-primary w-100">Загрузить DOCX</a>
                                     </div>
-                                {% else %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="card-body">
+                                <h5 class="card-title">Выгрузка документов</h5>
+                                <p class="small">Для загрузки документа вы должны заполнить поле "Название объекта" в
+                                    форме</p>
+                                <div class="row">
                                     <div class="col-6">
                                         <a class="btn btn-bd-primary w-100 disabled">Загрузить DOCX</a>
                                     </div>
-
-                                {% endif %}
-
-                                {#                                <div class="col-6">#}
-                                {#                                    <a href="{% url 'zakaz:download_igdi_docx' %}" class="btn btn-bd-primary w-100">Загрузить#}
-                                {#                                        igdi#}
-                                {#                                        DOCX#}
-                                {#                                    </a>#}
-                                {#                                </div>#}
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
-
             </div>
-        {{ order_form.errors }}
+            <div class="row">
+                <div class="col-sm-6 mb-sm-0 text-center">
+{#                    <button type="submit" class="btn btn-secondary btn-lg"#}
+{#                            style="width: auto; background-color: #012970;">СОХРАНИТЬ#}
+{#                    </button>#}
+                    <button type="submit" class="btn btn-bd-primary w-50">СОХРАНИТЬ
+                    </button>
+                </div>
+            </div>
         </form>
     </section>
-    <div style="margin-top: 50px; max-width: 700px; max-height: 700px;">
-        {{ map_html | safe }}
-    </div>
+{#    <div style="margin-top: 50px; max-width: 700px; max-height: 700px;">#}
+{#        {{ map_html | safe }}#}
+{#    </div>#}
 
     <script src="{% static 'js/application.js' %}"></script>
 {% endblock %}

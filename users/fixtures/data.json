@@ -230,56 +230,64 @@
     "model": "zakaz.region",
     "pk": 1,
     "fields": {
-      "name": "Свердловская область"
+      "name": "Свердловская область",
+      "cadastral_region_number": 66
     }
   },
   {
     "model": "zakaz.region",
     "pk": 2,
     "fields": {
-      "name": "Республика Татарстан"
+      "name": "Республика Татарстан",
+      "cadastral_region_number": 16
     }
   },
   {
     "model": "zakaz.region",
     "pk": 3,
     "fields": {
-      "name": "Краснодарский край"
+      "name": "Краснодарский край",
+      "cadastral_region_number": 23
     }
   },
   {
     "model": "zakaz.region",
     "pk": 4,
     "fields": {
-      "name": "Нижегородская область"
+      "name": "Нижегородская область",
+      "cadastral_region_number": 52
     }
   },
   {
     "model": "zakaz.region",
     "pk": 5,
     "fields": {
-      "name": "Республика Башкортостан"
+      "name": "Республика Башкортостан",
+      "cadastral_region_number": 2
     }
   },
   {
     "model": "zakaz.region",
     "pk": 6,
     "fields": {
-      "name": "Московская область"
+      "name": "Московская область",
+      "cadastral_region_number": 50
     }
   },
   {
     "model": "zakaz.region",
     "pk": 7,
     "fields": {
-      "name": "Самарская область"
+      "name": "Самарская область",
+      "cadastral_region_number": 63
     }
   },
   {
     "model": "zakaz.region",
     "pk": 8,
     "fields": {
-      "name": "Республика Крым"
+      "name": "Республика Крым",
+      "cadastral_region_number": 90
     }
   },
   {
@@ -287,7 +295,8 @@
     "pk": 1,
     "fields": {
       "name": "Кировградский район",
-      "region": 1
+      "region": 1,
+      "cadastral_area_number": 72
     }
   },
   {
@@ -295,7 +304,8 @@
     "pk": 2,
     "fields": {
       "name": "Режевский район",
-      "region": 1
+      "region": 1,
+      "cadastral_area_number": 42
     }
   },
   {
@@ -303,7 +313,8 @@
     "pk": 3,
     "fields": {
       "name": "Нижнекамский район",
-      "region": 2
+      "region": 2,
+      "cadastral_area_number": 16
     }
   },
   {
@@ -311,7 +322,8 @@
     "pk": 4,
     "fields": {
       "name": "Арской район",
-      "region": 2
+      "region": 2,
+      "cadastral_area_number": 16
     }
   },
   {
@@ -319,7 +331,8 @@
     "pk": 5,
     "fields": {
       "name": "Абинский район",
-      "region": 3
+      "region": 3,
+      "cadastral_area_number": 23
     }
   },
   {
@@ -327,7 +340,8 @@
     "pk": 6,
     "fields": {
       "name": "Геленджикский район",
-      "region": 3
+      "region": 3,
+      "cadastral_area_number": 23
     }
   },
   {
@@ -335,7 +349,8 @@
     "pk": 7,
     "fields": {
       "name": "Арзамасский район",
-      "region": 4
+      "region": 4,
+      "cadastral_area_number": 52
     }
   },
   {
@@ -343,7 +358,8 @@
     "pk": 8,
     "fields": {
       "name": "Богородский район",
-      "region": 4
+      "region": 4,
+      "cadastral_area_number": 52
     }
   },
   {
@@ -351,7 +367,8 @@
     "pk": 9,
     "fields": {
       "name": "Дюртюлинский район",
-      "region": 5
+      "region": 5,
+      "cadastral_area_number": 2
     }
   },
   {
@@ -359,7 +376,8 @@
     "pk": 10,
     "fields": {
       "name": "Кушнаренковский район",
-      "region": 5
+      "region": 5,
+      "cadastral_area_number": 73
     }
   },
   {
@@ -367,7 +385,8 @@
     "pk": 11,
     "fields": {
       "name": "Ленинский район",
-      "region": 6
+      "region": 6,
+      "cadastral_area_number": 19
     }
   },
   {
@@ -375,7 +394,8 @@
     "pk": 12,
     "fields": {
       "name": "Наро-Фоминский район",
-      "region": 6
+      "region": 6,
+      "cadastral_area_number": 50
     }
   },
   {
@@ -383,7 +403,8 @@
     "pk": 13,
     "fields": {
       "name": "Кинель-Черкасский район",
-      "region": 7
+      "region": 7,
+      "cadastral_area_number": 63
     }
   },
   {
@@ -391,7 +412,8 @@
     "pk": 14,
     "fields": {
       "name": "Большечерниговский район",
-      "region": 7
+      "region": 7,
+      "cadastral_area_number": 15
     }
   },
   {
@@ -399,7 +421,8 @@
     "pk": 15,
     "fields": {
       "name": "Бахчисарайский район",
-      "region": 8
+      "region": 8,
+      "cadastral_area_number": 82
     }
   },
   {
@@ -407,7 +430,8 @@
     "pk": 16,
     "fields": {
       "name": "Раздольненский район",
-      "region": 8
+      "region": 8,
+      "cadastral_area_number": 82
     }
   },
   {
@@ -734,6 +758,118 @@
     "pk": 4,
     "fields": {
       "purpose": "Жилой многоэтажный дом"
+    }
+  },
+  {
+    "model": "zakaz.department",
+    "pk": 1,
+    "fields": {
+      "region": 1,
+      "name": "Государственная служба геодезии и картографии",
+      "director_position": "Директор",
+      "director_name": "Трофим",
+      "director_surname": "Белорусов",
+      "director_patronymic": "Федорович",
+      "phone_number": "+7 (951) 426-87-69",
+      "email": "trofim3763@mail.ru"
+    }
+  },
+  {
+    "model": "zakaz.department",
+    "pk": 2,
+    "fields": {
+      "region": 2,
+      "name": "Федеральное агентство по геодезии и картографии",
+      "director_position": "Руководитель",
+      "director_name": "Антон",
+      "director_surname": "Янушевский",
+      "director_patronymic": "Степанович",
+      "phone_number": "+7 (955) 799-17-96",
+      "email": "anton3057@rambler.ru"
+    }
+  },
+  {
+    "model": "zakaz.department",
+    "pk": 3,
+    "fields": {
+      "region": 3,
+      "name": "Изыскательское управление территории и подземных ресурсов",
+      "director_position": "Начальник",
+      "director_name": "Мила",
+      "director_surname": "Портнова",
+      "director_patronymic": "Георгьевна",
+      "phone_number": "+7 (915) 548-71-42",
+      "email": "mila7302@mail.ru"
+    }
+  },
+  {
+    "model": "zakaz.department",
+    "pk": 4,
+    "fields": {
+      "region": 4,
+      "name": "Управление геодезии и кадастра",
+      "director_position": "Руководитель",
+      "director_name": "Даниил",
+      "director_surname": "Ядрихинский",
+      "director_patronymic": "Семенович",
+      "phone_number":  "+7 (930) 663-87-25",
+      "email": "daniil5573@rambler.ru"
+    }
+  },
+  {
+    "model": "zakaz.department",
+    "pk": 5,
+    "fields": {
+      "region": 5,
+      "name": "Федеральная служба геологии и изыскательных работ",
+      "director_position": "Главный геолог",
+      "director_name": "Константин",
+      "director_surname": "Толбугин",
+      "director_patronymic" : "Яковлевич",
+      "phone_number": "+7 (911) 875-53-53",
+      "email": "konstantin4748@outlook.com"
+    }
+  },
+  {
+    "model": "zakaz.department",
+    "pk": 6,
+    "fields": {
+      "region": 6,
+      "name": "Департамент геодезии и геоинформатики",
+      "director_position": "Начальник",
+      "director_name": "Нонна",
+      "director_surname": "Цельнера",
+      "director_patronymic": "Ивановна",
+      "phone_number": "+7 (989) 248-24-77",
+      "email": "nonna87@ya.ru"
+    }
+  },
+  {
+    "model": "zakaz.department",
+    "pk": 7,
+    "fields": {
+      "region": 7,
+      "name": "Управление инженерных изысканий и геодезии",
+      "director_position": "Руководитель",
+      "director_name": "Зоя",
+      "director_surname": "Медведкова",
+      "director_patronymic": "Прокопьевна",
+      "phone_number": "+7 (918) 103-84-91",
+      "email": "zoya56@gmail.com"
+    }
+  },
+  {
+    "model": "zakaz.department",
+    "pk": 8,
+    "fields": {
+      "region": 8,
+      "name": "Государственный комитет геологии и недропользования",
+      "director_position": "Глава",
+      "director_name": "Сюзанна",
+      "director_surname": "Булка",
+      "director_patronymic": "Валерьевна",
+      "phone_number": "+7 (921) 149-60-47",
+      "email": "syuzanna03011987@hotmail.com"
     }
   }
 ]

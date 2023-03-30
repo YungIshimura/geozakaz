@@ -1,9 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
+from pytils.translit import slugify
+from django.utils.crypto import get_random_string
 
 
-# Create your models here.
 class User(AbstractUser):
     patronymic = models.CharField(
         'Отчество',
@@ -26,10 +27,14 @@ class User(AbstractUser):
         null=True
     )
     company_number_slug = models.SlugField(
-        'Уникальный номер заказа',
+        'Уникальный номер компании',
         max_length=8,
         unique=True,
         db_index=True,
         blank=True,
         null=True
     )
+
+    def save(self, *args, **kwargs):
+        self.company_slug = slugify(self.company_name)
+        super().save(*args, **kwargs)
