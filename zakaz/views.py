@@ -7,7 +7,7 @@ from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from .validators import validate_number
-from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm, CadastralNumberForm
+from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm, CadastralNumberForm, CreateObjectNameForm
 from .models import OrderFile, TypeWork, Order, Region, Area as area
 from django.contrib import messages
 from rosreestr2coord import Area
@@ -110,50 +110,75 @@ def view_change_order_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     type_works = TypeWork.objects.all().filter(orders=order)
-    # map_html = get_map(order.cadastral_number)
+    map_html = get_map(order.cadastral_number)
     if request.method == 'POST':
-        order_form = OrderChangeStatusForm(request.POST, instance=order)
-        if order_form.is_valid():
-            order = order_form.save()
+        objectname_form = CreateObjectNameForm(request.POST, instance=order)
+        # order_form = OrderChangeStatusForm(request.POST, instance=order)
+        if objectname_form.is_valid():
+            order = objectname_form.save()
 
             company_number_slug = order.user.company_number_slug
             return redirect(reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
-            # return HttpResponseRedirect(reverse('zakaz:order_pages'))
     else:
         order_form = OrderChangeStatusForm(instance=order)
+        objectname_form = CreateObjectNameForm(instance=order)
 
     context = {
         'files': files,
         'order_form': order_form,
+        'objectname_form': objectname_form,
         'order': order,
         'type_works': type_works,
-        # 'map_html': map_html
+        'map_html': map_html
     }
 
     return render(request, 'change_order_status.html', context=context)
 
 
-def get_map(number):
+# def get_map(number):
+#     points = []
+#     area = Area(number, with_proxy=False)
+#     coordinates = area.get_coord()
+#     if coordinates:
+#         for coordinate in coordinates:
+#             for addresses in coordinate:
+#                 m = folium.Map(
+#                     (addresses[0][1], addresses[0][0]), zoom_start=16)
+#                 for pt in addresses:
+#                     place_lat = [pt[1] for pt in addresses]
+#                     place_lng = [pt[0] for pt in addresses]
+#
+#                     for i in range(len(place_lat)):
+#                         points.append([place_lat[i], place_lng[i]])
+#                     folium.PolyLine(points, color='red').add_to(m)
+#
+#         folium.PolyLine(points, color='red').add_to(m)
+#     else:
+#         m = folium.Map(location=[5976857.455632876,
+#                        4331295.852266274], zoom_start=16)
+#     map_html = m._repr_html_()
+#     return map_html
+
+def get_map(number_list):
     points = []
-    area = Area(number, with_proxy=False)
-    coordinates = area.get_coord()
-    if coordinates:
-        for coordinate in coordinates:
-            for addresses in coordinate:
-                m = folium.Map(
-                    (addresses[0][1], addresses[0][0]), zoom_start=16)
-                for pt in addresses:
-                    place_lat = [pt[1] for pt in addresses]
-                    place_lng = [pt[0] for pt in addresses]
+    m = folium.Map(location=[55.7558, 37.6173], zoom_start=6)
+    for number in number_list:
+        area = Area(number, with_proxy=False)
+        coordinates = area.get_coord()
+        if coordinates:
+            for coordinate in coordinates:
+                for addresses in coordinate:
+                    for pt in addresses:
+                        place_lat = [pt[1] for pt in addresses]
+                        place_lng = [pt[0] for pt in addresses]
 
-                    for i in range(len(place_lat)):
-                        points.append([place_lat[i], place_lng[i]])
-                    folium.PolyLine(points, color='red').add_to(m)
+                        for i in range(len(place_lat)):
+                            points.append([place_lat[i], place_lng[i]])
+                        folium.PolyLine(points, color='red').add_to(m)
 
-        folium.PolyLine(points, color='red').add_to(m)
-    else:
-        m = folium.Map(location=[5976857.455632876,
-                       4331295.852266274], zoom_start=16)
+            folium.PolyLine(points, color='red').add_to(m)
+            bounds = [[min(place_lat), min(place_lng)], [max(place_lat), max(place_lng)]]
+            m.fit_bounds(bounds)
     map_html = m._repr_html_()
     return map_html
 
@@ -249,7 +274,7 @@ def download_igi_docx(request, pk):
             '_имя_руководителя_ведомства': department.director_name,
             '_название_объекта_полное': order.object_name,
             '_местоположение_объекта': location,
-            '_кадастровый_номер': order.cadastral_number,
+            '_кадастровый_номер': ', '.join(order.cadastral_number),
             '_обзорная_схема': 'схема',
             '_таблица_координат': 'координаты'
         }
