@@ -33,7 +33,7 @@
                                             {% csrf_token %}
                                             <input type="text" name="cadastral_number"
                                                    placeholder="Введите кадастровый номер" id="id_cadastral_number">
-                                            <select multiple  class='select form-select' name='select' style='overflow:hidden; display: none;'
+                                            <select multiple  class='select form-select disabled' name='select' style='overflow:hidden; display: none;'
                                                     required='' id='select'>
                                             </select>
                                             <br>
@@ -89,8 +89,8 @@
             };
 
             $('#id_cadastral_number').keyup(function () {
-                button = document.getElementById('btn');
-                select = document.getElementById('select');
+                button = document.getElementById('btn');    
+                select = document.getElementById('select');;
                 $.ajax({
                     data: $(this).serialize(),
                     url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
@@ -98,7 +98,8 @@
                         if (response.is_valid == true) {
                             button.disabled = false;
                             select.style.cssText = 'display:block; overflow:hidden';
-                        } else {
+                        } 
+                        else {
                             button.disabled = true;
                         }
                     },
