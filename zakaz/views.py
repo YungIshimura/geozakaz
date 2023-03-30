@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from django.core.exceptions import ValidationError
+
+from .rosreestr2 import GetArea
 from .validators import validate_number
 from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm, CadastralNumberForm, CreateObjectNameForm
 from .models import OrderFile, TypeWork, Order, Region, Area as area
@@ -16,7 +18,6 @@ import os
 from docx import Document
 from django.http import HttpResponse
 from django.conf import settings
-
 
 User = get_user_model()
 
@@ -93,7 +94,7 @@ def view_order(request, company_slug, company_number_slug):
 
     else:
         order_form = OrderForm(initial={'cadastral_number': cadastral_number,
-                               'region': cadastral_region.id, 'area': cadastral_area.id})
+                                        'region': cadastral_region.id, 'area': cadastral_area.id})
         order_files_form = OrderFileForm()
 
     context['user_company'] = user_company
@@ -174,8 +175,8 @@ def get_map(number_list):
     all_place_lat = []
     all_place_lng = []
     for number in number_list:
-        area = Area(number, with_proxy=False)
-        coordinates = area.get_coord()
+        areas = GetArea(number)
+        coordinates = areas.get_coord()
         if coordinates:
             for coordinate in coordinates:
                 for addresses in coordinate:
@@ -201,6 +202,7 @@ def get_map(number_list):
     m.fit_bounds(bounds)
     map_html = m._repr_html_()
     return map_html
+
 
 # Выгрузка DOCX
 def replace_placeholders(paragraph, placeholders):
