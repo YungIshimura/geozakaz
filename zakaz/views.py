@@ -6,14 +6,12 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from django.core.exceptions import ValidationError
-from rosreestr2coord import Area
 
 from .rosreestr2 import GetArea
 from .validators import validate_number
 from .forms import OrderForm, OrderFileForm, CadastralNumberForm, CreateObjectNameForm
 from .models import OrderFile, Order, Region, Area as area
 from django.contrib import messages
-from rosreestr2coord import Area
 import folium
 import io
 import os
@@ -32,15 +30,6 @@ def ajax_validate_cadastral_number(request):
         response = {
             'is_valid': True
         }
-        for number in cadastral_number:
-            while True:
-                areas = GetArea(number)
-                coordinates = areas.get_coord()
-                for coordinate in coordinates:
-                    for i in coordinate:
-                        print(coordinates)
-                        if len(i) > 2:
-                            return False
 
     except ValidationError:
         response = {
@@ -81,17 +70,18 @@ def view_order(request, company_slug, company_number_slug):
         cadastral_region_number=cadastral_numbers[0].split(':')[0])
     cadastral_area = area.objects.get(
         cadastral_area_number=cadastral_numbers[0].split(':')[1])
-
-    areas = GetArea(cadastral_numbers)
-    coordinates = areas.get_coord()
+    coordinates = []
+    for number in cadastral_numbers:
+        areas = GetArea(number)
+        coordinates = areas.get_coord()
+    area_map = get_map(cadastral_numbers)
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
-        area_map = get_map(cadastral_numbers)
         if order_form.is_valid() and order_files_form.is_valid():
             order = order_form.save()
             order.user = user_company
-            order.map = area_map
+            # order.map = area_map
             order.coordinates = coordinates
             order.save()
             for file in request.FILES.getlist('file'):
@@ -153,30 +143,6 @@ def view_change_order_status(request, order_id):
 
     return render(request, 'change_order_status.html', context=context)
 
-
-# def get_map(number):
-#     points = []
-#     area = GetArea(number[0])
-#     coordinates = area.get_coord()
-#     if coordinates:
-#         for coordinate in coordinates:
-#             for addresses in coordinate:
-#                 m = folium.Map(
-#                     (addresses[0][1], addresses[0][0]), zoom_start=16)
-#                 for pt in addresses:
-#                     place_lat = [pt[1] for pt in addresses]
-#                     place_lng = [pt[0] for pt in addresses]
-#
-#                     for i in range(len(place_lat)):
-#                         points.append([place_lat[i], place_lng[i]])
-#                     folium.PolyLine(points, color='red').add_to(m)
-#
-#         folium.PolyLine(points, color='red').add_to(m)
-#     else:
-#         m = folium.Map(location=[5976857.455632876,
-#                        4331295.852266274], zoom_start=16)
-#     map_html = m._repr_html_()
-#     return map_html
 
 def get_map(number_list):
     m = folium.Map(location=[55.7558, 37.6173], zoom_start=6)
