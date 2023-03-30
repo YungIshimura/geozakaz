@@ -158,25 +158,35 @@ def view_change_order_status(request, order_id):
 #     return map_html
 
 def get_map(number_list):
-    points = []
     m = folium.Map(location=[55.7558, 37.6173], zoom_start=6)
+    all_place_lat = []
+    all_place_lng = []
     for number in number_list:
         area = Area(number, with_proxy=False)
         coordinates = area.get_coord()
         if coordinates:
             for coordinate in coordinates:
                 for addresses in coordinate:
+                    points = []
                     for pt in addresses:
-                        place_lat = [pt[1] for pt in addresses]
-                        place_lng = [pt[0] for pt in addresses]
+                        place_lat = pt[1]
+                        place_lng = pt[0]
+                        all_place_lat.append(place_lat)
+                        all_place_lng.append(place_lng)
+                        points.append([place_lat, place_lng])
+                    folium.Polygon(points, color='red', fill=True, fill_opacity=0.2).add_to(m)
 
-                        for i in range(len(place_lat)):
-                            points.append([place_lat[i], place_lng[i]])
-                        folium.PolyLine(points, color='red').add_to(m)
+                    center_point_x = area.center['x'],
+                    center_point_y = area.center['y'],
 
-            folium.PolyLine(points, color='red').add_to(m)
-            bounds = [[min(place_lat), min(place_lng)], [max(place_lat), max(place_lng)]]
-            m.fit_bounds(bounds)
+                    folium.Marker([center_point_y[0], center_point_x[0]],
+                                  popup=f"Участок {number}").add_to(m)
+
+    bounds = [[min(all_place_lat), min(all_place_lng)], [max(all_place_lat), max(all_place_lng)]]
+    center_lat = (bounds[0][0] + bounds[1][0]) / 2
+    center_lng = (bounds[0][1] + bounds[1][1]) / 2
+    m.location = [center_lat, center_lng]
+    m.fit_bounds(bounds)
     map_html = m._repr_html_()
     return map_html
 
