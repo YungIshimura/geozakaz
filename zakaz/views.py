@@ -7,8 +7,8 @@ from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from .validators import validate_number
-from .forms import OrderForm, OrderFileForm, OrderChangeStatusForm, CadastralNumberForm, CreateObjectNameForm
-from .models import OrderFile, TypeWork, Order, Region, Area as area
+from .forms import OrderForm, OrderFileForm, CadastralNumberForm, CreateObjectNameForm
+from .models import OrderFile, Order, Region, Area as area
 from django.contrib import messages
 from rosreestr2coord import Area
 import folium
@@ -43,10 +43,11 @@ def view_order_cadastral(request, company_slug, company_number_slug):
     if request.method == 'POST':
         form = CadastralNumberForm(request.POST)
         if form.is_valid():
-            cadastral_number = request.POST.getlist('select')
+            cadastral_numbers = request.POST.getlist('select')
             response = HttpResponseRedirect(
-                reverse('zakaz:order', args=[company_slug, company_number_slug]))
-            response.set_cookie('cadastral_number', cadastral_number)
+                reverse('zakaz:order',
+                        args=[company_slug, company_number_slug]))
+            response.set_cookie('cadastral_numbers', cadastral_numbers)
             return response
 
     else:
@@ -60,13 +61,14 @@ def view_order_cadastral(request, company_slug, company_number_slug):
 @login_required(login_url='users:user_login')
 def view_order(request, company_slug, company_number_slug):
     user_company = get_object_or_404(
-        User, company_number_slug=company_number_slug)
+        User, company_number_slug=company_number_slug
+    )
     context = {}
-    cadastral_number = eval(request.COOKIES.get('cadastral_number'))
+    cadastral_numbers = eval(request.COOKIES.get('cadastral_numbers'))
     cadastral_region = Region.objects.get(
-        cadastral_region_number=cadastral_number[0].split(':')[0])
+        cadastral_region_number=cadastral_numbers[0].split(':')[0])
     cadastral_area = area.objects.get(
-        cadastral_area_number=cadastral_number[0].split(':')[1])
+        cadastral_area_number=cadastral_numbers[0].split(':')[1])
 
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
@@ -80,8 +82,10 @@ def view_order(request, company_slug, company_number_slug):
             messages.success(request, 'Ваша заявка отправлена')
 
     else:
-        order_form = OrderForm(initial={'cadastral_number': cadastral_number,
-                               'region': cadastral_region.id, 'area': cadastral_area.id})
+        order_form = OrderForm(initial={
+            'cadastral_numbers': cadastral_numbers,
+            'region': cadastral_region.id,
+            'area': cadastral_area.id})
         order_files_form = OrderFileForm()
 
     context['user_company'] = user_company
@@ -95,7 +99,9 @@ def view_order(request, company_slug, company_number_slug):
 def view_order_pages(request, company_number_slug):
     orders = Order.objects.filter(
         user__company_number_slug=company_number_slug
-    ).select_related('city', 'area', 'region', 'purpose_building', 'work_objective', 'user')
+    ).select_related(
+        'city', 'area', 'region', 'purpose_building', 'work_objective', 'user'
+    )
     context = {
         "orders": orders,
     }
@@ -105,7 +111,9 @@ def view_order_pages(request, company_number_slug):
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_change_order_status(request, order_id):
-    order = get_object_or_404(Order.objects.select_related('city', 'area', 'region', 'purpose_building', 'work_objective', 'user'), id=order_id)
+    order = get_object_or_404(Order.objects.select_related(
+        'city', 'area', 'region', 'purpose_building', 'work_objective', 'user'),
+        id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     map_html = get_map(order.cadastral_number)
     if request.method == 'POST':
@@ -113,13 +121,15 @@ def view_change_order_status(request, order_id):
         if objectname_form.is_valid():
             order = objectname_form.save()
             company_number_slug = order.user.company_number_slug
-            return redirect(reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
+            return redirect(
+                reverse('zakaz:order_pages',
+                        kwargs={'company_number_slug': company_number_slug}))
     else:
         objectname_form = CreateObjectNameForm(instance=order)
 
     context = {
         'files': files,
-        'objectname_form': objectname_form,
+        'object_name_form': objectname_form,
         'order': order,
         'map_html': map_html
     }
@@ -168,7 +178,8 @@ def get_map(number_list):
                         all_place_lat.append(place_lat)
                         all_place_lng.append(place_lng)
                         points.append([place_lat, place_lng])
-                    folium.Polygon(points, color='red', fill=True, fill_opacity=0.2).add_to(m)
+                    folium.Polygon(points, color='red', fill=True,
+                                   fill_opacity=0.2).add_to(m)
 
                     center_point_x = area.center['x'],
                     center_point_y = area.center['y'],
@@ -176,7 +187,8 @@ def get_map(number_list):
                     folium.Marker([center_point_y[0], center_point_x[0]],
                                   popup=f"Участок {number}").add_to(m)
 
-    bounds = [[min(all_place_lat), min(all_place_lng)], [max(all_place_lat), max(all_place_lng)]]
+    bounds = [[min(all_place_lat), min(all_place_lng)], [
+        max(all_place_lat), max(all_place_lng)]]
     center_lat = (bounds[0][0] + bounds[1][0]) / 2
     center_lng = (bounds[0][1] + bounds[1][1]) / 2
     m.location = [center_lat, center_lng]
