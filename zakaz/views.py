@@ -122,8 +122,7 @@ def view_change_order_status(request, order_id):
             order = objectname_form.save()
             company_number_slug = order.user.company_number_slug
             return redirect(
-                reverse('zakaz:order_pages',
-                        kwargs={'company_number_slug': company_number_slug}))
+                reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
     else:
         objectname_form = CreateObjectNameForm(instance=order)
 
@@ -131,7 +130,8 @@ def view_change_order_status(request, order_id):
         'files': files,
         'object_name_form': objectname_form,
         'order': order,
-        'map_html': map_html
+        'map_html': map_html,
+        'lengt_unit': order.get_length_unit_display()
     }
 
     return render(request, 'change_order_status.html', context=context)
