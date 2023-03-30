@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from django.core.exceptions import ValidationError
+from rosreestr2coord import Area
 
 from .rosreestr2 import GetArea
 from .validators import validate_number
@@ -148,7 +149,7 @@ def view_change_order_status(request, order_id):
 
 # def get_map(number):
 #     points = []
-#     area = Area(number, with_proxy=False)
+#     area = GetArea(number[0])
 #     coordinates = area.get_coord()
 #     if coordinates:
 #         for coordinate in coordinates:
@@ -189,8 +190,8 @@ def get_map(number_list):
                         points.append([place_lat, place_lng])
                     folium.Polygon(points, color='red', fill=True, fill_opacity=0.2).add_to(m)
 
-                    center_point_x = area.center['x'],
-                    center_point_y = area.center['y'],
+                    center_point_x = areas.center['x'],
+                    center_point_y = areas.center['y'],
 
                     folium.Marker([center_point_y[0], center_point_x[0]],
                                   popup=f"Участок {number}").add_to(m)

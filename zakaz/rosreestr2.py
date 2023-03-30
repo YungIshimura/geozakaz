@@ -9,7 +9,7 @@ from rosreestr2coord.utils import xy2lonlat
 
 class GetArea(Area):
     def __init__(self, code):
-        super().__init__(code)
+        super().__init__(code, use_cache=True)
         self.code = code
         # self.timeout = timeout
 
