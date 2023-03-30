@@ -40,7 +40,7 @@
                                             <br>
                                             <div style='display:flex; justify-content: space-evenly;'>
                                                 <button type="submit" style='background-color: #012970;' class='btn btn-primary'>Отправить</button>
-                                                <button type='button' style='width: 25px; color: white; background-color: #012970;' id='btn' disabled
+                                                <button type='button' style='width: 25px; color: white; background-color: #012970;' onclick='AddCadastralNumber()' id='btn' disabled
                                                 class='btn'>+</button>
                                             </div>
                                         </form> 
@@ -72,20 +72,21 @@
 
         </section>
         <script>
-            let addAudit = function () {
+            function GetSelectOption () {
                 let cadastral_number = document.getElementById("id_cadastral_number");
                 let option = document.createElement('option');
+                let button = document.getElementById('btn')
+                button.disabled = true;
                 option.text = cadastral_number.value;
                 option.selected = true;
                 document.querySelector('#select').add(option);
             };
 
-            document.onclick = function () {
-                let elem = window.event.srcElement;
-                if (elem.className === "btn") {
-                    addAudit();
-                    document.getElementById('id_cadastral_number').value = ''
-                }
+            function AddCadastralNumber() {
+                GetSelectOption();
+                select.style.cssText = 'display:block; overflow:hidden';
+                document.getElementById('id_cadastral_number').value = ''
+                
             };
 
             $('#id_cadastral_number').keyup(function () {
@@ -97,7 +98,6 @@
                     success: function (response) {
                         if (response.is_valid == true) {
                             button.disabled = false;
-                            select.style.cssText = 'display:block; overflow:hidden';
                         } 
                         else {
                             button.disabled = true;
