@@ -144,6 +144,15 @@
                         {% endfor %}
                         <div class="input-file-list"></div>
                     </div>
+                    <div class="card">
+
+                        <div class="card-body">
+                            <h5 class="card-title" style="padding: 0 0 15px 0;"></h5>
+                            {{ map_html | safe }}
+                        </div>
+
+                    </div>
+
                 </div>
                 <div class="col-sm-6">
                     <div class="card">
@@ -282,12 +291,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-6 mb-sm-0">
-                    <button type="submit" class="btn btn-secondary btn-lg"
-                            style="width: auto; background-color: #012970;">СОХРАНИТЬ
-                    </button>
-                </div>
+            <div class="row justify-content-end">
                 <div class="col-sm-6">
                     <div class="card">
                         {% if order.object_name %}
@@ -314,14 +318,21 @@
                         {% endif %}
                     </div>
                 </div>
-
             </div>
-            {{ order_form.errors }}
+            <div class="row">
+                <div class="col-sm-6 mb-sm-0 text-center">
+{#                    <button type="submit" class="btn btn-secondary btn-lg"#}
+{#                            style="width: auto; background-color: #012970;">СОХРАНИТЬ#}
+{#                    </button>#}
+                    <button type="submit" class="btn btn-bd-primary w-50">СОХРАНИТЬ
+                    </button>
+                </div>
+            </div>
         </form>
     </section>
-    <div style="margin-top: 50px; max-width: 700px; max-height: 700px;">
-        {{ map_html | safe }}
-    </div>
+{#    <div style="margin-top: 50px; max-width: 700px; max-height: 700px;">#}
+{#        {{ map_html | safe }}#}
+{#    </div>#}
 
     <script src="{% static 'js/application.js' %}"></script>
 {% endblock %}
