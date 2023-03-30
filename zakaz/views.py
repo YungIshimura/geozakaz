@@ -106,28 +106,22 @@ def view_order_pages(request, company_number_slug):
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_change_order_status(request, order_id):
     order = get_object_or_404(Order.objects.select_related('city', 'area', 'region', 'purpose_building', 'work_objective', 'user'), id=order_id)
-    # files = OrderFile.objects.select_related('order').filter(order=order.pk)
-    # type_works = TypeWork.objects.all().filter(orders=order)
-    # map_html = get_map(order.cadastral_number)
-    # if request.method == 'POST':
-    #     objectname_form = CreateObjectNameForm(request.POST, instance=order)
-    #     # order_form = OrderChangeStatusForm(request.POST, instance=order)
-    #     if objectname_form.is_valid():
-    #         order = objectname_form.save()
-
-    #         company_number_slug = order.user.company_number_slug
-    #         return redirect(reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
-    # else:
-    #     order_form = OrderChangeStatusForm(instance=order)
-    #     objectname_form = CreateObjectNameForm(instance=order)
+    files = OrderFile.objects.select_related('order').filter(order=order.pk)
+    map_html = get_map(order.cadastral_number)
+    if request.method == 'POST':
+        objectname_form = CreateObjectNameForm(request.POST, instance=order)
+        if objectname_form.is_valid():
+            order = objectname_form.save()
+            company_number_slug = order.user.company_number_slug
+            return redirect(reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
+    else:
+        objectname_form = CreateObjectNameForm(instance=order)
 
     context = {
-        # 'files': files,
-        # 'order_form': order_form,
-        # 'objectname_form': objectname_form,
-        'order': order
-        # 'type_works': type_works,
-        # 'map_html': map_html
+        'files': files,
+        'objectname_form': objectname_form,
+        'order': order,
+        'map_html': map_html
     }
 
     return render(request, 'change_order_status.html', context=context)
