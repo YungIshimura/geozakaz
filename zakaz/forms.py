@@ -169,7 +169,7 @@ class OrderChangeStatusForm(forms.ModelForm):
     cadastral_number = forms.CharField(
         validators=[validate_number],
         widget=forms.TextInput(attrs={'placeholder': 'Кадастровый номер'}),
-        disabled=True
+        disabled=True,
     )
 
     street = forms.CharField(widget=forms.TextInput(
@@ -185,8 +185,7 @@ class OrderChangeStatusForm(forms.ModelForm):
     building = forms.IntegerField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Корпус/Строение'}),
-        disabled=True,
-        required=False
+        disabled=True
     )
 
     square = forms.IntegerField(
@@ -228,8 +227,7 @@ class OrderChangeStatusForm(forms.ModelForm):
     height = forms.IntegerField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Высота'}),
-        disabled=True,
-        required=False
+        disabled=True
     )
 
     height_unit = forms.ChoiceField(
@@ -241,8 +239,7 @@ class OrderChangeStatusForm(forms.ModelForm):
 
     comment = forms.CharField(
         widget=forms.Textarea(attrs={'placeholder': 'Комментарий к заказу'}),
-        disabled=True,
-        required=False
+        disabled=True
     )
 
     name = forms.CharField(
@@ -278,7 +275,6 @@ class OrderChangeStatusForm(forms.ModelForm):
         queryset=PurposeBuilding.objects.all(),
         widget=forms.Select(),
         disabled=True,
-        required=False
     )
     work_objective = forms.ModelChoiceField(
         queryset=WorkObjective.objects.all(),
@@ -307,7 +303,7 @@ class OrderChangeStatusForm(forms.ModelForm):
         fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
                   'square', 'square_unit', 'length', 'length_unit', 'width', 'width_unit', 'height', 'height_unit',
                   'comment', 'name', 'surname', 'user_purpose_building',
-                  'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective', 'object_name')
+                  'father_name', 'phone_number', 'email', 'purpose_building', 'work_objective')
 
     def __init__(self, *args, **kwargs):
         super(OrderChangeStatusForm, self).__init__(*args, **kwargs)
@@ -319,3 +315,11 @@ class OrderChangeStatusForm(forms.ModelForm):
         self.fields['width_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['purpose_building'].widget.attrs['class'] = 'form-select'
         self.fields['work_objective'].widget.attrs['class'] = 'form-select'
+
+
+class CreateObjectNameForm(forms.ModelForm):
+
+    class Meta:
+        model = Order
+        fields = ('object_name',)
+        widgets = {'object_name': forms.TextInput(attrs={'class': 'form-control'})}
