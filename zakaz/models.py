@@ -33,6 +33,7 @@ class Region(models.Model):
         blank=True,
         null=True
     )
+
     def __str__(self):
         return self.name
 
@@ -153,7 +154,7 @@ class Order(models.Model):
     cadastral_number = ArrayField(models.CharField(
         'Кадастровый номер',
         max_length=50,
-    ),blank=True, null=True)
+    ), blank=True, null=True)
     region = models.ForeignKey(
         Region,
         related_name='orders',
@@ -266,6 +267,23 @@ class Order(models.Model):
     object_name = models.CharField(
         'Название объекта',
         max_length=200,
+        blank=True,
+        null=True
+    )
+
+    coordinates = ArrayField(
+        ArrayField(
+            models.CharField(
+                'Координаты',
+                max_length=100,
+                blank=True,
+                null=True),
+        )
+    )
+
+    map = models.CharField(
+        'Карта',
+        max_length=5000,
         blank=True,
         null=True
     )

@@ -8,10 +8,10 @@ from rosreestr2coord.utils import xy2lonlat
 
 
 class GetArea(Area):
-    def __init__(self, code, timeout):
+    def __init__(self, code):
         super().__init__(code)
         self.code = code
-        self.timeout = timeout
+        # self.timeout = timeout
 
     def download_feature_info(self):
         search_url = self.feature_info_url + self.clear_code(self.code)
