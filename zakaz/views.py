@@ -81,13 +81,17 @@ def view_order(request, company_slug, company_number_slug):
         cadastral_region_number=cadastral_number[0].split(':')[0])
     cadastral_area = area.objects.get(
         cadastral_area_number=cadastral_number[0].split(':')[1])
-
+    areas = GetArea(cadastral_number)
+    coordinates = areas.get_coord()
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
+        area_map = get_map(cadastral_number)
         if order_form.is_valid() and order_files_form.is_valid():
             order = order_form.save()
             order.user = user_company
+            order.map = area_map
+            order.coordinates = coordinates
             order.save()
             for file in request.FILES.getlist('file'):
                 OrderFile.objects.create(order=order, file=file)
@@ -122,8 +126,7 @@ def view_change_order_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     type_works = TypeWork.objects.all().filter(orders=order)
-    a = ['24:39:0101001:369', '61:58:0002046:11']
-    map_html = get_map(a)
+    map_html = get_map(order.cadastral_number)
     if request.method == 'POST':
         order_form = OrderChangeStatusForm(request.POST, instance=order)
         if order_form.is_valid():
@@ -151,7 +154,6 @@ def get_map(number_list):
     for number in number_list:
         areas = GetArea(number)
         coordinates = areas.get_coord()
-        print(coordinates)
         if coordinates:
             for coordinate in coordinates:
                 for addresses in coordinate:
@@ -167,7 +169,6 @@ def get_map(number_list):
             bounds = [[min(place_lat), min(place_lng)], [max(place_lat), max(place_lng)]]
             m.fit_bounds(bounds)
     map_html = m._repr_html_()
-    print(type(map_html))
     return map_html
 
 # # Выгрузка DOCX

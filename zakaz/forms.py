@@ -138,7 +138,7 @@ class OrderForm(forms.ModelForm):
         fields = ('cadastral_number', 'region', 'area', 'city', 'street', 'house_number', 'building',
                   'square', 'square_unit', 'length', 'length_unit', 'width', 'width_unit', 'height', 'height_unit',
                   'type_work', 'comment', 'name', 'surname', 'father_name', 'phone_number', 'email',
-                  'purpose_building', 'user_purpose_building', 'work_objective')
+                  'purpose_building', 'user_purpose_building', 'work_objective', 'map', 'coordinates')
 
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)

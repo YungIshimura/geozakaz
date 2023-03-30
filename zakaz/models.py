@@ -271,15 +271,11 @@ class Order(models.Model):
         null=True
     )
 
-    coordinates = ArrayField(
-        ArrayField(
-            models.CharField(
-                'Координаты',
-                max_length=100,
-                blank=True,
-                null=True),
-        )
-    )
+    coordinates = models.CharField(
+        'Координаты',
+        max_length=1000,
+        blank=True,
+        null=True)
 
     map = models.CharField(
         'Карта',
