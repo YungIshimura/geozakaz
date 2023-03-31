@@ -150,7 +150,7 @@ def view_change_order_status(request, order_id):
             order = objectname_form.save()
             company_number_slug = order.user.company_number_slug
             return redirect(
-                reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
+                reverse('zakaz:change_order_status', kwargs={'order_id': order_id}))
     else:
         objectname_form = CreateObjectNameForm(instance=order)
 
@@ -187,8 +187,8 @@ def get_map(number_list, order_id):
                     folium.Polygon(points, color='red', fill=True,
                                    fill_opacity=0.2).add_to(m)
 
-                    center_point_lng = area.center['x'],
-                    center_point_lat = area.center['y'],
+                    center_point_lng = areas.center['x'],
+                    center_point_lat = areas.center['y'],
                     folium.Marker([center_point_lat[0], center_point_lng[0]],
                                   popup=f"Участок {number}").add_to(m)
 
@@ -208,6 +208,7 @@ def get_map(number_list, order_id):
 
 
 # Выгрузка DOCX
+# Замена заполнителей значениями в абзаце.
 def replace_placeholders(paragraph, placeholders):
     for placeholder, value in placeholders.items():
         if placeholder in paragraph.text:
@@ -238,7 +239,7 @@ def replace_placeholders_in_footer(document, placeholders):
             replace_placeholders(paragraph, placeholders)
 
 
-# Замена слов по ключам в параграфах, заголовках и таблицах
+# Замена заполнителей значениями во всех абзацах и таблицах документа
 def replace_placeholders_in_document(document, placeholders):
     for paragraph in document.paragraphs:
         replace_placeholders(paragraph, placeholders)
@@ -247,10 +248,11 @@ def replace_placeholders_in_document(document, placeholders):
         replace_placeholders_in_table(table, placeholders)
 
     replace_placeholders_in_footer(document, placeholders)
+
     return document
 
 
-# Генерация нового документа
+# Генерация нового документа с заменой заполнителей значениями.
 def generate_docx(document_path, placeholders):
     document = Document(document_path)
     replace_placeholders_in_document(document, placeholders)
@@ -271,8 +273,6 @@ def download_docx(request, document_name, document_path, placeholders):
     )
     response['Content-Disposition'] = f'attachment; filename="{document_name}.docx"'
     return response
-
-
 
 
 # Скачиваем ШИФР-ИГИ
@@ -309,7 +309,7 @@ def download_igi_docx(request, pk):
             '_имя_руководителя_ведомства': department.director_name,
             '_название_объекта_полное': order.object_name,
             '_местоположение_объекта': location,
-            '_кадастровый_номер': ', '.join(order.cadastral_number),
+            '_кадастровый_номер': ', '.join(order.cadastral_numbers),
             '_обзорная_схема': screenshot,
             '_таблица_координат': 'координаты',
             '_шифр-тема': date_now
