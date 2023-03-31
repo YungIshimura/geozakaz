@@ -70,11 +70,13 @@ def view_order(request, company_slug, company_number_slug):
         cadastral_region_number=cadastral_numbers[0].split(':')[0])
     cadastral_area = area.objects.get(
         cadastral_area_number=cadastral_numbers[0].split(':')[1])
+
     coordinates = []
     for number in cadastral_numbers:
         areas = GetArea(number)
         coordinates = areas.get_coord()
     area_map = get_map(cadastral_numbers)
+
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
@@ -87,8 +89,8 @@ def view_order(request, company_slug, company_number_slug):
             for file in request.FILES.getlist('file'):
                 OrderFile.objects.create(order=order, file=file)
             messages.success(request, 'Ваша заявка отправлена')
-        else:
-            print(order_form.errors)
+
+            return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
     else:
         order_form = OrderForm(initial={
             'cadastral_numbers': cadastral_numbers,
