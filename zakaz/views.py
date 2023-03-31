@@ -23,6 +23,16 @@ from django.conf import settings
 User = get_user_model()
 
 
+def ajax_download_map(request):
+    cadastral_number = request.POST.get('cadastral_number', None)
+    response = {
+            'is_valid': True
+        }
+    GetArea(cadastral_number)
+
+    return JsonResponse(response)
+
+
 def ajax_validate_cadastral_number(request):
     cadastral_number = request.GET.get('cadastral_number', None)
     try:
@@ -30,7 +40,6 @@ def ajax_validate_cadastral_number(request):
         response = {
             'is_valid': True
         }
-        areas = GetArea(cadastral_number)
     except ValidationError:
         response = {
             'is_valid': False
