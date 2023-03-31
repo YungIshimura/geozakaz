@@ -1,7 +1,9 @@
 from django.urls import path
 
-from zakaz.views import view_order_pages, view_change_order_status, view_order_cadastral, view_order, download_igi_docx, \
-    ajax_validate_cadastral_number
+from zakaz.views import (view_order_pages, view_change_order_status, view_order_cadastral,
+                         view_order,
+                         download_igi_docx,
+                         ajax_validate_cadastral_number)
 
 app_name = 'zakaz'
 
