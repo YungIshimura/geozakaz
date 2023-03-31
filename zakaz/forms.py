@@ -18,7 +18,7 @@ class OrderForm(forms.ModelForm):
     cadastral_numbers = SimpleArrayField(forms.CharField(
         validators=[validate_number],
         widget=forms.TextInput(attrs={'placeholder': 'Кадастровый номер'}),
-        required=True
+        required=True,
     ))
 
     street = forms.CharField(
@@ -148,6 +148,7 @@ class OrderForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
+        self.fields['cadastral_numbers'].widget.attrs['readonly'] = True
         self.fields['length_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['height_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['square_unit'].widget.attrs['class'] = 'custom-btn-check'

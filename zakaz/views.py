@@ -92,7 +92,7 @@ def view_order(request, company_slug, company_number_slug):
                     OrderFile.objects.create(order=order, file=file)
                 messages.success(request, 'Ваша заявка отправлена')
 
-                return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
+                return redirect(request.path)
 
             else:
                 messages.error(request, 'Проверьте правильность введённых данных')
