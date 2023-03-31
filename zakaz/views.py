@@ -56,7 +56,7 @@ def view_order_cadastral(request, company_slug, company_number_slug):
 
     context['form'] = form
 
-    return render(request, 'customer_home.html', context=context)
+    return render(request, 'zakaz/customer_home.html', context=context)
 
 
 @login_required(login_url='users:user_login')
@@ -107,7 +107,7 @@ def view_order(request, company_slug, company_number_slug):
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
 
-    return render(request, 'order.html', context=context)
+    return render(request, 'zakaz/order.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
@@ -121,7 +121,7 @@ def view_order_pages(request, company_number_slug):
         "orders": orders,
     }
 
-    return render(request, 'order_pages.html', context=context)
+    return render(request, 'zakaz/order_pages.html', context=context)
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
@@ -149,7 +149,7 @@ def view_change_order_status(request, order_id):
         'lengt_unit': order.get_length_unit_display()
     }
 
-    return render(request, 'change_order_status.html', context=context)
+    return render(request, 'zakaz/change_order_status.html', context=context)
 
 
 def get_map(number_list):
