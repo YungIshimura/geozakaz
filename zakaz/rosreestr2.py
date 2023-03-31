@@ -4,7 +4,7 @@ import os
 from rosreestr2coord import Area
 from rosreestr2coord.merge_tiles import PkkAreaMerger
 from PIL import Image
-from rosreestr2coord.utils import xy2lonlat
+from rosreestr2coord.utils import xy2lonlat, TimeoutException
 
 
 class GetArea(Area):
@@ -14,27 +14,55 @@ class GetArea(Area):
         # self.timeout = timeout
 
     def download_feature_info(self):
-        search_url = self.feature_info_url + self.clear_code(self.code)
-        self.log("Start downloading area info: %s" % search_url)
-        resp = self.make_request(search_url)
-        data = json.loads(resp.decode("utf-8"))
-        if data:
-            feature = data.get("feature")
-            if feature:
-                attrs = feature.get("attrs")
-                if attrs:
-                    self.attrs = attrs
-                    self.code_id = attrs["id"]
-                if feature.get("extent"):
-                    self.extent = feature["extent"]
-                if feature.get("center"):
-                    x = feature["center"]["x"]
-                    y = feature["center"]["y"]
-                    if self.coord_out == "EPSG:4326":
-                        (x, y) = xy2lonlat(x, y)
-                    self.center = {"x": x, "y": y}
-                    self.attrs["center"] = self.center
-            return feature
+        feature_info_path = os.path.join(self.workspace, "feature_info.json")
+        data = False
+        if feature_info_path:
+            try:
+                with open(feature_info_path, "r") as data_file:
+                    data = json.loads(data_file.read())
+            except Exception:
+                pass
+        try:
+            if not data:
+                search_url = self.feature_info_url + self.clear_code(self.code)
+                self.log("Start downloading area info: %s" % search_url)
+                resp = self.make_request(search_url)
+                data = json.loads(resp.decode("utf-8"))
+                if data and "feature" in data:
+                    feature = data["feature"]
+                    if feature:
+                        self.log("Area info downloaded.")
+                        with open(feature_info_path, "w") as outfile:
+                            json.dump(data, outfile)
+                    else:
+                        self.log(
+                            "Area info is not loaded. Check the area type and try again"
+                        )
+            else:
+                self.log("Area info loaded from file: {}".format(feature_info_path))
+            if data:
+                feature = data.get("feature")
+                if feature:
+                    attrs = feature.get("attrs")
+                    if attrs:
+                        self.attrs = attrs
+                        self.code_id = attrs["id"]
+                    if feature.get("extent"):
+                        self.extent = feature["extent"]
+                    if feature.get("center"):
+                        x = feature["center"]["x"]
+                        y = feature["center"]["y"]
+                        if self.coord_out == "EPSG:4326":
+                            (x, y) = xy2lonlat(x, y)
+                        self.center = {"x": x, "y": y}
+                        self.attrs["center"] = self.center
+                return feature
+        except TimeoutException:
+            raise TimeoutException()
+        except Exception as error:
+            self.error(error)
+            raise error
+        return False
 
     def parse_geometry_from_image(self):
         formats = ["png"]
