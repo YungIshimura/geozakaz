@@ -17,12 +17,14 @@
                                 <img src="{% static 'img/logo.png' %}" alt="">
                                 <span class="d-none d-lg-block">Геозаказ</span>
                             </a>
-                        </div><!-- End Logo -->
+                        </div>
 
-                        <div class="card mb-3">
-
+                        <div class="card mb-3"> 
+                            <div class="alert alert-danger text-center" style='display:none;' id='test'>
+                                <span>Проверьте правильность введённых данных</span>
+                                <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>
+                            </div>
                             <div class="card-body">
-
                                 <div class="pt-4 pb-2">
                                     <p class="text-center">Введите кадастровый(ые) номер(а)</p>
                                 </div>
@@ -70,36 +72,23 @@
             </div>
 
         </section>
+        <script src="{% static 'js/customer_home.js' %}"></script>
         <script>
-            function GetSelectOption () {
-                let cadastral_number = document.getElementById("id_cadastral_number");
-                let option = document.createElement('option');
-                let button = document.getElementById('btn')
-                button.disabled = true;
-                option.text = cadastral_number.value;
-                option.selected = true;
-                document.querySelector('#select').add(option);
-            };
-
-            function AddCadastralNumber() {
-                GetSelectOption();
-                select.style.cssText = 'display:block; overflow:hidden';
-                document.getElementById('id_cadastral_number').value = ''
-                
-            };
-
             $('#id_cadastral_number').keyup(function () {
                 button = document.getElementById('btn');    
-                select = document.getElementById('select');;
+                select = document.getElementById('select');
+                test = document.getElementById('test')
                 $.ajax({
                     data: $(this).serialize(),
                     url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
                     success: function (response) {
                         if (response.is_valid == true) {
                             button.disabled = false;
+                            setTimeout(() => { test.style.cssText = 'display:none;'; }, 1500);
                         } 
                         else {
                             button.disabled = true;
+                            setTimeout(() => { test.style.cssText = 'display:block;'; }, 1500);
                         }
                     },
                     error: function (response) {
