@@ -21,8 +21,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="{{ form.cadastral_number.id_for_label }}">Кадастровый номер</label>
-                                {% for cadastral_number in order.cadastral_number %}
-                                <input class='form-control' disabled value='{{ order.cadastral_number }}'></input>
+                                {% for cadastral_number in order.cadastral_numbers %}
+                                <input class='form-control' disabled value='{{ order.cadastral_numbers }}'></input>
                                 {% endfor %}
                             </div>
                             <div>

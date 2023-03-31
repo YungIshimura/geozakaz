@@ -136,7 +136,7 @@ class OrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ('cadastral_number', 'region', 'area', 'city', 'street',
+        fields = ('cadastral_numbers', 'region', 'area', 'city', 'street',
                   'house_number', 'building', 'square', 'square_unit', 'length',
                   'length_unit', 'width', 'width_unit', 'height', 'height_unit',
                   'type_work', 'comment', 'name', 'surname', 'father_name',

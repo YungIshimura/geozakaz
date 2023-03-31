@@ -151,10 +151,10 @@ class Order(models.Model):
         max_length=254,
         blank=True
     )
-    cadastral_number = ArrayField(models.CharField(
+    cadastral_numbers = ArrayField(models.CharField(
         'Кадастровый номер',
         max_length=50,
-    ), blank=True, null=True)
+    ), blank=True, null=True, verbose_name='Кадастровые номера')
     region = models.ForeignKey(
         Region,
         related_name='orders',

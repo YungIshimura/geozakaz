@@ -22,7 +22,7 @@
         {% for order in orders %}
             <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
                 <th style='max-width:260px;'>
-                    {% for cadastral_number in order.cadastral_number %}
+                    {% for cadastral_number in order.cadastral_numbers %}
                         | {{ cadastral_number }} |
                     {% endfor %}
                 </th>

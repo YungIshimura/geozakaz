@@ -87,7 +87,8 @@ def view_order(request, company_slug, company_number_slug):
             for file in request.FILES.getlist('file'):
                 OrderFile.objects.create(order=order, file=file)
             messages.success(request, 'Ваша заявка отправлена')
-
+        else:
+            print(order_form.errors)
     else:
         order_form = OrderForm(initial={
             'cadastral_numbers': cadastral_numbers,
@@ -122,7 +123,7 @@ def view_change_order_status(request, order_id):
         'city', 'area', 'region', 'purpose_building', 'work_objective', 'user'),
         id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
-    map_html = get_map(order.cadastral_number)
+    map_html = get_map(order.cadastral_numbers)
     if request.method == 'POST':
         objectname_form = CreateObjectNameForm(request.POST, instance=order)
         if objectname_form.is_valid():
