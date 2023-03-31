@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'zakaz',
     'users',
-    'smart_selects'
+    'smart_selects',
+    'tinymce'
 ]
 
 MIDDLEWARE = [

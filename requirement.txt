@@ -9,3 +9,5 @@ django-smart-selects==1.6.0
 rosreestr2coord==4.1.6
 folium==0.14.0
 python-docx==0.8.11
+selenium==4.8.3
+django-tinymce==3.6.1

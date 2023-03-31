@@ -10,6 +10,7 @@ urlpatterns = [
     path('', include('users.urls', namespace='users')),
     path('__debug__/', include('debug_toolbar.urls')),
     path('chaining/', include('smart_selects.urls')),
+    path('tinymce/', include('tinymce.urls')),
 ]
 
 if settings.DEBUG:

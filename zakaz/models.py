@@ -277,10 +277,11 @@ class Order(models.Model):
         blank=True,
         null=True)
 
-    map = models.FileField(
-        'Карта'
+    map = models.TextField(
+        'Карта участка',
+        null=True,
+        blank=True
     )
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', null=True, blank=True)
 
     def __str__(self):
