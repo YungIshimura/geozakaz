@@ -30,7 +30,7 @@ def ajax_validate_cadastral_number(request):
         response = {
             'is_valid': True
         }
-
+        areas = GetArea(cadastral_number)
     except ValidationError:
         response = {
             'is_valid': False
