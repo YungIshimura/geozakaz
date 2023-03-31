@@ -15,7 +15,6 @@ class GetArea(Area):
 
     def download_feature_info(self):
         feature_info_path = os.path.join(self.workspace, "feature_info.json")
-        print(feature_info_path)
         data = False
         if feature_info_path:
             try:
