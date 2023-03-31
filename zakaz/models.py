@@ -4,6 +4,7 @@ from smart_selects.db_fields import ChainedForeignKey
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
+from tinymce.models import HTMLField
 
 User = get_user_model()
 
@@ -268,6 +269,11 @@ class Order(models.Model):
         max_length=200,
         blank=True,
         null=True
+    )
+    map = models.TextField(
+        'Карта участка',
+        null=True,
+        blank=True
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', null=True, blank=True)

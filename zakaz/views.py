@@ -1,4 +1,6 @@
 import datetime
+
+from bs4 import BeautifulSoup
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect
@@ -6,6 +8,8 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from django.core.exceptions import ValidationError
+from docx.shared import Inches
+
 from .validators import validate_number
 from .forms import OrderForm, OrderFileForm, CadastralNumberForm, CreateObjectNameForm
 from .models import OrderFile, Order, Region, Area as area
@@ -17,7 +21,10 @@ import os
 from docx import Document
 from django.http import HttpResponse
 from django.conf import settings
-
+from selenium import webdriver
+from urllib.parse import quote as urlquote
+from io import BytesIO
+from PIL import Image
 
 User = get_user_model()
 
@@ -115,14 +122,16 @@ def view_change_order_status(request, order_id):
         'city', 'area', 'region', 'purpose_building', 'work_objective', 'user'),
         id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
-    map_html = get_map(order.cadastral_number)
+    map_html = get_map(order.cadastral_number, order_id)
     if request.method == 'POST':
         objectname_form = CreateObjectNameForm(request.POST, instance=order)
         if objectname_form.is_valid():
             order = objectname_form.save()
-            company_number_slug = order.user.company_number_slug
+            # company_number_slug = order.user.company_number_slug
+            # return redirect(
+            #     reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
             return redirect(
-                reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
+                reverse('zakaz:change_order_status', kwargs={'order_id': order_id}))
     else:
         objectname_form = CreateObjectNameForm(instance=order)
 
@@ -161,8 +170,10 @@ def view_change_order_status(request, order_id):
 #     map_html = m._repr_html_()
 #     return map_html
 
-def get_map(number_list):
+def get_map(number_list, order_id):
     m = folium.Map(location=[55.7558, 37.6173], zoom_start=6)
+    m.get_root().html.add_child(
+        folium.Element("<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
     all_place_lat = []
     all_place_lng = []
     for number in number_list:
@@ -181,10 +192,10 @@ def get_map(number_list):
                     folium.Polygon(points, color='red', fill=True,
                                    fill_opacity=0.2).add_to(m)
 
-                    center_point_x = area.center['x'],
-                    center_point_y = area.center['y'],
+                    center_point_lng = area.center['x'],
+                    center_point_lat = area.center['y'],
 
-                    folium.Marker([center_point_y[0], center_point_x[0]],
+                    folium.Marker([center_point_lat[0], center_point_lng[0]],
                                   popup=f"Участок {number}").add_to(m)
 
     bounds = [[min(all_place_lat), min(all_place_lng)], [
@@ -193,34 +204,64 @@ def get_map(number_list):
     center_lng = (bounds[0][1] + bounds[1][1]) / 2
     m.location = [center_lat, center_lng]
     m.fit_bounds(bounds)
+
+    # m.save('map.html')
+
     map_html = m._repr_html_()
+
+    order = get_object_or_404(Order, id=order_id)
+    order.map = map_html
+    order.save()
+
     return map_html
 
 
 # Выгрузка DOCX
+# Замена заполнителей значениями в абзаце.
 def replace_placeholders(paragraph, placeholders):
     for placeholder, value in placeholders.items():
         if placeholder in paragraph.text:
             for run in paragraph.runs:
                 if placeholder in run.text:
-                    run.text = run.text.replace(placeholder, value)
+                    if placeholder == '_обзорная_схема':
+                        run.text = ""
+                        width, height = Image.open(value).size
+                        run.add_picture(value, width=Inches(width / 192), height=Inches(height / 192))
+                    else:
+                        run.text = run.text.replace(placeholder, value)
 
 
-# Замена слов по ключам в параграфах, заголовках и таблицах
+# Замена заполнителей значениями в таблице.
+def replace_placeholders_in_table(table, placeholders):
+    for row in table.rows:
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                replace_placeholders(paragraph, placeholders)
+
+
+# Замена заполнителей значениями в футере документа.
+def replace_placeholders_in_footer(document, placeholders):
+    sections = document.sections
+    for section in sections:
+        footer = section.footer
+        for paragraph in footer.paragraphs:
+            replace_placeholders(paragraph, placeholders)
+
+
+# Замена заполнителей значениями во всех абзацах и таблицах документа
 def replace_placeholders_in_document(document, placeholders):
     for paragraph in document.paragraphs:
         replace_placeholders(paragraph, placeholders)
 
     for table in document.tables:
-        for row in table.rows:
-            for cell in row.cells:
-                for paragraph in cell.paragraphs:
-                    replace_placeholders(paragraph, placeholders)
+        replace_placeholders_in_table(table, placeholders)
+
+    replace_placeholders_in_footer(document, placeholders)
 
     return document
 
 
-# Генерация нового документа
+# Генерация нового документа с заменой заполнителей значениями.
 def generate_docx(document_path, placeholders):
     document = Document(document_path)
     replace_placeholders_in_document(document, placeholders)
@@ -243,27 +284,6 @@ def download_docx(request, document_name, document_path, placeholders):
     return response
 
 
-# Скачиваем ШИФР-ИГДИ
-# def download_igdi_docx(request):
-#     document_name = 'igdi'
-#     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
-#     placeholders = {
-#         '_шифр-игди': 'Какой-то шифр ИГДИ',
-#         '_должность_руководителя_ведомства': 'Директор',
-#         '_название_ведомства': 'Ведомство всех ведомств',
-#         '_фио_руководителя_ведомства': 'Иванов Иван Иванович',
-#         '_тел_ведомства': '8 900 000 00 00',
-#         '_почта_ведомства': 'vedomstvo@example.com',
-#         '_дата_текущая': datetime.datetime.now().strftime("%Y-%m-%d"),
-#         '_имя_руководителя_ведомства': 'Иван',
-#         '_название_объекта_полное': 'Объект какой-то там',
-#         '_кадастровый_номер': '47:23:0604008:451',
-#         '_обзорная_схема': 'схема',
-#         '_таблица_координат': 'координаты'
-#     }
-#     return download_docx(request, document_name, document_path, placeholders)
-
-
 # Скачиваем ШИФР-ИГИ
 def download_igi_docx(request, pk):
     order = get_object_or_404(Order, pk=pk)
@@ -273,12 +293,22 @@ def download_igi_docx(request, pk):
         location += f" {order.building}"
 
     date = datetime.datetime.now()
+    date_now = f"{date.strftime('%Y%m%d')}-{order.pk:03d}"
+
+    html_map = order.map
+
+    data_url = 'data:text/html;charset=utf-8,{}'.format(urlquote(html_map))
+
+    driver = webdriver.Chrome()
+    driver.get(data_url)
+    screenshot = BytesIO(driver.get_screenshot_as_png())
+    driver.quit()
 
     document_name = 'igi'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
     if department:
         placeholders = {
-            '_шифр-иги': f"{date.strftime('%Y%m%d')}-{order.pk:03d}",
+            '_шифр-иги': date_now,
             '_должность_руководителя_ведомства': department.director_position,
             '_название_ведомства': department.name,
             '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
@@ -289,8 +319,9 @@ def download_igi_docx(request, pk):
             '_название_объекта_полное': order.object_name,
             '_местоположение_объекта': location,
             '_кадастровый_номер': ', '.join(order.cadastral_number),
-            '_обзорная_схема': 'схема',
-            '_таблица_координат': 'координаты'
+            '_обзорная_схема': screenshot,
+            '_таблица_координат': 'координаты',
+            '_шифр-тема': date_now
         }
     else:
         placeholders = {}
