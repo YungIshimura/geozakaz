@@ -113,5 +113,25 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
   });
 
-
+function ValueReplace () {
+	regex = /[a-zA-Z0-9-@"№#!;$%^:&?*({,><~_=+`|/.../^\x5c})]+$/;
+	let name = document.getElementById('id_name');
+	let surname = document.getElementById('id_surname');
+	let father_name = document.getElementById('id_father_name');
+	let user_purpose_building = document.getElementById('id_user_purpose_building')
+	name.oninput = function (){
+		this.value = this.value.replace(regex, '')
+	}
+	surname.oninput = function (){
+		this.value = this.value.replace(regex, '')
+	}
+	father_name.oninput = function (){
+		this.value = this.value.replace(regex, '')
+	}
+	user_purpose_building.oninput = function (){
+		this.value = this.value.replace(regex, '')
+	}
+}
 window.onload = DisableFloor()
+window.onload = ValueReplace()
+

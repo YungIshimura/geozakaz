@@ -147,3 +147,8 @@ input[type='radio']:checked::after {
 .leaflet-control-attribution {
 visibility: hidden !important;
 }
+
+#id_cadastral_numbers, #id_region, #id_area {
+	background-color: lightgrey;
+	pointer-events: none;
+}
