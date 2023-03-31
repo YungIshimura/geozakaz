@@ -110,7 +110,7 @@ class OrderForm(forms.ModelForm):
 
     phone_number = forms.CharField(
         widget=forms.TextInput(
-            attrs={'placeholder': 'Введите номер телефона'}),
+            attrs={'placeholder': '+79001232222'}),
         required=True
     )
 

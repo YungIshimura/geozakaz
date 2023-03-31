@@ -61,36 +61,41 @@ def view_order_cadastral(request, company_slug, company_number_slug):
 
 @login_required(login_url='users:user_login')
 def view_order(request, company_slug, company_number_slug):
+    coordinates = []
+    context = {}
+
     user_company = get_object_or_404(
         User, company_number_slug=company_number_slug
     )
-    context = {}
+
     cadastral_numbers = eval(request.COOKIES.get('cadastral_numbers'))
     cadastral_region = Region.objects.get(
         cadastral_region_number=cadastral_numbers[0].split(':')[0])
     cadastral_area = area.objects.get(
         cadastral_area_number=cadastral_numbers[0].split(':')[1])
 
-    coordinates = []
     for number in cadastral_numbers:
         areas = GetArea(number)
         coordinates = areas.get_coord()
     area_map = get_map(cadastral_numbers)
 
     if request.method == 'POST':
-        order_form = OrderForm(request.POST)
-        order_files_form = OrderFileForm(request.POST, request.FILES)
-        if order_form.is_valid() and order_files_form.is_valid():
-            order = order_form.save()
-            order.user = user_company
-            # order.map = area_map
-            order.coordinates = coordinates
-            order.save()
-            for file in request.FILES.getlist('file'):
-                OrderFile.objects.create(order=order, file=file)
-            messages.success(request, 'Ваша заявка отправлена')
+            order_form = OrderForm(request.POST)
+            order_files_form = OrderFileForm(request.POST, request.FILES)
+            if order_form.is_valid() and order_files_form.is_valid():
+                order = order_form.save()
+                order.user = user_company
+                # order.map = area_map
+                order.coordinates = coordinates
+                order.save()
+                for file in request.FILES.getlist('file'):
+                    OrderFile.objects.create(order=order, file=file)
+                messages.success(request, 'Ваша заявка отправлена')
 
-            return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
+                return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
+
+            else:
+                messages.error(request, 'Проверьте правильность введённых данных')
     else:
         order_form = OrderForm(initial={
             'cadastral_numbers': cadastral_numbers,
