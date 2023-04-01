@@ -24,7 +24,7 @@
                                 <label for="{{ form.cadastral_number.id_for_label }}">Кадастровый номер</label>
 
                                 <input class='form-control' disabled
-                                       value='{% for cadastral_number in order.cadastral_number %} | {{ cadastral_number }} | {% endfor %}'>
+                                       value='{% for cadastral_number in order.cadastral_numbers %} | {{ cadastral_number }} | {% endfor %}'>
                             </div>
                             <div>
                                 <div class="card-title">
