@@ -1,4 +1,6 @@
 import datetime
+import json
+
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect
@@ -89,7 +91,7 @@ def view_order(request, company_slug, company_number_slug):
 
     for number in cadastral_numbers:
         areas = GetArea(number)
-        coordinates = areas.get_coord()
+        coordinates += areas.get_coord()
     # area_map = get_map(cadastral_numbers)
 
     if request.method == 'POST':
@@ -297,6 +299,15 @@ def download_igi_docx(request, pk):
     screenshot = BytesIO(driver.get_screenshot_as_png())
     driver.quit()
 
+    cadastral_nambers = order.cadastral_numbers
+    coordinates = json.loads(order.coordinates)
+
+    data = []
+    for i, number in enumerate(cadastral_nambers):
+        data.append(f"{number}: {coordinates[i][0]}")
+
+    formatted_data = '\n'.join(data)
+
     document_name = 'igi'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
     if department:
@@ -313,7 +324,7 @@ def download_igi_docx(request, pk):
             '_местоположение_объекта': location,
             '_кадастровый_номер': ', '.join(order.cadastral_numbers),
             '_обзорная_схема': screenshot,
-            '_таблица_координат': 'координаты',
+            '_таблица_координат': formatted_data,
             '_шифр-тема': date_now
         }
     else:
