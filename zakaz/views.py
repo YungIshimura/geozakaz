@@ -100,6 +100,8 @@ def view_order(request, company_slug, company_number_slug):
                 order.user = user_company
                 # order.map = area_map
                 order.coordinates = coordinates
+                order.map = get_map(order.cadastral_numbers)
+
                 order.save()
                 for file in request.FILES.getlist('file'):
                     OrderFile.objects.create(order=order, file=file)
@@ -143,7 +145,7 @@ def view_change_order_status(request, order_id):
         'city', 'area', 'region', 'purpose_building', 'work_objective', 'user'),
         id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
-    map_html = get_map(order.cadastral_numbers, order.id)
+    map_html = get_map(order.cadastral_numbers)
     if request.method == 'POST':
         objectname_form = CreateObjectNameForm(request.POST, instance=order)
         if objectname_form.is_valid():
@@ -165,7 +167,7 @@ def view_change_order_status(request, order_id):
     return render(request, 'zakaz/change_order_status.html', context=context)
 
 
-def get_map(number_list, order_id):
+def get_map(number_list):
     m = folium.Map(location=[55.7558, 37.6173], zoom_start=6)
     m.get_root().html.add_child(
         folium.Element("<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
@@ -200,9 +202,9 @@ def get_map(number_list, order_id):
     m.fit_bounds(bounds)
     map_html = m._repr_html_()
 
-    order = get_object_or_404(Order, id=order_id)
-    order.map = map_html
-    order.save()
+    # order = get_object_or_404(Order, id=order_id)
+    # order.map = map_html
+    # order.save()
 
     return map_html
 
