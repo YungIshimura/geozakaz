@@ -15,6 +15,7 @@ from .forms import OrderForm, OrderFileForm, CadastralNumberForm, CreateObjectNa
 from .models import OrderFile, Order, Region, Area as area
 from django.contrib import messages
 import folium
+from folium import plugins
 import io
 import os
 from docx import Document
@@ -32,8 +33,8 @@ User = get_user_model()
 def ajax_download_map(request):
     cadastral_number = request.POST.get('cadastral_number', None)
     response = {
-            'is_valid': True
-        }
+        'is_valid': True
+    }
     GetArea(cadastral_number)
 
     return JsonResponse(response)
@@ -95,24 +96,24 @@ def view_order(request, company_slug, company_number_slug):
     # area_map = get_map(cadastral_numbers)
     
     if request.method == 'POST':
-            order_form = OrderForm(request.POST)
-            order_files_form = OrderFileForm(request.POST, request.FILES)
-            if order_form.is_valid() and order_files_form.is_valid():
-                order = order_form.save()
-                order.user = user_company
-                # order.map = area_map
-                order.coordinates = coordinates
-                order.map = get_map(order.cadastral_numbers)
+        order_form = OrderForm(request.POST)
+        order_files_form = OrderFileForm(request.POST, request.FILES)
+        if order_form.is_valid() and order_files_form.is_valid():
+            order = order_form.save()
+            order.user = user_company
+            # order.map = area_map
+            order.coordinates = coordinates
+            order.map = get_map(order.cadastral_numbers)
 
-                order.save()
-                for file in request.FILES.getlist('file'):
-                    OrderFile.objects.create(order=order, file=file)
-                messages.success(request, 'Ваша заявка отправлена')
+            order.save()
+            for file in request.FILES.getlist('file'):
+                OrderFile.objects.create(order=order, file=file)
+            messages.success(request, 'Ваша заявка отправлена')
 
-                return redirect(request.path)
+            return redirect(request.path)
 
-            else:
-                messages.error(request, 'Проверьте правильность введённых данных')
+        else:
+            messages.error(request, 'Проверьте правильность введённых данных')
     else:
         order_form = OrderForm(initial={
             'cadastral_numbers': cadastral_numbers,
@@ -170,9 +171,15 @@ def view_change_order_status(request, order_id):
 
 
 def get_map(number_list):
-    m = folium.Map(location=[55.7558, 37.6173], zoom_start=6)
+    m = folium.Map(location=[55.7558, 37.6173], zoom_start=6, zoom_control=False,
+                   control_scale=True,
+                   )
+
+    m.options.update({'max_width': '100%'})
     m.get_root().html.add_child(
         folium.Element("<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
+
+
     all_place_lat = []
     all_place_lng = []
     for number in number_list:
@@ -188,14 +195,18 @@ def get_map(number_list):
                         all_place_lat.append(place_lat)
                         all_place_lng.append(place_lng)
                         points.append([place_lat, place_lng])
-                    folium.Polygon(points, color='red', fill=True,
-                                   fill_opacity=0.2).add_to(m)
+                    folium.Polygon(points, color='red').add_to(m)
 
                     center_point_lng = areas.center['x'],
                     center_point_lat = areas.center['y'],
-                    folium.Marker([center_point_lat[0], center_point_lng[0]],
-                                  popup=f"Участок {number}").add_to(m)
+                    folium.CircleMarker(
+                        location=[center_point_lat[0], center_point_lng[0]],
+                        popup=folium.Popup(f':{number.split(":")[-1]}', show=True),
+                        opacity=0,
+                    ).add_to(m)
 
+    m.get_root().html.add_child(
+        folium.Element("<style>.leaflet-popup-close-button {display: none;}</style>"))
     bounds = [[min(all_place_lat), min(all_place_lng)], [
         max(all_place_lat), max(all_place_lng)]]
     center_lat = (bounds[0][0] + bounds[1][0]) / 2
