@@ -24,13 +24,13 @@ def login_user(request):
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
         if form.is_valid():
-            username_or_email = form.cleaned_data.get('username_or_email')
+            email_or_phone = form.cleaned_data.get('email_or_phone')
             password = form.cleaned_data.get('password')
             company_slug = request.session.get('company_slug', None)
             company_number_slug = request.session.get('company_number_slug', None)
 
             # Аутентификация пользователя
-            user = authenticate(request, username=username_or_email, password=password)
+            user = authenticate(request, username=email_or_phone, password=password)
 
             if user is not None:
                 # Аутентификация прошла успешно
@@ -62,11 +62,11 @@ def login_company(request):
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
         if form.is_valid():
-            username_or_email = form.cleaned_data.get('username_or_email')
+            email_or_phone = form.cleaned_data.get('email_or_phone')
             password = form.cleaned_data.get('password')
 
             # Аутентификация пользователя
-            user = authenticate(request, username=username_or_email, password=password)
+            user = authenticate(request, username=email_or_phone, password=password)
 
             if user is not None:
                 if user.is_staff:
@@ -95,13 +95,23 @@ def register_user(request):
     form = UserRegistrationForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        username = form.cleaned_data.get('username')
+        email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password1')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
         login(request, user)
 
         messages.success(request, 'Вы успешно зарегистрировались')
-        return redirect('users:stub_page')
+
+        company_slug = request.session.get('company_slug', None)
+        company_number_slug = request.session.get('company_number_slug', None)
+        return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
+
+    previous_url = request.META.get('HTTP_REFERER')
+    path_parts = urlparse(previous_url).path.split('/')
+    company_slug = path_parts[2]
+    company_number_slug = path_parts[3]
+    request.session['company_slug'] = company_slug
+    request.session['company_number_slug'] = company_number_slug
 
     context = {
         'form': form,
@@ -123,4 +133,4 @@ def logout_account(request):
 
 # Пользовательское соглашение
 def view_agreement(request):
-    return render(request, 'user_agreement.html', {'title': 'Пользовательское соглашение'})
+    return render(request, 'zakaz/user_agreement.html', {'title': 'Пользовательское соглашение'})

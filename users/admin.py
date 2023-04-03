@@ -6,14 +6,16 @@ from django.utils.translation import gettext_lazy as _
 
 # Register your models here.
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'phone', 'company_slug', 'company_number_slug', 'first_name', 'last_name', 'patronymic', 'is_staff')
+    list_display = ('email', 'phone_number', 'company_slug', 'company_number_slug', 'is_staff')
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'patronymic', 'email', 'phone', 'company_slug', 'company_number_slug', 'company_name')}),
+        (None, {'fields': ('email', 'password')}),
+        (_('Personal info'), {'fields': (
+            'first_name', 'last_name', 'phone_number', 'company_slug', 'company_number_slug', 'company_name')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
+    ordering = ['email']
 
 
 admin.site.register(User, CustomUserAdmin)
