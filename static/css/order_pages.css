@@ -1,0 +1,11 @@
+/*.container span {*/
+/*    display: none;*/
+/*}*/
+
+/*.container span:nth-child {*/
+/*    display: inline-block;*/
+/*}*/
+
+.js-show{
+    opacity: 60%;
+}
