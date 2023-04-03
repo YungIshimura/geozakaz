@@ -2,42 +2,46 @@
 {% load static %}
 
 {% block title %}
-{{ title }}
+    {{ title }}
 {% endblock %}
 
 {% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
     <table class="table" style="color: grey">
         <thead>
         <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
-            <th scope="col">Кадастровый номер</th>
-            <th scope="col">Тип работ</th>
-            <th scope="col">Регион</th>
-            <th scope="col">Город</th>
-            <th scope="col">Район</th>
+            <th scope="col">Номер заявки</th>
             <th scope="col">Дата заявки</th>
-            <th scope="col">Ссылка на админку</th>
+            <th scope="col">Регион</th>
+            <th scope="col">Район</th>
+            <th scope="col">Город</th>
+            <th scope="col">Кадастровый номер</th>
+            <th scope="col">ФИО Заказчика</th>
+            <th scope="col">Ссылка на заявку</th>
         </tr>
         </thead>
         <tbody>
         {% for order in orders %}
             <tr style="border-bottom-color: #2D9CDB; border-width: 0 0 2px 0;">
-                <th style='max-width:260px;'>
-                    {% for cadastral_number in order.cadastral_numbers %}
-                        | {{ cadastral_number }} |
-                    {% endfor %}
-                </th>
-                <td>
-                    {% for work in order.type_work.values %}
-                        {{ work.type }}<br>
-                        {% endfor %}</td>
-                <td>{{ order.region }}</td>
-                <td>{{ order.city }}</td>
-                <td>{{ order.area }}</td>
+                <td>{{ order.date.year }}{{ order.date.month }}{{ order.date.day }}-{{ order.pk }}</td>
                 <td>{{ order.date.date }}</td>
-                <td><a href="{% url 'zakaz:change_order_status' order.id %}" class="link-primary">Подробнее</a></td>
+                <td>{{ order.region }}</td>
+                <td>{{ order.area }}</td>
+                <td>{{ order.city }}</td>
+                <th>
+                    <div class="cadastral_number">
+                        {% for cadastral_number in order.cadastral_numbers %}
+                            <span>{{ cadastral_number }}<br></span>
+                        {% endfor %}
+                    </div>
+                </th>
+                <td>{{ order.surname }}{{ order.name }}{{ order.father_name }}</td>
+                <td><a href="{% url 'zakaz:change_order_status' order.id %}" class="link-primary">Перейти в заявку</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
+        <script src="{% static 'js/order_pages.js' %}"></script>
 {% endblock %}
