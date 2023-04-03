@@ -3,6 +3,7 @@
 
 {% block content %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'js/customer_home.js' %}"></script>
     <div class="container">
 
         <section class="section register d-flex flex-column align-items-center justify-content-center py-4" style='min-height:85vh;'>
@@ -20,44 +21,41 @@
                         </div>
 
                         <div class="card mb-3"> 
-                            <div class="alert alert-danger text-center" style='display:none;' id='test'>
+                            <div class="alert alert-danger text-center" style='display:none;' id='input__error'>
                                 <span>Проверьте правильность введённых данных</span>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style='min-width:430px;'>
                                 <div class="pt-4 pb-2">
-                                    <p class="text-center">Введите кадастровый(ые) номер(а)</p>
+                                    <p class="text-center">Введите кадастровый номер или адрес участка. Есть выписка / техническое задание?<br>Просто перетащите на это окно</p>
                                 </div>
                                 <div class="col-12 cadastal-container">
                                     <div class="search-bar">
                                         <form class="search-form  align-items-center" method="POST"
                                               action="#">
                                             {% csrf_token %}
-                                            <input type="text" name="cadastral_number"
-                                                   placeholder="Введите кадастровый номер" id="id_cadastral_number">
-                                            <select multiple  class='select form-select disabled' name='select' style='overflow:hidden; display: none;'
-                                                    required='' id='select'>
-                                            </select>
+                                            <div class="input-group mb-3">
+                                                <input type="text" name="cadastral_number"
+                                                    placeholder="Введите кадастровый номер или адрес участка" id="id_cadastral_number">
+                                                <div class="input-group-append">
+                                                    <button type='submit' style='position:absolute; right:5px; width: 30px; height:30px; margin-top:3.5px; color: white; background-color: #012970;'  onclick='AddCadastralNumber();' id='btn' disabled
+                                                            class='btn btn-outline-secondary custom-btn'>+</button>
+                                                </div>
+                                            </div>
+
+                                            <a href='#' class='#'>Загрузить выписку / техническое задание</a>
                                             <br>
                                             <br>
-                                            <div style='display:flex; justify-content: space-evenly;'>
-                                                <button type="submit" style='background-color: #012970;' class='btn btn-primary'>Отправить</button>
-                                                <button type='submit' style='width: 25px; color: white; background-color: #012970;'  onclick='AddCadastralNumber();' id='btn' disabled
-                                                class='btn'>+</button>
+                                            <div style='display:flex; flex-direction: column; align-items:center;'>
+                                                <div class='cadastal_numbers' id='cadastal_numbers'><div>
+                                                <button type="submit" style='background-color: #012970; margin-top:10px;' id='order-btn' disabled class='btn btn-primary'>Создать заявку</button>
                                             </div>
                                         </form> 
                                     </div>
                                 </div>
 
                                 {% if not request.user.is_authenticated %}
-
-                                    <p class="text-center">или войдите в свой аккаунт</p></p>
-                                    <div class="col-12 mb-3">
-                                        <a href="{% url 'users:user_login' %}"
-                                           class="btn btn-bd-primary w-100">Войти</a>
-                                    </div>
                                     <div class="col-12">
-                                        <p class="small mb-0">Нет учетной записи? <a
-                                                href="{% url 'users:user_register' %}">Создать</a></p>
+                                        <p class="small mb-0"><a href="{% url 'users:user_login' %}">Войти</a> или <a href="{% url 'users:user_register' %}">создать учетную запись</a></p>
                                     </div>
 
                                 {% endif %}
@@ -71,24 +69,23 @@
             </div>
 
         </section>
-        <script src="{% static 'js/customer_home.js' %}"></script>
         <script>
             $(document).ready(function () {
                 $('#id_cadastral_number').on('input', function(){
                 button = document.getElementById('btn');    
                 select = document.getElementById('select');
-                test = document.getElementById('test')
+                error = document.getElementById('input__error')
                 $.ajax({
                     data: $(this).serialize(),
                     url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
                     success: function (response) {
                         if (response.is_valid == true) {
                             button.disabled = false;
-                            setTimeout(() => { test.style.cssText = 'display:none; padding-bottom:10px;'; }, 1500);
+                            setTimeout(() => { error.style.cssText = 'display:none; padding-bottom:10px;'; }, 1500);
                         } 
                         else {
                             button.disabled = true;
-                            setTimeout(() => { test.style.cssText = 'display:block; padding-bottom:10px;'; }, 1500);
+                            setTimeout(() => { error.style.cssText = 'display:block; padding-bottom:10px;'; }, 1500);
                         }
                     },
                     error: function (response) {
@@ -100,7 +97,7 @@
         });
         </script>
 
-        <script>
+        {% comment %} <script>
             $(function () {
                 $('#btn').on('click', function () {
                     let cadastal_number = document.getElementById('select')
@@ -112,7 +109,7 @@
                     });
                 });
             });
-        </script>
+        </script> {% endcomment %}
     </div>
 
 {% endblock %}

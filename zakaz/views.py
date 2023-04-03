@@ -59,7 +59,7 @@ def view_order_cadastral(request, company_slug, company_number_slug):
     if request.method == 'POST':
         form = CadastralNumberForm(request.POST)
         if form.is_valid():
-            cadastral_numbers = request.POST.getlist('select')
+            cadastral_numbers = request.POST.getlist('cadastral_numbers')
             response = HttpResponseRedirect(
                 reverse('zakaz:order',
                         args=[company_slug, company_number_slug]))
@@ -74,7 +74,7 @@ def view_order_cadastral(request, company_slug, company_number_slug):
     return render(request, 'zakaz/customer_home.html', context=context)
 
 
-@login_required(login_url='users:user_login')
+# @login_required(login_url='users:user_login')
 def view_order(request, company_slug, company_number_slug):
     coordinates = []
     context = {}
@@ -93,7 +93,7 @@ def view_order(request, company_slug, company_number_slug):
         areas = GetArea(number)
         coordinates += areas.get_coord()
     # area_map = get_map(cadastral_numbers)
-
+    
     if request.method == 'POST':
             order_form = OrderForm(request.POST)
             order_files_form = OrderFileForm(request.POST, request.FILES)
