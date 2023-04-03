@@ -13,9 +13,10 @@ function AddCadastralNumber() {
     let div = document.createElement("div")
     div.style.cssText = 'display:flex;'
     div.className='input-group'
+    div.id = id
     div.innerHTML = `<input id='cadastral_number${id}' type='text' name='cadastral_numbers' class='form-control' readonly value='${cadatral_number.value}' style='border-radius:8px; text-align:center;'>
     <button id='edit' type='button' onClick='EditCadastral(cadastral_number${id})' style='margin:auto 5px auto 5px;'><i class='bx bxs-edit btn btn-outline-secondary'></i></button>
-    <button id='delete' type='button' onClick='DeleteCadastral(cadastral_number${id});'><i class='bx bxs-x-circle btn btn-outline-secondary'></i></button>`
+    <button id='delete' type='button' onClick='DeleteCadastral(${id});'><i class='bx bxs-x-circle btn btn-outline-secondary'></i></button>`
 
     my_div = document.getElementById("cadastal_numbers");
     my_div.parentNode.insertBefore(div, my_div)
@@ -28,10 +29,8 @@ function UndisabledButton() {
     document.getElementById('order-btn').disabled = false;
 }
 
-function DeleteCadastral(cadastral_number) {
-    document.getElementById('edit').remove();
-    document.getElementById('delete').remove();
-    document.getElementById(cadastral_number.id).remove()
+function DeleteCadastral(id) {
+    document.getElementById(id).remove();
 }
 
 function EditCadastral(cadastral_number) {
@@ -46,7 +45,6 @@ function EditCadastral(cadastral_number) {
     else {
         edit.innerHTML = "<i class='bx bxs-edit btn btn-outline-secondary'></i>";
         cadastral.readOnly = true;
-        alert(cadastral.value)
         cadastral.style.cssText = 'border-radius:8px; text-align:center;'
         flag++;
     }
