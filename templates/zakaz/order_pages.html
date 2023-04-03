@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block content %}
-        <link rel='stylesheet' href="{% static 'css/order_pages.css' %}">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel='stylesheet' href="{% static 'css/order_pages.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <table class="table" style="color: grey">
         <thead>
@@ -31,14 +31,15 @@
                 <td>{{ order.area }}</td>
                 <td>{{ order.city }}</td>
                 <th>
-                <div class="container-12">
-                    {% for cadastral_number in order.cadastral_numbers %}
-                        <span>{{ cadastral_number }}<br></span>
-                    {% endfor %}
-                </div>
+                    <div class="cadastral_number">
+                        {% for cadastral_number in order.cadastral_numbers %}
+                            <span>{{ cadastral_number }}<br></span>
+                        {% endfor %}
+                    </div>
                 </th>
                 <td>{{ order.surname }}{{ order.name }}{{ order.father_name }}</td>
-                <td><a href="{% url 'zakaz:change_order_status' order.id %}" class="link-primary">Перейти в заявку</a></td>
+                <td><a href="{% url 'zakaz:change_order_status' order.id %}" class="link-primary">Перейти в заявку</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
@@ -46,19 +47,30 @@
 
     <script>
 
-$(function() {
-  $(".container-12").each(function() {
-    let $span = $(this).find("span");
-    if( $span.length <= 3 ) return;
+        $(function () {
+            $(".cadastral_number").each(function () {
+                let $span = $(this).find("span");
+                if ($span.length <= 3) return;
 
-    $span.slice(3).hide();
-    $(this).append('<a class="js-show">...</a>');
-  });
+                $span.slice(3).hide();
+                $(this).append('<a class="js-show">...</a>');
+            });
+            const btn = document.querySelector(".js-show");
+            const content = document.querySelector("span");
+            btn.addEventListener("click", btnClick);
 
-  $(".container-12").on("click", ".js-show", function() {
-    $(this).siblings("span").show().end();
-  });
-});
-</script>
+            function btnClick() {
+                console.log(content.classList);
+
+                if (content.classList.contains("hidden")) {
+                    $(this).siblings("span").slice(3).hide();
+                } else {
+                    $(this).siblings("span").show();
+                }
+
+                content.classList.toggle("hidden");
+            }
+        });
+    </script>
 
 {% endblock %}
