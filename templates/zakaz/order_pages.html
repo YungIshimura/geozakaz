@@ -36,12 +36,12 @@
                         {% endfor %}
                     </div>
                 </th>
-                <td>{{ order.surname }}{{ order.name }}{{ order.father_name }}</td>
+                <td>{{ order.surname }} {{ order.name }} {{ order.father_name }}</td>
                 <td><a href="{% url 'zakaz:change_order_status' order.id %}" class="link-primary">Перейти в заявку</a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-        <script src="{% static 'js/order_pages.js' %}"></script>
+    <script src="{% static 'js/order_pages.js' %}"></script>
 {% endblock %}

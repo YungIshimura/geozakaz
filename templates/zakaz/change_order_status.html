@@ -28,13 +28,17 @@
                             <div class="card-title">
                                 <h5>Участок</h5>
                             </div>
-                                    <label for="{{ form.cadastral_numbers.id_for_label }}">Кадастровый номер</label>
-                                    <div class="input-group mb-3">
-                                    {{ order_form.cadastral_numbers }}
-                                    <div class="input-group-append">
-                                        <button id='edit' type='button' class='btn btn-outline-secondary custom-button' onclick='EditCadastral();' style='margin-left: 10px; margin-right:5px;'><i class='bx bxs-edit'></i></button>
-                                        <button id='delete' type='button' class='btn btn-outline-secondary custom-button'><i class='bx bxs-x-circle'></i></button>`
-                                    </div>
+                            <label for="{{ form.cadastral_numbers.id_for_label }}">Кадастровый номер</label>
+                            <div class="input-group mb-3">
+                                {{ order_form.cadastral_numbers }}
+                                <div class="input-group-append">
+                                    <button id='edit' type='button' class='btn btn-outline-secondary custom-button'
+                                            onclick='EditCadastral();' style='margin-left: 10px; margin-right:5px;'><i
+                                            class='bx bxs-edit'></i></button>
+                                    <button id='delete' type='button' class='btn btn-outline-secondary custom-button'><i
+                                            class='bx bxs-x-circle'></i></button>
+                                    `
+                                </div>
                             </div>
                             <div>
                                 <div class="card-title">
@@ -211,7 +215,7 @@
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <label class='building_label'
-                                            for="{{ form.building.id_for_label }}">Назначение здания</label>
+                                                   for="{{ form.building.id_for_label }}">Назначение здания</label>
                                             {{ order_form.user_purpose_building }}
                                         </div>
                                     </div>
@@ -315,14 +319,14 @@
                         </div>
                     </div>
                 </div>
-                <div style="">
-                    <button type="submit" class="btn btn-secondary btn-lg"
-                            style="width: auto; background-color: #012970;">ОТПРАВИТЬ ЗАЯВКУ
-                    </button>
+                <div class="row">
+                    <div class="col-sm-6 mb-sm-0 text-center">
+                        <button type="submit" class="btn btn-bd-primary w-50">СОХРАНИТЬ
+                        </button>
+                    </div>
                 </div>
             </div>
         </form>
     </section>
-
-    <script src="{% static 'js/order.js' %}"></script>
+            <script src="{% static 'js/order.js' %}"></script>
 {% endblock %}
