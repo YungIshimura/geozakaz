@@ -93,7 +93,6 @@ def view_order(request, company_slug, company_number_slug):
     for number in cadastral_numbers:
         areas = GetArea(number)
         coordinates += areas.get_coord()
-    # area_map = get_map(cadastral_numbers)
 
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
@@ -101,7 +100,6 @@ def view_order(request, company_slug, company_number_slug):
         if order_form.is_valid() and order_files_form.is_valid():
             order = order_form.save()
             order.user = user_company
-            # order.map = area_map
             order.coordinates = coordinates
             order.map = get_map(order.cadastral_numbers)
 
@@ -150,18 +148,18 @@ def view_change_order_status(request, order_id):
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     map_html = get_map(order.cadastral_numbers)
     if request.method == 'POST':
-        objectname_form = CreateObjectNameForm(request.POST, instance=order)
+        objectname_form = OrderForm(request.POST, instance=order)
         if objectname_form.is_valid():
             order = objectname_form.save()
             company_number_slug = order.user.company_number_slug
             return redirect(
                 reverse('zakaz:change_order_status', kwargs={'order_id': order_id}))
     else:
-        objectname_form = CreateObjectNameForm(instance=order)
+        objectname_form = OrderForm(instance=order)
 
     context = {
         'files': files,
-        'object_name_form': objectname_form,
+        'order_form': objectname_form,
         'order': order,
         'map_html': map_html,
         'lengt_unit': order.get_length_unit_display()
