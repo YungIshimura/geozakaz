@@ -10,6 +10,14 @@
     <link rel='stylesheet' href="{% static 'css/order.css' %}">
 
     <section>
+        <nav style="--bs-breadcrumb-divider: '';" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size: 16px">
+                <li class="breadcrumb-item"><a href="{% url 'zakaz:order_pages' user.company_number_slug %}">Страница
+                    заявок</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Заявка -
+                    {{ order.date.year }}{{ order.date.month }}{{ order.date.day }}-{{ order.pk }}</li>
+            </ol>
+        </nav>
         <form action={% url 'zakaz:change_order_status' order.pk %} method='POST' enctype='multipart/form-data'>
             {% csrf_token %}
             {% include 'inc/_alerts.html' %}
@@ -23,8 +31,8 @@
                             <div class="mb-3">
                                 <label for="{{ form.cadastral_number.id_for_label }}">Кадастровый номер</label>
 
-                                <input class='form-control' disabled
-                                       value='{% for cadastral_number in order.cadastral_numbers %} | {{ cadastral_number }} | {% endfor %}'>
+                                <input class='form-control'
+                                       value='{% for cadastral_number in order.cadastral_numbers %} {{ cadastral_number }} {% endfor %}'>
                             </div>
                             <div>
                                 <div class="card-title">
@@ -37,7 +45,7 @@
                                                 <div class="mb-3">
                                                     <label for="{{ form.length.id_for_label }}"
                                                            class="form-label">Длина</label>
-                                                    <input class='form-control' disabled value='{{ order.length }}'/>
+                                                    <input class='form-control' value='{{ order.length }}'/>
                                                     {% if order.length_unit == 'm' %}
                                                         м{% elif order.length_unit == 'км' %}км{% endif %}
                                                 </div>
@@ -50,7 +58,7 @@
                                                 <div class="mb-3" id='width'>
                                                     <label for="{{ form.height.id_for_label }}"
                                                            class="form-label">Высота</label>
-                                                    <input class='form-control' disabled
+                                                    <input class='form-control'
                                                            value='{{ order.height }}'/>
                                                     {% if order.height_unit == 'm' %}
                                                         м{% elif order.height_unit == 'floor' %}этаж{% endif %}
@@ -64,7 +72,7 @@
                                                 <div class="mb-3">
                                                     <label for="{{ form.width.id_for_label }}"
                                                            class="form-label">Ширина</label>
-                                                    <input class='form-control' disabled
+                                                    <input class='form-control'
                                                            value='{{ order.length }}'/>
                                                     {% if order.width_unit == 'm' %}м{% elif order.width_unit == 'кь' %}
                                                         км{% endif %}
@@ -79,18 +87,18 @@
                                     </div>
                                     {{ order_form.media.js }}
                                     <label for="{{ form.region.id_for_label }}">Регион</label>
-                                    <input class='form-control' disabled value='{{ order.region }}'></input>
+                                    <input class='form-control' value='{{ order.region }}'></input>
                                     <br>
                                     <label for="{{ form.area.id_for_label }}">Район</label>
-                                    <input class='form-control' disabled value='{{ order.area }}'></input>
+                                    <input class='form-control' value='{{ order.area }}'></input>
                                     <br>
                                     <label for="{{ form.city.id_for_label }}">Населенный пункт</label>
-                                    <input class='form-control' disabled value='{{ order.city }}'></input>
+                                    <input class='form-control' value='{{ order.city }}'></input>
                                     <br>
                                     </select>
                                     <div class="mb-3">
                                         <label for="{{ form.street.id_for_label }}">Улица</label>
-                                        <input class='form-control' disabled value='{{ order.street }}'></input>
+                                        <input class='form-control' value='{{ order.street }}'></input>
                                     </div>
                                     <br>
                                     <div class="row">
@@ -101,7 +109,7 @@
                                                         <label class='house_label'
                                                                for="{{ form.house_number.id_for_label }}">Номер
                                                             дома</label>
-                                                        <input class='form-control' disabled
+                                                        <input class='form-control'
                                                                value='{{ order.house_number }}'></input>
                                                     </div>
                                                 </div>
@@ -114,10 +122,10 @@
                                                         <label class='building_label'
                                                                for="{{ form.building.id_for_label }}">Корпус/Строение</label>
                                                         {% if order.building %}
-                                                            <input class='form-control' disabled
+                                                            <input class='form-control'
                                                                    value='{{ order.building }}'>
                                                         {% else %}
-                                                            <input class='form-control' disabled
+                                                            <input class='form-control'
                                                                    value='-'>
                                                         {% endif %}
                                                     </div>
@@ -181,7 +189,7 @@
                                         <div class="mb-3">
                                             <label for="{{ form.square.id_for_label }}"
                                                    class="form-label">Площадь</label>
-                                            <input class='form-control' disabled
+                                            <input class='form-control'
                                                    value='{{ order.square }}'/>
                                             {% if order.square_unit == 'sq_m' %}
                                                 м²{% elif order.square_unit == 'hectometer' %}га{% endif %}
@@ -193,7 +201,7 @@
                                 <div class="card-title">
                                     <h5>Назначение здания</h5>
                                 </div>
-                                <input class='form-control' disabled value='{{ order.purpose_building }}'></input>
+                                <input class='form-control' value='{{ order.purpose_building }}'></input>
                             </div>
                             {% if order.user_purpose_building %}
                                 <div class="col-sm-6" id='user-purpose' style='margin-top:20px;'>
@@ -202,7 +210,7 @@
                                             <div class="mb-3">
                                                 <label class='building_label'
                                                        for="{{ form.building.id_for_label }}">Назначение здания</label>
-                                                <input class='form-control' disabled
+                                                <input class='form-control'
                                                        value='{{ order.user_purpose_building }}'/>
                                             </div>
                                         </div>
@@ -232,7 +240,7 @@
                                     <div class="card-title">
                                         <h5>Цели работ</h5>
                                     </div>
-                                    <input class='form-control' disabled value='{{ order.work_objective }}'/>
+                                    <input class='form-control' value='{{ order.work_objective }}'/>
                                 </div>
                                 <div style="max-width: 500px">
                                     <div class="card-title">
@@ -244,7 +252,7 @@
                                     <div class="card-title">
                                         <h5>Комментарий</h5>
                                         <textarea cols="40" rows="10" class="form-control"
-                                                  id="id_comment" disabled>{{ order.comment }}</textarea>
+                                                  id="id_comment">{{ order.comment }}</textarea>
                                     </div>
                                 </div>
                                 <div>
@@ -254,7 +262,7 @@
                                                 <div class="card-body">
                                                     <div class="mb-3">
                                                         <label for="{{ form.name.id_for_label }}">Имя</label>
-                                                        <input class='form-control' disabled
+                                                        <input class='form-control'
                                                                value='{{ order.name }}'></input>
                                                     </div>
                                                 </div>
@@ -265,7 +273,7 @@
                                                 <div class="card-body">
                                                     <div class="mb-3">
                                                         <label for="{{ form.surname.id_for_label }}">Фамилия</label>
-                                                        <input class='form-control' disabled
+                                                        <input class='form-control'
                                                                value='{{ order.surname }}'></input>
                                                     </div>
                                                 </div>
@@ -277,7 +285,7 @@
 
                                                     <div class="mb-3">
                                                         <label for="{{ form.father_name.id_for_label }}">Отчество</label>
-                                                        <input class='form-control' disabled
+                                                        <input class='form-control'
                                                                value='{{ order.father_name }}'></input>
                                                     </div>
                                                 </div>
@@ -291,7 +299,7 @@
                                                     <div class="mb-3">
                                                         <label for="{{ form.phone_number.id_for_label }}">Номер
                                                             телефона</label>
-                                                        <input class='form-control' disabled
+                                                        <input class='form-control'
                                                                value='{{ order.phone_number }}'></input>
                                                     </div>
 
@@ -304,7 +312,7 @@
                                                     <div class="mb-3">
                                                         <label for="{{ form.email.id_for_label }}">Электронная
                                                             почта</label>
-                                                        <input class='form-control' disabled
+                                                        <input class='form-control'
                                                                value='{{ order.email }}'></input>
                                                     </div>
                                                 </div>
@@ -350,5 +358,5 @@
         </form>
     </section>
 
-    <script src="{% static 'js/application.js' %}"></script>
+    <script src="{% static 'js/order.js' %}"></script>
 {% endblock %}

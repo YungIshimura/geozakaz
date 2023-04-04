@@ -94,7 +94,7 @@ def view_order(request, company_slug, company_number_slug):
         areas = GetArea(number)
         coordinates += areas.get_coord()
     # area_map = get_map(cadastral_numbers)
-    
+
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
@@ -133,7 +133,7 @@ def view_order_pages(request, company_number_slug):
     orders = Order.objects.filter(
         user__company_number_slug=company_number_slug
     ).select_related(
-        'city', 'area', 'region', 'purpose_building', 'work_objective', 'user'
+        'city', 'area', 'region', 'user'
     )
     context = {
         "orders": orders,
@@ -178,7 +178,6 @@ def get_map(number_list):
     m.options.update({'max_width': '100%'})
     m.get_root().html.add_child(
         folium.Element("<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
-
 
     all_place_lat = []
     all_place_lng = []
