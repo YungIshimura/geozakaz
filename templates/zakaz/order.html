@@ -19,7 +19,7 @@
     <div class="d-flex py-4">
         <a class="logo d-flex align-items-center w-auto">
             {% if user_company.company_name %}
-                <span class="d-none d-lg-block">Заявка для компании {{ user_company.company_name }}</span>
+                <span class="d-none d-lg-block">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button type="button" class="btn btn-primary mb-2" style='background-color: #012970;'>Изменить</button></span>
             {% else %}
                 <span class="d-none d-lg-block">Заявка</span>
 
@@ -49,15 +49,19 @@
                             <div class="card-title">
                                 <h5>Участок</h5>
                             </div>
-                            <div class="mb-3">
-                                <label for="{{ form.cadastral_numbers.id_for_label }}">Кадастровый номер</label>
-                                {{ order_form.cadastral_numbers }}
+                                    <label for="{{ form.cadastral_numbers.id_for_label }}">Кадастровый номер</label>
+                                    <div class="input-group mb-3">
+                                    {{ order_form.cadastral_numbers }}
+                                    <div class="input-group-append">
+                                        <button id='edit' type='button' class='btn btn-outline-secondary custom-button' onclick='EditCadastral();' style='margin-left: 10px; margin-right:5px;'><i class='bx bxs-edit'></i></button>
+                                        <button id='delete' type='button' class='btn btn-outline-secondary custom-button'><i class='bx bxs-x-circle'></i></button>`
+                                    </div>
                             </div>
                             <div>
                                 <div class="card-title">
                                     <h5>Габариты здания</h5>
                                 </div>
-                                <div class="row">
+                                <div class="row justify-content-center">
                                     <div class="col-sm-4 mb-3 mb-sm-0">
                                         <div class="card">
                                             <div class="card-body">
@@ -74,21 +78,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3" id='width'>
-                                                    <label for="{{ form.height.id_for_label }}"
-                                                           class="form-label">Высота</label>
-                                                    {{ order_form.height }}
-                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                         style="width: 110px; height: 35px">
-                                                        {{ order_form.height_unit }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="col-sm-4">
                                         <div class="card">
                                             <div class="card-body">
@@ -104,6 +94,41 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="w-100"></div>
+
+                                    <div class="col-sm-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3" id='width'>
+                                                    <label for="{{ form.height.id_for_label }}"
+                                                           class="form-label">Высота</label>
+                                                    {{ order_form.height }}
+                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                         style="width: 110px; height: 35px">
+                                                        {{ order_form.height_unit }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="{{ form.square.id_for_label }}"
+                                                           class="form-label">Площадь</label>
+                                                    {{ order_form.square }}
+                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                         style="width: 110px; height: 35px">
+                                                        {{ order_form.square_unit }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                                 <div>
                                     <div class="card-title">
@@ -169,21 +194,6 @@
                 <div class="col-sm-6">
                     <div class="card" style='min-width: 300px;'>
                         <div class="card-body">
-                            <div class="col-sm-4">
-                                <div class="card" style='margin-top:14px;'>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="{{ form.square.id_for_label }}"
-                                                   class="form-label">Площадь</label>
-                                            {{ order_form.square }}
-                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                 style="width: 110px; height: 35px">
-                                                {{ order_form.square_unit }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div style="max-width: 500px">
                                 <div class="card-title">
                                     <h5>Назначение здания</h5>
@@ -198,7 +208,7 @@
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <label class='building_label'
-                                                   for="{{ form.building.id_for_label }}">Назначение здания</label>
+                                            for="{{ form.building.id_for_label }}">Назначение здания</label>
                                             {{ order_form.user_purpose_building }}
                                         </div>
                                     </div>
@@ -206,7 +216,7 @@
                             </div>
                             <div>
                                 <div class="card-title">
-                                    <h5>Виды работ</h5>
+                                    <h5>Укажите необходимые виды инженерных изысканий</h5>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 mb-3 mb-sm-0">
@@ -230,13 +240,33 @@
                                     </div>
                                     {{ order_form.work_objective }}
                                 </div>
+                                <hr>
                                 <div>
-                                    <div class="card-title">
-                                        <h5>Комментарий</h5>
-                                        {{ order_form.comment }}
+                                    <div class="row" style="margin-top:25px; text-align: left;">
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <div class="card ">
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label for="{{ form.phone_number.id_for_label }}">Номер
+                                                            телефона</label>
+                                                        {{ order_form.phone_number }}
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label for="{{ form.email.id_for_label }}">Электронная
+                                                            почта</label>
+                                                        {{ order_form.email }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div>
                                     <div class="row mt-5">
                                         <div class="col-sm-4 mb-3 mb-sm-0">
                                             <div class="card">
@@ -271,32 +301,15 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row" style="margin: 0 auto; padding: 10px; text-align: left;">
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <div class="card ">
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="{{ form.phone_number.id_for_label }}">Номер
-                                                            телефона</label>
-                                                        {{ order_form.phone_number }}
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="{{ form.email.id_for_label }}">Электронная
-                                                            почта</label>
-                                                        {{ order_form.email }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                </div>
+                                <div>
+                                    <div class="card-title">
+                                        <h5>Комментарий</h5>
+                                        {{ order_form.comment }}
                                     </div>
                                 </div>
+                                <input type="checkbox" id="agreement" name="agreement">
+                                <label for='agreement'> <a href="{% url 'users:agreement' %}" target='_blank'>Согласен с политикой конфиденциальности</a></label>
                             </div>
                         </div>
                     </div>
