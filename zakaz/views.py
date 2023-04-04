@@ -1,6 +1,9 @@
 import datetime
 import json
+import random
+import time
 
+import openpyxl as openpyxl
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect
@@ -15,7 +18,6 @@ from .forms import OrderForm, OrderFileForm, CadastralNumberForm, CreateObjectNa
 from .models import OrderFile, Order, Region, Area as area
 from django.contrib import messages
 import folium
-from folium import plugins
 import io
 import os
 from docx import Document
@@ -94,7 +96,7 @@ def view_order(request, company_slug, company_number_slug):
         areas = GetArea(number)
         coordinates += areas.get_coord()
     # area_map = get_map(cadastral_numbers)
-    
+
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
@@ -178,7 +180,6 @@ def get_map(number_list):
     m.options.update({'max_width': '100%'})
     m.get_root().html.add_child(
         folium.Element("<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
-
 
     all_place_lat = []
     all_place_lng = []
@@ -274,19 +275,38 @@ def generate_docx(document_path, placeholders):
     return document
 
 
+def add_table(document):
+    for paragraph in document.paragraphs:
+        if '_таблица_координат' in paragraph.text:
+            # Добавляем пустую таблицу 2 на 3.
+            table = document.add_table(rows=2, cols=3)
+            # Добавляем ячейки в таблицу.
+            for row in table.rows:
+                for cell in row.cells:
+                    cell.text = ''
+            # Вставляем таблицу после абзаца, содержащего "_таблица координат".
+            paragraph.insert_paragraph_before('Table Grid', style='Normal')
+            break
+
+
+
 # Скачивание DOCX
-def download_docx(request, document_name, document_path, placeholders):
+def download_docx(request, document_name, document_path, document_cipher, placeholders):
     document = generate_docx(document_path, placeholders)
+
+    add_table(document)
 
     output = io.BytesIO()
     document.save(output)
     output.seek(0)
 
+    document_name_upload = f'{document_cipher}-{document_name}'
+
     response = HttpResponse(
         output,
         content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )
-    response['Content-Disposition'] = f'attachment; filename="{document_name}.docx"'
+    response['Content-Disposition'] = f'attachment; filename="{document_name_upload}.docx"'
     return response
 
 
@@ -299,45 +319,140 @@ def download_igi_docx(request, pk):
         location += f" {order.building}"
 
     date = datetime.datetime.now()
-    date_now = f"{date.strftime('%Y%m%d')}-{order.pk:03d}"
+    document_cipher = f"{date.strftime('%Y%m%d')}-{order.pk:03d}"
 
-    html_map = order.map
-
-    data_url = 'data:text/html;charset=utf-8,{}'.format(urlquote(html_map))
-
-    driver = webdriver.Chrome()
-    driver.get(data_url)
-    screenshot = BytesIO(driver.get_screenshot_as_png())
-    driver.quit()
-
-    cadastral_nambers = order.cadastral_numbers
+    cadastral_numbers = order.cadastral_numbers
     coordinates = json.loads(order.coordinates)
 
-    data = []
-    for i, number in enumerate(cadastral_nambers):
-        data.append(f"{number}: {coordinates[i][0]}")
+    coordinates_dict = {}
 
-    formatted_data = '\n'.join(data)
+    for i, coords in enumerate(coordinates):
+        cadastral_num = cadastral_numbers[i]
+        coordinates_dict[cadastral_num] = coords[0]
 
-    document_name = 'igi'
+    print(coordinates_dict)
+
+    # data = []
+    # for i, number in enumerate(cadastral_numbers):
+    #     data.append(f"{number}: {coordinates[i][0]}")
+    #
+    # formatted_data = '\n'.join(data)
+    data = ""
+    for key, value in coordinates_dict.items():
+        data += f"\nКоординаты углов участка {key}\n"
+        data += "Номер точки\tКоордината Х\tКоордината У\n"
+        for i, point in enumerate(value):
+            data += f"{i + 1}\t\t{point[0]}\t\t{point[1]}\n"
+
+    document_name = 'IGI'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
+
     if department:
         placeholders = {
-            '_шифр-иги': date_now,
+            '_шифр-иги': document_cipher,
             '_должность_руководителя_ведомства': department.director_position,
             '_название_ведомства': department.name,
             '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
-            '_тел_ведомства': f'{department.phone_number}',
+            '_тел_ведомства': str(department.phone_number),
             '_почта_ведомства': department.email,
             '_дата_текущая': date.strftime("%Y-%m-%d"),
             '_имя_руководителя_ведомства': department.director_name,
             '_название_объекта_полное': order.object_name,
             '_местоположение_объекта': location,
-            '_кадастровый_номер': ', '.join(order.cadastral_numbers),
-            '_обзорная_схема': screenshot,
-            '_таблица_координат': formatted_data,
-            '_шифр-тема': date_now
+            '_кадастровый_номер': ', '.join(cadastral_numbers),
+            # '_таблица_координат': data,
+            '_шифр-тема': document_cipher
         }
     else:
         placeholders = {}
-    return download_docx(request, document_name, document_path, placeholders)
+
+    screenshot = get_map_screenshot(order.map)
+
+    placeholders['_обзорная_схема'] = BytesIO(screenshot)
+
+    return download_docx(request, document_name, document_path, document_cipher, placeholders)
+
+
+# Получение скриншота карты
+def get_map_screenshot(map_html):
+    data_url = 'data:text/html;charset=utf-8,{}'.format(urlquote(map_html))
+
+    driver = webdriver.Chrome()
+    driver.set_window_size(1024, 748)
+    driver.get(data_url)
+
+    time.sleep(1)
+    screenshot = driver.get_screenshot_as_png()
+    driver.quit()
+
+    return screenshot
+
+
+# Скачивание карты
+def download_map(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+
+    screenshot_name = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
+    screenshot = get_map_screenshot(order.map)
+
+    response = HttpResponse(content_type='image/png')
+    response['Content-Disposition'] = f'attachment; filename="{screenshot_name}.png"'
+    response.write(screenshot)
+
+    return response
+
+
+# Скачивание координат
+def download_xlsx(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    cadastral_numbers = order.cadastral_numbers
+
+    coordinates_list = json.loads(order.coordinates)
+    coordinates_dict = {}
+
+    for i, coords in enumerate(coordinates_list):
+        cadastral_num = cadastral_numbers[i]
+        coordinates_dict[cadastral_num] = coords[0]
+
+    # Создаем новый файл Excel
+    workbook = openpyxl.Workbook()
+
+    # Получаем лист по умолчанию
+    sheet = workbook.active
+
+    # Записываем заголовки строк
+    current_row = 1
+
+    # Проходим по каждому ключу словаря coordinates_dict
+    for key, coords in coordinates_dict.items():
+        # Записываем заголовок строки с координатами углов участка
+        sheet.merge_cells(start_row=current_row, start_column=1, end_row=current_row, end_column=3)
+        sheet.cell(row=current_row, column=1, value=f'Координаты углов участка {key}')
+        current_row += 1
+
+        # Записываем заголовки столбцов таблицы
+        sheet.cell(row=current_row, column=1, value='Номер точки')
+        sheet.cell(row=current_row, column=2, value='Координата Х')
+        sheet.cell(row=current_row, column=3, value='Координата У')
+        current_row += 1
+
+        # Проходим по каждой координате в списке для данного ключа
+        for i, coord in enumerate(coords):
+            # Записываем номер точки, координату Х и координату У
+            sheet.cell(row=current_row, column=1, value=str(i + 1))
+            sheet.cell(row=current_row, column=2, value=str(coord[0]))
+            sheet.cell(row=current_row, column=3, value=str(coord[1]))
+            current_row += 1
+
+        # Добавляем пустую строку между таблицами
+        current_row += 1
+
+    document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
+
+    # Сохраняем файл и отправляем его пользователю
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename=coord.xlsx'
+    response['Content-Disposition'] = f'attachment; filename="{document_cipher}-coord.xlsx"'
+    workbook.save(response)
+
+    return response
