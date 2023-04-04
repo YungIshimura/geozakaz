@@ -118,8 +118,8 @@ class WorkObjective(models.Model):
 
 class Order(models.Model):
     SQUARE_UNIT = (
+        ('hectometer', 'га'),
         ('sq_m', 'м²'),
-        ('hectometer', 'га')
     )
     LENGTH_AND_WIDTH_UNIT = (
         ('m', 'м'),

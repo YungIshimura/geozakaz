@@ -1,4 +1,5 @@
 from django import forms
+
 from django.contrib.postgres.forms import SimpleArrayField
 from .models import TypeWork, Order, OrderFile, PurposeBuilding, WorkObjective
 from django.core.validators import MinValueValidator
@@ -147,13 +148,17 @@ class OrderForm(forms.ModelForm):
         super(OrderForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
-        
+
+        self.fields['purpose_building'].empty_label = 'Нажмите, чтобы выбрать назначение здания'
+        self.fields['work_objective'].empty_label = 'Нажмите, чтобы выбрать цель работ'
+
         self.fields['length_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['height_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['square_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['width_unit'].widget.attrs['class'] = 'custom-btn-check'
 
         self.fields['purpose_building'].widget.attrs['class'] = 'form-select'
+
         self.fields['work_objective'].widget.attrs['class'] = 'form-select'
 
 

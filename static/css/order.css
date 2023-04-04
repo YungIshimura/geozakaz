@@ -147,3 +147,19 @@ input[type='radio']:checked::after {
 .leaflet-control-attribution {
 visibility: hidden !important;
 }
+
+#id_cadastral_numbers {
+	background-color: lightgrey;
+	pointer-events: none;
+}
+
+.custom-button {
+	background-color: #012970;
+	color: white;
+	/* position: absolute;
+	right:80px; */
+}
+
+.custom-button:hover {
+	background-color: #012970;
+}
