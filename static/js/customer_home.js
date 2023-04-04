@@ -11,8 +11,9 @@ function AddCadastralNumber() {
     GetSelectOption();
     UndisabledButton();
     let cadatral_number = document.getElementById('id_cadastral_number')
-    if (array.includes(cadatral_number) == false) {
-        array.push(cadatral_number)
+    if (array.includes(cadatral_number.value) == false) {
+        array.push(cadatral_number.value)
+        alert(array)
         let div = document.createElement("div")
         div.style.cssText = 'display:flex;'
         div.className='input-group'
@@ -36,7 +37,12 @@ function UndisabledButton() {
 }
 
 function DeleteCadastral(id) {
+    let cadastral_number = document.getElementById(`cadastral_number${id}`);
+    let index = array.indexOf(cadastral_number.value)
     document.getElementById(id).remove();
+    array.splice(index, 1)
+    alert(index);
+
 }
 
 
