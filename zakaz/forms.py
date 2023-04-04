@@ -171,13 +171,3 @@ class OrderFileForm(forms.ModelForm):
     class Meta:
         model = OrderFile
         fields = ('file',)
-
-
-class CreateObjectNameForm(forms.ModelForm):
-
-    class Meta:
-        model = Order
-        fields = ('object_name',)
-        widgets = {'object_name': forms.TextInput(
-            attrs={'class': 'form-control'})
-        }

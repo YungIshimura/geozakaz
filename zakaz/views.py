@@ -1,6 +1,5 @@
 import datetime
 import json
-import random
 import time
 
 import openpyxl as openpyxl
@@ -14,7 +13,7 @@ from django.core.exceptions import ValidationError
 
 from .rosreestr2 import GetArea
 from .validators import validate_number
-from .forms import OrderForm, OrderFileForm, CadastralNumberForm, CreateObjectNameForm
+from .forms import OrderForm, OrderFileForm, CadastralNumberForm
 from .models import OrderFile, Order, Region, Area as area, TypeWork
 from django.contrib import messages
 import folium
@@ -156,7 +155,7 @@ def view_change_order_status(request, order_id):
             order = objectname_form.save()
             company_number_slug = order.user.company_number_slug
             return redirect(
-                reverse('zakaz:change_order_status', kwargs={'order_id': order_id}))
+                reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
     else:
         objectname_form = OrderForm(instance=order)
 
@@ -287,7 +286,6 @@ def add_table(document):
             # Вставляем таблицу после абзаца, содержащего "_таблица координат".
             paragraph.insert_paragraph_before('Table Grid', style='Normal')
             break
-
 
 
 # Скачивание DOCX
