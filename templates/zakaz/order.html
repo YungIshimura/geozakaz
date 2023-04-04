@@ -19,7 +19,7 @@
     <div class="d-flex py-4">
         <a class="logo d-flex align-items-center w-auto">
             {% if user_company.company_name %}
-                <span class="d-none d-lg-block">Заявка для компании {{ user_company.company_name }}</span>
+                <span class="d-none d-lg-block">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button type="button" class="btn btn-primary mb-2" style='background-color: #012970;'>Изменить</button></span>
             {% else %}
                 <span class="d-none d-lg-block">Заявка</span>
 
