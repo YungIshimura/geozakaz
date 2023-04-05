@@ -119,7 +119,7 @@ function ValueReplace () {
 	let name = document.getElementById('id_name');
 	let surname = document.getElementById('id_surname');
 	let father_name = document.getElementById('id_father_name');
-	let user_purpose_building = document.getElementById('id_user_purpose_building')
+	let purpose_building = document.getElementById('id_purpose_building')
 	name.oninput = function (){
 		this.value = this.value.replace(regex, '')
 	}
@@ -129,26 +129,36 @@ function ValueReplace () {
 	father_name.oninput = function (){
 		this.value = this.value.replace(regex, '')
 	}
-	user_purpose_building.oninput = function (){
+	purpose_building.oninput = function (){
 		this.value = this.value.replace(regex, '')
 	}
 }
 
-function EditCadastral(id) {
-	let cadastral = document.getElementById('id_cadastral_numbers');
-    let edit = document.getElementById('edit');
 
-	if (flag) {
-		edit.innerHTML = "<i class='bx bxs-check-circle'></i>";
-		cadastral.style.cssText = 'background-color:white; pointer-events: all;';
+function DeleteCadastral(id) {
+    document.getElementById(`cadastral_number${id}`);
+    document.getElementById(id).remove();
+}
+
+
+function EditCadastral(id) {
+    let cadastral = document.getElementById(`cadastral_number${id}`);
+    let edit = document.getElementById(`edit${id}`);
+    if (flag) {
+        edit.innerHTML = "<i class='bx bxs-check-circle'></i>";
+        cadastral.readOnly = false;
+		cadastral.style.cssText = 'background-color:white; transition: 0.15s linear;';
         flag--;
     }
     else {
         edit.innerHTML = "<i class='bx bxs-edit'></i>";
-        cadastral.style.cssText = 'background-color:ligthgray; lightgray: none;'
+        cadastral.readOnly = true;
+		cadastral.style.cssText = 'background-color:lightgray; transition: 0.15s linear;';
         flag++;
     }
 }
+
+
 window.onload = DisableFloor()
 window.onload = ValueReplace()
 

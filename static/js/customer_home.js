@@ -17,7 +17,7 @@ function AddCadastralNumber() {
         div.style.cssText = 'display:flex;';
         div.className='input-group';
         div.id = id;
-        div.innerHTML = `<input id='cadastral_number${id}' type='text' name='cadastral_numbers' class='form-control' readonly value='${cadatral_number.value}' style='border-radius:8px; text-align:center;'>
+        div.innerHTML = `<input id='cadastral_number${id}' type='text' name='cadastral_numbers' class='form-control' onchange='VaidateCadastral(${id});' readonly value='${cadatral_number.value}' style='border-radius:8px; text-align:center;'>
         <button id='edit${id}' type='button' onClick='EditCadastral(${id})' style='margin:auto 5px auto 5px;'><i class='bx bxs-edit btn btn-outline-secondary'></i></button>
         <button id='delete' type='button' onClick='DeleteCadastral(${id});'><i class='bx bxs-x-circle btn btn-outline-secondary'></i></button>`
     
@@ -53,9 +53,28 @@ function EditCadastral(id) {
         flag--;
     }
     else {
-        edit.innerHTML = "<i class='bx bxs-edit btn btn-outline-secondary'></i>";
-        cadastral.readOnly = true;
-        cadastral.style.cssText = 'border-radius:8px; text-align:center;'
-        flag++;
+        let [a, new_cadastral] = VaidateCadastral(id);
+        if (a) {
+            edit.innerHTML = "<i class='bx bxs-edit btn btn-outline-secondary'></i>";
+            cadastral.readOnly = true;
+            cadastral.style.cssText = 'border-radius:8px; text-align:center;'
+            let index = array.indexOf(cadastral.value);
+            array.splice(index);
+            array.push(new_cadastral);
+            flag++;
+        }
+    }
+}
+
+function VaidateCadastral(id) {
+    let cadastral = document.getElementById(`cadastral_number${id}`);
+    if (array.includes(cadastral.value)) {
+        alert('Данный кадастровый номер уже добавлен')
+        document.getElementById(`cadastral_number${id}`).value = cadastral.value
+
+        return false
+    }
+    else {
+        return [true, cadastral.value]
     }
 }

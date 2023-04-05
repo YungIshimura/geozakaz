@@ -72,20 +72,20 @@
         <script>
             $(document).ready(function () {
                 $('#id_cadastral_number').on('input', function(){
-                button = document.getElementById('btn');    
-                select = document.getElementById('select');
+                cadastral = document.getElementById('id_cadastral_number')
+                button = document.getElementById('btn');        
                 error = document.getElementById('input__error')
                 $.ajax({
                     data: $(this).serialize(),
                     url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
                     success: function (response) {
-                        if (response.is_valid == true) {
+                        if (response.is_valid == true || cadastral.value == '') {
                             button.disabled = false;
-                            setTimeout(() => { error.style.cssText = 'display:none; padding-bottom:10px;'; }, 1500);
+                            setTimeout(() => { error.style.cssText = 'display:none; padding-bottom:10px;'; }, 500);
                         } 
                         else {
                             button.disabled = true;
-                            setTimeout(() => { error.style.cssText = 'display:block; padding-bottom:10px;'; }, 1500);
+                            setTimeout(() => { error.style.cssText = 'display:block; padding-bottom:10px;'; }, 500);
                         }
                     },
                     error: function (response) {

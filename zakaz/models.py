@@ -244,15 +244,7 @@ class Order(models.Model):
         'Дата заявки',
         auto_now_add=True,
     )
-    purpose_building = models.ForeignKey(
-        PurposeBuilding,
-        on_delete=models.CASCADE,
-        verbose_name='Назначение здания',
-        related_name='orders',
-        blank=True,
-        null=True
-    )
-    user_purpose_building = models.CharField(
+    purpose_building = models.CharField(
         'Пользовательское назначение здания',
         max_length=200,
         blank=True,

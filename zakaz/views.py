@@ -13,8 +13,8 @@ from django.core.exceptions import ValidationError
 
 from .rosreestr2 import GetArea
 from .validators import validate_number
+from .models import OrderFile, Order, Region, PurposeBuilding, Area as area
 from .forms import OrderForm, OrderFileForm, CadastralNumberForm
-from .models import OrderFile, Order, Region, Area as area
 from django.contrib import messages
 import folium
 import io
@@ -27,6 +27,7 @@ from selenium import webdriver
 from urllib.parse import quote as urlquote
 from io import BytesIO
 from PIL import Image
+
 
 User = get_user_model()
 
@@ -123,6 +124,7 @@ def view_order(request, company_slug, company_number_slug):
     context['user_company'] = user_company
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
+    context['purpose_building'] = PurposeBuilding.objects.all()
 
     return render(request, 'zakaz/order.html', context=context)
 
@@ -132,7 +134,7 @@ def view_order_pages(request, company_number_slug):
     orders = Order.objects.filter(
         user__company_number_slug=company_number_slug
     ).select_related(
-        'city', 'area', 'region', 'purpose_building', 'work_objective', 'user'
+        'city', 'area', 'region', 'work_objective', 'user'
     )
     context = {
         "orders": orders,
@@ -144,7 +146,7 @@ def view_order_pages(request, company_number_slug):
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_change_order_status(request, order_id):
     order = get_object_or_404(Order.objects.select_related(
-        'city', 'area', 'region', 'purpose_building', 'work_objective', 'user'),
+        'city', 'area', 'region', 'work_objective', 'user'),
         id=order_id)
     type_works = order.type_work.all()
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
