@@ -1,6 +1,5 @@
 import datetime
 import json
-import random
 import time
 
 import openpyxl as openpyxl
@@ -15,7 +14,7 @@ from django.core.exceptions import ValidationError
 from .rosreestr2 import GetArea
 from .validators import validate_number
 from .forms import OrderForm, OrderFileForm, CadastralNumberForm
-from .models import OrderFile, Order, Region, Area as area, TypeWork
+from .models import OrderFile, Order, Region, Area as area
 from django.contrib import messages
 import folium
 import io
@@ -147,7 +146,7 @@ def view_change_order_status(request, order_id):
     order = get_object_or_404(Order.objects.select_related(
         'city', 'area', 'region', 'purpose_building', 'work_objective', 'user'),
         id=order_id)
-    type_work = TypeWork.objects.all().filter(orders=order.pk)
+    type_works = order.type_work.all()
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     map_html = get_map(order.cadastral_numbers)
     if request.method == 'POST':
@@ -160,7 +159,7 @@ def view_change_order_status(request, order_id):
         objectname_form = OrderForm(instance=order)
 
     context = {
-        'type_works': type_work,
+        'type_works': type_works,
         'files': files,
         'order_form': objectname_form,
         'order': order,

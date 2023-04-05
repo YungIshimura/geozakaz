@@ -247,7 +247,8 @@
                                                      style='width:200px;'>
                                                     <input class="form-check-input" type="checkbox"
                                                            id="inlineCheckbox{{ type_work.id }}"
-                                                           value="{{ type_work.id }}" name='type_work'>
+                                                           value="{{ type_work.id }}" name='type_work'
+                                                           {% if type_work in type_works %}checked{% endif %}>
                                                     <label class="form-check-label"
                                                            for="inlineCheckbox{{ type_work.id }}">{{ type_work }}</label>
                                                 </div>
@@ -337,23 +338,19 @@
         </form>
     </section>
     <script>
-        $(document).ready(function () {
-            $('#form-data input').focus(function () {
+        function saveFormData() {
+            clearTimeout(saveFormData.timer);
+            saveFormData.timer = setTimeout(function () {
                 $.ajax({
+                    url: '{% url 'zakaz:change_order_status' order.pk %}',
                     type: 'POST',
-                    url: "{% url 'zakaz:change_order_status' order.pk %}",
-                    data: $('#form-data').serialize(),
-                    success: function (response) {
-
-                    },
-                    error: function (response) {
-
-                    }
+                    data: $('#form-data').serialize()
                 });
-            });
+            }, 3000);
+        }
+
+        $(document).ready(function () {
+            $('#form-data').on('input', saveFormData);
         });
-
-
     </script>
-
 {% endblock %}
