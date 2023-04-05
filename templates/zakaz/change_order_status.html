@@ -219,21 +219,12 @@
                                 <div class="card-title">
                                     <h5>Назначение здания</h5>
                                 </div>
-                                {{ order_form.purpose_building }}
-                            </div>
-                            <div class="card-title" id='user-purpose-title'>
-                                <h5>Напишите, если не нашли подходящее</h5>
-                            </div>
-                            <div class="col-sm-6" id='user-purpose'>
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label class='building_label'
-                                                   for="{{ form.building.id_for_label }}">Назначение здания</label>
-                                            {{ order_form.user_purpose_building }}
-                                        </div>
-                                    </div>
-                                </div>
+                                {{order_form.purpose_building}}
+                                    <datalist id="purpose_building">
+                                        {% for purpose in purpose_building%}
+                                            <option value="{{purpose}}">
+                                        {% endfor %}
+                                    </datalist>
                             </div>
                             <div>
                                 <div class="card-title">
