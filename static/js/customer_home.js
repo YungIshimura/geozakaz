@@ -60,7 +60,7 @@ function EditCadastral(id) {
             cadastral.style.cssText = 'border-radius:8px; text-align:center;'
             let index = array.indexOf(cadastral.value);
             array.splice(index);
-            alert(array)
+            array.push(new_cadastral);
             flag++;
         }
     }
