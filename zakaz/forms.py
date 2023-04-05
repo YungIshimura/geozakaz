@@ -1,7 +1,7 @@
 from django import forms
 
 from django.contrib.postgres.forms import SimpleArrayField
-from .models import TypeWork, Order, OrderFile, PurposeBuilding, WorkObjective
+from .models import TypeWork, Order, OrderFile, WorkObjective
 from django.core.validators import MinValueValidator
 from .validators import validate_number
 
@@ -120,15 +120,11 @@ class OrderForm(forms.ModelForm):
         required=True
     )
 
-    purpose_building = forms.ModelChoiceField(
-        queryset=PurposeBuilding.objects.all(),
-        widget=forms.Select(),
-        required=False
+    purpose_building = forms.CharField(
+        widget=forms.TextInput(attrs={'list': 'purpose_building', 'placeholder': 'Выберите/Введите назначение здания'}),
+        required=True,
     )
-    user_purpose_building = forms.CharField(
-        widget=forms.TextInput(),
-        required=False
-    )
+
     work_objective = forms.ModelChoiceField(
         queryset=WorkObjective.objects.all(),
         widget=forms.Select(),
@@ -141,8 +137,8 @@ class OrderForm(forms.ModelForm):
                   'house_number', 'building', 'square', 'square_unit', 'length',
                   'length_unit', 'width', 'width_unit', 'height', 'height_unit',
                   'type_work', 'comment', 'name', 'surname', 'father_name',
-                  'phone_number', 'email', 'purpose_building',
-                  'user_purpose_building', 'work_objective')
+                  'phone_number', 'email', 'purpose_building', 'work_objective')
+
 
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
@@ -156,8 +152,6 @@ class OrderForm(forms.ModelForm):
         self.fields['height_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['square_unit'].widget.attrs['class'] = 'custom-btn-check'
         self.fields['width_unit'].widget.attrs['class'] = 'custom-btn-check'
-
-        self.fields['purpose_building'].widget.attrs['class'] = 'form-select'
 
         self.fields['work_objective'].widget.attrs['class'] = 'form-select'
 

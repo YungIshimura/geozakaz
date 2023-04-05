@@ -53,9 +53,15 @@ function EditCadastral(id) {
         flag--;
     }
     else {
-        edit.innerHTML = "<i class='bx bxs-edit btn btn-outline-secondary'></i>";
-        cadastral.readOnly = true;
-        cadastral.style.cssText = 'border-radius:8px; text-align:center;'
-        flag++;
+        if (array.includes(cadastral.value)) {
+            alert('Данный кадастровый номер уже добавлен');
+        }
+        else {
+            edit.innerHTML = "<i class='bx bxs-edit btn btn-outline-secondary'></i>";
+            cadastral.readOnly = true;
+            cadastral.style.cssText = 'border-radius:8px; text-align:center;'
+            flag++;
+        }
     }
+
 }
