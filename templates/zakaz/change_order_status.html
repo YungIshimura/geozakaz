@@ -18,8 +18,8 @@
                     {{ order.date.year }}{{ order.date.month }}{{ order.date.day }}-{{ order.pk }}</li>
             </ol>
         </nav>
-        <form action={% url 'zakaz:change_order_status' order.pk %} method='POST' enctype='multipart/form-data'
-              id="form">
+        <form action="#" method='POST' enctype='multipart/form-data'
+              id="form-data">
             {% csrf_token %}
             {% include 'inc/_alerts.html' %}
             <div class="row">
@@ -333,13 +333,27 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6 mb-sm-0 text-center">
-                        <button type="submit" class="btn btn-bd-primary w-50">СОХРАНИТЬ
-                        </button>
-                    </div>
-                </div>
             </div>
         </form>
     </section>
+    <script>
+        $(document).ready(function () {
+            $('#form-data input').focus(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'zakaz:change_order_status' order.pk %}",
+                    data: $('#form-data').serialize(),
+                    success: function (response) {
+
+                    },
+                    error: function (response) {
+
+                    }
+                });
+            });
+        });
+
+
+    </script>
+
 {% endblock %}

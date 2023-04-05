@@ -1,5 +1,6 @@
 import datetime
 import json
+import random
 import time
 
 import openpyxl as openpyxl
@@ -154,8 +155,7 @@ def view_change_order_status(request, order_id):
         if objectname_form.is_valid():
             order = objectname_form.save()
             company_number_slug = order.user.company_number_slug
-            return redirect(
-                reverse('zakaz:order_pages', kwargs={'company_number_slug': company_number_slug}))
+            return JsonResponse({'success': True})
     else:
         objectname_form = OrderForm(instance=order)
 
