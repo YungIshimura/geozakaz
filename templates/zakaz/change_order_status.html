@@ -165,7 +165,20 @@
 
                         <div class="card-body">
                             <h5 class="card-title" style="padding: 0 0 15px 0;"></h5>
-                            {{ map_html | safe }}
+                            <div>
+                               {{ map_html | safe }}
+                            </div><br>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <a href="{% url 'zakaz:download_map' order.pk %}"
+                                       class="btn btn-bd-primary w-100">Скачать карту</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="{% url 'zakaz:download_xlsx' order.pk %}"
+                                       class="btn btn-bd-primary w-100">Скачать координаты</a>
+                                </div>
+                            </div>
 
                         </div>
 
