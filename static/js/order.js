@@ -159,6 +159,18 @@ function EditCadastral(id) {
 }
 
 
+function ChangeCadastral(id) {
+	let cadastral = document.getElementById(`cadastral_number${id}`)
+	const regex = new RegExp('[0-9]{2}:[0-9]{2}:[0-9]{5,7}:[0-9]{1,4}')
+	let edit = document.getElementById(`edit${id}`);
+	if (regex.test(cadastral.value)) {
+		edit.disabled = false;
+	}
+	else {
+		edit.disabled=true;
+	}
+}
+
 window.onload = DisableFloor()
 window.onload = ValueReplace()
 
