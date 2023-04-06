@@ -3,6 +3,9 @@
 
 {% block content %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="{% static 'js/customer_home.js' %}"></script>
     <div class="container">
 
@@ -71,29 +74,76 @@
         </section>
         <script>
             $(document).ready(function () {
-                $('#id_cadastral_number').on('input', function(){
+                $('#id_cadastral_number, #123').on('input', function(){
                 cadastral = document.getElementById('id_cadastral_number')
                 button = document.getElementById('btn');        
                 error = document.getElementById('input__error')
-                $.ajax({
-                    data: $(this).serialize(),
-                    url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
-                    success: function (response) {
-                        if (response.is_valid == true || cadastral.value == '') {
-                            button.disabled = false;
-                            setTimeout(() => { error.style.cssText = 'display:none; padding-bottom:10px;'; }, 500);
-                        } 
-                        else {
-                            button.disabled = true;
-                            setTimeout(() => { error.style.cssText = 'display:block; padding-bottom:10px;'; }, 500);
+                if (cadastral && cadastral.value.length > 5 && cadastral.value.includes(":")) {
+                    $.ajax({
+                        data: $(this).serialize(),
+                        url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
+                        success: function (response) {
+                            if (response.is_valid == true || cadastral.value == '') {
+                                button.disabled = false;
+                                setTimeout(() => { error.style.cssText = 'display:none; padding-bottom:10px;'; }, 1500);
+                            } 
+                            else {
+                                button.disabled = true;
+                                setTimeout(() => { error.style.cssText = 'display:block; padding-bottom:10px;'; }, 1500);
+                            }
+                        },
+                        error: function (response) {
+                            console.log(response.responseJSON.errors)
                         }
-                    },
-                    error: function (response) {
-                        console.log(response.responseJSON.errors)
-                    }
-                });
-                return false;
-            });
+                    });
+                    return false;
+                }   
+                else {
+                    $(function () {
+                        let input = document.getElementById('id_cadastral_number')
+                        $("#id_cadastral_number").autocomplete({
+                            source: "{% url 'zakaz:region_autocomplete' %}",
+                            minLength: 2,
+                            select: function( event, ui ) {
+                                $('#id_cadastral_number').attr('id', '123')
+                                let selected_value = ui.item.value
+                                ui.item.value += ', '
+                                if (ui.item.value) {
+                                    $.ajax({
+                                        url: "{% url 'zakaz:area_autocomplete' %}",
+                                        data: {'region': selected_value},
+                                        success: function(response){
+                                            $("#123").autocomplete({
+                                                source: response,   
+                                                select: function(event, ui) {
+                                                    $('#123').attr('id', '234')
+                                                    ui.item.value += ', '
+                                                    if (ui.item.value) {
+                                                        $.ajax({
+                                                            url: "{% url 'zakaz:city_autocomplete' %}",
+                                                            data: {"region": ui.item.value},
+                                                            success: function(response) {
+                                                                $('#234').autocomplete({
+                                                                    source:response,
+                                                                    minLength: 2,
+                                                                    select: function(response) {
+                                                                        alert('Ура, оно работает!')
+                                                                    }
+                                                                })
+                                                            }
+                                                        })
+                                                    }
+                                                    
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    });
+                }
+            }); 
         });
         </script>
 
