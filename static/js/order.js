@@ -116,10 +116,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function ValueReplace () {
 	regex = /[a-zA-Z0-9-@"№#!;$%^:&?*({,><~_=+`|/.../^\x5c})]+$/;
+
 	let name = document.getElementById('id_name');
 	let surname = document.getElementById('id_surname');
 	let father_name = document.getElementById('id_father_name');
 	let purpose_building = document.getElementById('id_purpose_building')
+
 	name.oninput = function (){
 		this.value = this.value.replace(regex, '')
 	}
@@ -177,7 +179,7 @@ function Agreement() {
 	let check = document.getElementById('agreement');
 	let btn = document.getElementById('send-order');
 	check.onchange = function() {
-		let agreement = (check.checked) ? btn.disabled=false : btn.disabled=true
+		(check.checked) ? btn.disabled=false : btn.disabled=true
 	}
 }
 
