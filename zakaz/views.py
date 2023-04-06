@@ -15,7 +15,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 from .rosreestr2 import GetArea
 from .validators import validate_number
-from .models import OrderFile, Order, Region, PurposeBuilding, Area as area
+from .models import OrderFile, Order, Region, PurposeBuilding, Area
 from .forms import OrderForm, OrderFileForm, CadastralNumberForm
 from django.contrib import messages
 import folium
@@ -32,6 +32,37 @@ from PIL import Image
 
 
 User = get_user_model()
+
+
+def region_autocomplete(request):
+    if 'term' in request.GET:
+        qs = Region.objects.filter(name__icontains=request.GET.get('term'))
+        regions = []
+        for region in qs:
+            regions.append(region.name)
+
+        return JsonResponse(regions, safe=False)
+
+
+def area_autocomplete(request):
+    qs = Region.objects.get(name__icontains=request.GET.get('region'))
+    areas = []
+    for area in qs.areas.all():
+        areas.append(f'{qs.name}, {area.name}')
+
+    return JsonResponse(areas, safe=False)
+
+
+def city_autocomplete(request):
+    data = request.GET.get('region').split(', ')
+    data.remove('')
+    region, area = data
+    qs = Area.objects.get(name=area)
+    citys = []
+    for city in qs.citys.all():
+        citys.append(f'{region}, {area}, {city.name}')
+        
+    return JsonResponse(citys, safe=False)
 
 
 def ajax_download_map(request):
@@ -91,7 +122,7 @@ def view_order(request, company_slug, company_number_slug):
     cadastral_numbers = eval(request.COOKIES.get('cadastral_numbers'))
     cadastral_region = Region.objects.get(
         cadastral_region_number=cadastral_numbers[0].split(':')[0])
-    cadastral_area = area.objects.get(
+    cadastral_area = Area.objects.get(
         cadastral_area_number=cadastral_numbers[0].split(':')[1])
 
     for number in cadastral_numbers:
