@@ -100,12 +100,13 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
-                                                    <label for="{{ form.width.id_for_label }}"
-                                                           class="form-label">Ширина</label>
-                                                    <input class='form-control' disabled
-                                                           value='{{ order.length }}'/>
-                                                    {% if order.width_unit == 'm' %}м{% elif order.width_unit == 'кь' %}
-                                                        км{% endif %}
+                                                    <label for="{{ form.square.id_for_label }}"
+                                                           class="form-label">Площадь</label>
+                                                    {{ order_form.square }}
+                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                         style="width: 110px; height: 35px">
+                                                        {{ order_form.square_unit }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -218,12 +219,12 @@
                                 <div class="card-title">
                                     <h5>Назначение здания</h5>
                                 </div>
-                                {{order_form.purpose_building}}
-                                    <datalist id="purpose_building">
-                                        {% for purpose in purpose_building%}
-                                            <option value="{{purpose}}">
-                                        {% endfor %}
-                                    </datalist>
+                                {{ order_form.purpose_building }}
+                                <datalist id="purpose_building">
+                                    {% for purpose in purpose_building %}
+                                        <option value="{{ purpose }}">
+                                    {% endfor %}
+                                </datalist>
                             </div>
                             <div>
                                 <div class="card-title">
@@ -353,15 +354,10 @@
             </div>
             <div class="row">
                 <div class="col-sm-6 mb-sm-0 text-center">
-                    <button type="submit" class="btn btn-bd-primary w-50">СОХРАНИТЬ
-                    </button>
-                                <div>
-                                    <div class="card-title">
-                                        <h5>Комментарий</h5>
-                                        {{ order_form.comment }}
-                                    </div>
-                                </div>
-                            </div>
+                    <div>
+                        <div class="card-title">
+                            <h5>Комментарий</h5>
+                            {{ order_form.comment }}
                         </div>
                     </div>
                 </div>
@@ -397,7 +393,6 @@
             $('#form-data').on('input', saveFormData);
         });
     </script>
-    {#    <script src="{% static 'js/application.js' %}"></script>#}
     <script>
         function downloadFile(url, fileName) {
             $('#wait-modal').modal('show');

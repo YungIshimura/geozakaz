@@ -169,6 +169,7 @@ def view_change_order_status(request, order_id):
         objectname_form = OrderForm(instance=order)
 
     context = {
+        'purpose_building': PurposeBuilding.objects.all(),
         'type_works': type_works,
         'files': files,
         'order_form': objectname_form,
