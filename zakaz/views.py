@@ -16,7 +16,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from .rosreestr2 import GetArea
 from .validators import validate_number
 from .models import OrderFile, Order, Region, PurposeBuilding, Area as area
-from .forms import OrderForm, OrderFileForm, CadastralNumberForm, CreateObjectNameForm
+from .forms import OrderForm, OrderFileForm, CadastralNumberForm
 from django.contrib import messages
 import folium
 import io
@@ -164,10 +164,7 @@ def view_change_order_status(request, order_id):
             order.object_name = request.POST.get('object_name')
             order = order_form.save()
             company_number_slug = order.user.company_number_slug
-            messages.success(request, 'Ваша заявка отправлена')
             return JsonResponse({'success': True})
-        else:
-            messages.error(request, 'Проверьте правильность введённых данных')
     else:
         order_form = OrderForm(instance=order)
 

@@ -407,7 +407,19 @@
                 $.ajax({
                     url: '{% url 'zakaz:change_order_status' order.pk %}',
                     type: 'POST',
-                    data: $('#form-data').serialize()
+                    data: $('#form-data').serialize(),
+                    success: function (response) {
+                        document.getElementById('teg-ok').style.display = 'block';
+                        setTimeout(function () {
+                            document.getElementById('teg-ok').style.display = 'none';
+                        }, 3000)
+                    },
+                    error: function (response) {
+                        document.getElementById('teg-error').style.display = 'block';
+                        setTimeout(function () {
+                            document.getElementById('teg-error').style.display = 'none';
+                        }, 3000)
+                    }
                 });
             }, 3000);
         }
