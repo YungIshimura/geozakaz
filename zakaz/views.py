@@ -15,8 +15,8 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 from .rosreestr2 import GetArea
 from .validators import validate_number
-from .forms import OrderForm, OrderFileForm, CadastralNumberForm, CreateObjectNameForm
 from .models import OrderFile, Order, Region, PurposeBuilding, Area as area
+from .forms import OrderForm, OrderFileForm, CadastralNumberForm
 from django.contrib import messages
 import folium
 import io
@@ -97,7 +97,6 @@ def view_order(request, company_slug, company_number_slug):
     for number in cadastral_numbers:
         areas = GetArea(number)
         coordinates += areas.get_coord()
-    # area_map = get_map(cadastral_numbers)
 
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
@@ -106,7 +105,6 @@ def view_order(request, company_slug, company_number_slug):
             order = order_form.save()
             order.cadastral_numbers = request.POST.getlist('cadastral_numbers')
             order.user = user_company
-            # order.map = area_map
             order.coordinates = coordinates
             # order.map = get_map(order.cadastral_numbers)
 
@@ -153,6 +151,7 @@ def view_change_order_status(request, order_id):
     order = get_object_or_404(Order.objects.select_related(
         'city', 'area', 'region', 'work_objective', 'user'),
         id=order_id)
+    type_works = order.type_work.all()
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     map_html = get_map(order.cadastral_numbers)
 
@@ -162,18 +161,18 @@ def view_change_order_status(request, order_id):
     document_igdi_name_upload = f'{document_cipher}-igdi'
 
     if request.method == 'POST':
-        objectname_form = CreateObjectNameForm(request.POST, instance=order)
+        objectname_form = OrderForm(request.POST, instance=order)
         if objectname_form.is_valid():
             order = objectname_form.save()
             company_number_slug = order.user.company_number_slug
-            return redirect(
-                reverse('zakaz:change_order_status', kwargs={'order_id': order_id}))
+            return JsonResponse({'success': True})
     else:
-        objectname_form = CreateObjectNameForm(instance=order)
+        objectname_form = OrderForm(instance=order)
 
     context = {
+        'type_works': type_works,
         'files': files,
-        'object_name_form': objectname_form,
+        'order_form': objectname_form,
         'order': order,
         'map_html': map_html,
         'lengt_unit': order.get_length_unit_display(),

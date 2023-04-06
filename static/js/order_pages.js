@@ -11,7 +11,6 @@ $(function () {
     btn.addEventListener("click", btnClick);
 
     function btnClick() {
-        console.log(content.classList);
 
         if (content.classList.contains("hidden")) {
             $(this).siblings("span").slice(3).hide();
