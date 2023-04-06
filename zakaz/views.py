@@ -104,10 +104,11 @@ def view_order(request, company_slug, company_number_slug):
         order_files_form = OrderFileForm(request.POST, request.FILES)
         if order_form.is_valid() and order_files_form.is_valid():
             order = order_form.save()
+            order.cadastral_numbers = request.POST.getlist('cadastral_numbers')
             order.user = user_company
             # order.map = area_map
             order.coordinates = coordinates
-            order.map = get_map(order.cadastral_numbers)
+            # order.map = get_map(order.cadastral_numbers)
 
             order.save()
             for file in request.FILES.getlist('file'):
