@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load verbose_name %}
 {% load static %}
 {% block content %}
 
@@ -21,9 +22,18 @@
                     {{ order.date.year }}{{ order.date.month }}{{ order.date.day }}-{{ order.pk }}</li>
             </ol>
         </nav>
-        <form action="#" method='POST' enctype='multipart/form-data'
-              id="form-data">
+        <form action="#" method='POST' enctype='multipart/form-data' id="form-data">
             {% csrf_token %}
+            {% if order_form.errors %}
+                {% for field in order_form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger text-center">
+                            <span>{% verbose_name_tag order_model field.name %} {{ error|lower }} </span>
+                            <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
             {% include 'inc/_alerts.html' %}
             <div class="row">
                 <div class="col-sm-6 mb-sm-0">
@@ -65,7 +75,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="col-sm-4">
                                         <div class="card">
                                             <div class="card-body">
@@ -81,6 +90,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="w-100"></div>
                                     <div class="col-sm-4">
                                         <div class="card">
                                             <div class="card-body">
@@ -434,4 +444,6 @@
         });
 
     </script>
+    <script src="{% static 'js/order.js' %}"></script>
+
 {% endblock %}

@@ -89,10 +89,13 @@ def view_order(request, company_slug, company_number_slug):
     )
 
     cadastral_numbers = eval(request.COOKIES.get('cadastral_numbers'))
-    cadastral_region = Region.objects.get(
-        cadastral_region_number=cadastral_numbers[0].split(':')[0])
-    cadastral_area = area.objects.get(
-        cadastral_area_number=cadastral_numbers[0].split(':')[1])
+    # cadastral_region = Region.objects.get(
+    #     cadastral_region_number=cadastral_numbers[0].split(':')[0])
+    # cadastral_area = area.objects.get(
+    #     cadastral_area_number=cadastral_numbers[0].split(':')[1])
+    cadastral_region = 2
+    cadastral_area = 2
+
 
     for number in cadastral_numbers:
         areas = GetArea(number)
@@ -119,8 +122,8 @@ def view_order(request, company_slug, company_number_slug):
     else:
         order_form = OrderForm(initial={
             'cadastral_numbers': cadastral_numbers,
-            'region': cadastral_region.id,
-            'area': cadastral_area.id})
+            'region': cadastral_region,
+            'area': cadastral_area})
         order_files_form = OrderFileForm()
 
     context['user_company'] = user_company
@@ -164,7 +167,10 @@ def view_change_order_status(request, order_id):
         if objectname_form.is_valid():
             order = objectname_form.save()
             company_number_slug = order.user.company_number_slug
+            messages.success(request, 'Ваша заявка отправлена')
             return JsonResponse({'success': True})
+        else:
+            messages.error(request, 'Проверьте правильность введённых данных')
     else:
         objectname_form = OrderForm(instance=order)
 
