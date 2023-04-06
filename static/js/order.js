@@ -159,6 +159,29 @@ function EditCadastral(id) {
 }
 
 
+function ChangeCadastral(id) {
+	let cadastral = document.getElementById(`cadastral_number${id}`)
+	const regex = new RegExp('[0-9]{2}:[0-9]{2}:[0-9]{5,7}:[0-9]{1,4}')
+	let edit = document.getElementById(`edit${id}`);
+
+	if (regex.test(cadastral.value)) {
+		edit.disabled = false;
+	}
+	else {
+		edit.disabled=true;
+	}
+}
+
+
+function Agreement() {
+	let check = document.getElementById('agreement');
+	let btn = document.getElementById('send-order');
+	check.onchange = function() {
+		let agreement = (check.checked) ? btn.disabled=false : btn.disabled=true
+	}
+}
+
+window.onload = Agreement()
 window.onload = DisableFloor()
 window.onload = ValueReplace()
 
