@@ -16,7 +16,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from .rosreestr2 import GetArea
 from .validators import validate_number
 from .models import OrderFile, Order, Region, PurposeBuilding, Area as area
-from .forms import OrderForm, OrderFileForm, CadastralNumberForm
+from .forms import OrderForm, OrderFileForm, CadastralNumberForm, CreateObjectNameForm
 from django.contrib import messages
 import folium
 import io
@@ -89,13 +89,10 @@ def view_order(request, company_slug, company_number_slug):
     )
 
     cadastral_numbers = eval(request.COOKIES.get('cadastral_numbers'))
-    # cadastral_region = Region.objects.get(
-    #     cadastral_region_number=cadastral_numbers[0].split(':')[0])
-    # cadastral_area = area.objects.get(
-    #     cadastral_area_number=cadastral_numbers[0].split(':')[1])
-    cadastral_region = 2
-    cadastral_area = 2
-
+    cadastral_region = Region.objects.get(
+        cadastral_region_number=cadastral_numbers[0].split(':')[0])
+    cadastral_area = area.objects.get(
+        cadastral_area_number=cadastral_numbers[0].split(':')[1])
 
     for number in cadastral_numbers:
         areas = GetArea(number)
@@ -153,7 +150,6 @@ def view_change_order_status(request, order_id):
     order = get_object_or_404(Order.objects.select_related(
         'city', 'area', 'region', 'work_objective', 'user'),
         id=order_id)
-    type_works = order.type_work.all()
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     map_html = get_map(order.cadastral_numbers)
 
@@ -161,24 +157,24 @@ def view_change_order_status(request, order_id):
     screenshot_name = f"{document_cipher}-map"
     document_igi_name_upload = f'{document_cipher}-igi'
     document_igdi_name_upload = f'{document_cipher}-igdi'
-
     if request.method == 'POST':
-        objectname_form = OrderForm(request.POST, instance=order)
-        if objectname_form.is_valid():
-            order = objectname_form.save()
+        order_form = OrderForm(request.POST, instance=order)
+        if order_form.is_valid():
+            order.object_name = request.POST.get('object_name')
+            order = order_form.save()
             company_number_slug = order.user.company_number_slug
             messages.success(request, 'Ваша заявка отправлена')
             return JsonResponse({'success': True})
         else:
             messages.error(request, 'Проверьте правильность введённых данных')
     else:
-        objectname_form = OrderForm(instance=order)
+        order_form = OrderForm(instance=order)
 
     context = {
         'purpose_building': PurposeBuilding.objects.all(),
-        'type_works': type_works,
+        'type_works': order.type_work.all(),
         'files': files,
-        'order_form': objectname_form,
+        'order_form': order_form,
         'order': order,
         'map_html': map_html,
         'lengt_unit': order.get_length_unit_display(),
