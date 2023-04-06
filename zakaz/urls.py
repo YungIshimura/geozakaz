@@ -20,6 +20,7 @@ urlpatterns = [
     path('change_order_status/<int:order_id>/', view_change_order_status, name="change_order_status"),
     path('download_igi_docx/<int:pk>/', download_igi_docx, name='download_igi_docx'),
     path('download_igdi_docx/<int:pk>/', download_igdi_docx, name='download_igdi_docx'),
+    path('download_all_docx/<int:pk>/', download_all_docx, name='download_all_docx'),
     path('download_map/<int:pk>/', download_map, name='download_map'),
     path('download_xlsx/<int:pk>/', download_xlsx, name='download_xlsx'),
 ]

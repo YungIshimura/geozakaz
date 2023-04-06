@@ -1,9 +1,11 @@
 import datetime
 import json
+import mimetypes
 import time
+import zipfile
 
 import openpyxl as openpyxl
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import user_passes_test, login_required
@@ -29,7 +31,7 @@ from selenium import webdriver
 from urllib.parse import quote as urlquote
 from io import BytesIO
 from PIL import Image
-
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 User = get_user_model()
 
@@ -137,7 +139,10 @@ def view_order(request, company_slug, company_number_slug):
             order.cadastral_numbers = request.POST.getlist('cadastral_numbers')
             order.user = user_company
             order.coordinates = coordinates
-            # order.map = get_map(order.cadastral_numbers)
+
+            img_data = get_map_screenshot(order.cadastral_numbers)._to_png()
+            img_file = SimpleUploadedFile(name='map.png', content=img_data, content_type='image/png')
+            order.map = img_file
 
             order.save()
             for file in request.FILES.getlist('file'):
@@ -186,10 +191,10 @@ def view_change_order_status(request, order_id):
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     map_html = get_map(order.cadastral_numbers)
 
-    document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
-    screenshot_name = f"{document_cipher}-map"
-    document_igi_name_upload = f'{document_cipher}-igi'
-    document_igdi_name_upload = f'{document_cipher}-igdi'
+    # document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
+    # screenshot_name = f"{document_cipher}-map"
+    # document_igi_name_upload = f'{document_cipher}-igi'
+    # document_igdi_name_upload = f'{document_cipher}-igdi'
 
     if request.method == 'POST':
         objectname_form = OrderForm(request.POST, instance=order)
@@ -207,9 +212,9 @@ def view_change_order_status(request, order_id):
         'order': order,
         'map_html': map_html,
         'lengt_unit': order.get_length_unit_display(),
-        'screenshot_name': screenshot_name,
-        'document_igi_name_upload': document_igi_name_upload,
-        'document_igdi_name_upload': document_igdi_name_upload
+        # 'screenshot_name': screenshot_name,
+        # 'document_igi_name_upload': document_igi_name_upload,
+        # 'document_igdi_name_upload': document_igdi_name_upload
     }
 
     return render(request, 'zakaz/change_order_status.html', context=context)
@@ -264,6 +269,52 @@ def get_map(number_list):
     # order.save()
 
     return map_html
+
+
+# Получаем объект карты, для сохранения скриншота к заказу
+def get_map_screenshot(number_list):
+    m = folium.Map(location=[55.7558, 37.6173], zoom_start=6, zoom_control=False,
+                   control_scale=True)
+
+    m.options.update({'max_width': '100%'})
+    m.get_root().html.add_child(
+        folium.Element("<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
+
+    all_place_lat = []
+    all_place_lng = []
+    for number in number_list:
+        areas = GetArea(number)
+        coordinates = areas.get_coord()
+        if coordinates:
+            for coordinate in coordinates:
+                for addresses in coordinate:
+                    points = []
+                    for pt in addresses:
+                        place_lat = pt[1]
+                        place_lng = pt[0]
+                        all_place_lat.append(place_lat)
+                        all_place_lng.append(place_lng)
+                        points.append([place_lat, place_lng])
+                    folium.Polygon(points, color='red').add_to(m)
+
+                    center_point_lng = areas.center['x'],
+                    center_point_lat = areas.center['y'],
+                    folium.CircleMarker(
+                        location=[center_point_lat[0], center_point_lng[0]],
+                        popup=folium.Popup(f':{number.split(":")[-1]}', show=True),
+                        opacity=0,
+                    ).add_to(m)
+
+    m.get_root().html.add_child(
+        folium.Element("<style>.leaflet-popup-close-button {display: none;}</style>"))
+    bounds = [[min(all_place_lat), min(all_place_lng)], [
+        max(all_place_lat), max(all_place_lng)]]
+    center_lat = (bounds[0][0] + bounds[1][0]) / 2
+    center_lng = (bounds[0][1] + bounds[1][1]) / 2
+    m.location = [center_lat, center_lng]
+    m.fit_bounds(bounds)
+
+    return m
 
 
 # Выгрузка DOCX
@@ -414,12 +465,10 @@ def download_igi_docx(request, pk):
             '_кадастровый_номер': ', '.join(cadastral_numbers),
             '_шифр-тема': f'{document_cipher}-ИГИ'
         }
+        if order.map:
+            placeholders['_обзорная_схема'] = order.map.path
     else:
         placeholders = {}
-
-    screenshot = get_map_screenshot(order.map)
-
-    placeholders['_обзорная_схема'] = BytesIO(screenshot)
 
     return download_docx(request, document_name, document_path, document_cipher, placeholders, coordinates_dict)
 
@@ -462,51 +511,48 @@ def download_igdi_docx(request, pk):
             '_кадастровый_номер': ', '.join(cadastral_numbers),
             '_шифр-тема': f'{document_cipher}-ИГДИ'
         }
+        if order.map:
+            placeholders['_обзорная_схема'] = order.map.path
     else:
         placeholders = {}
-
-    screenshot = get_map_screenshot(order.map)
-
-    placeholders['_обзорная_схема'] = BytesIO(screenshot)
 
     return download_docx(request, document_name, document_path, document_cipher, placeholders, coordinates_dict)
 
 
+# Скачиваем архив с документами
 def download_all_docx(request, pk):
-    download_igi_docx(request, pk)
-    download_igdi_docx(request, pk)
+    igi_docx = download_igi_docx(request, pk)
+    igdi_docx = download_igdi_docx(request, pk)
 
+    document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{pk:03d}"
 
-# Получение скриншота карты
-def get_map_screenshot(map_html):
-    data_url = f"data:text/html;charset=utf-8,{urlquote(map_html)}"
+    # Создаем архив и добавляем файлы в него
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, mode="w") as archive:
+        archive.writestr(f"{document_cipher}-igi.docx", igi_docx.content)
+        archive.writestr(f"{document_cipher}-igdi.docx", igdi_docx.content)
 
-    driver = webdriver.Chrome()
-    driver.set_window_size(1024, 748)
-    driver.get(data_url)
-
-    time.sleep(1)
-    screenshot = driver.get_screenshot_as_png()
-    driver.quit()
-
-    return screenshot
-
-
-# Скачивание карты
-def download_map(request, pk):
-    order = get_object_or_404(Order, pk=pk)
-
-    # screenshot_name = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
-    screenshot = get_map_screenshot(order.map)
-
-    response = HttpResponse(content_type='image/png')
-    # response['Content-Disposition'] = f'attachment; filename="{screenshot_name}-map.png"'
-    response.write(screenshot)
-
+    # Возвращаем архив пользователю
+    buffer.seek(0)
+    response = HttpResponse(buffer.read(), content_type="application/zip")
+    response["Content-Disposition"] = f"attachment; filename={document_cipher}.zip"
     return response
 
 
-# Скачивание координат
+# Скачиваем карты
+def download_map(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    try:
+        file_path = order.map.path
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type='application/octet-stream')
+            response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path)
+            return response
+    except:
+        raise Http404
+
+
+# Скачиваем excel файл
 def download_xlsx(request, pk):
     order = get_object_or_404(Order, pk=pk)
     cadastral_numbers = order.cadastral_numbers
@@ -514,7 +560,15 @@ def download_xlsx(request, pk):
     coordinates_list = json.loads(order.coordinates)
     coordinates_dict = {}
 
+    # Добавляем проверку на длину списка cadastral_numbers
+    if len(cadastral_numbers) == 0:
+        return HttpResponse('Нет кадастровых номеров для данного заказа')
+
     for i, coords in enumerate(coordinates_list):
+        # Добавляем проверку на длину списка cadastral_numbers
+        if i >= len(cadastral_numbers):
+            break
+
         cadastral_num = cadastral_numbers[i]
         coordinates_dict[cadastral_num] = coords[0]
 
