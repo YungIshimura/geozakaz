@@ -10,6 +10,8 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from django.core.exceptions import ValidationError
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 from .rosreestr2 import GetArea
 from .validators import validate_number
@@ -20,7 +22,7 @@ import folium
 import io
 import os
 from docx import Document
-from docx.shared import Inches
+from docx.shared import Inches, Pt
 from django.http import HttpResponse
 from django.conf import settings
 from selenium import webdriver
@@ -101,9 +103,10 @@ def view_order(request, company_slug, company_number_slug):
         order_files_form = OrderFileForm(request.POST, request.FILES)
         if order_form.is_valid() and order_files_form.is_valid():
             order = order_form.save()
+            order.cadastral_numbers = request.POST.getlist('cadastral_numbers')
             order.user = user_company
             order.coordinates = coordinates
-            order.map = get_map(order.cadastral_numbers)
+            # order.map = get_map(order.cadastral_numbers)
 
             order.save()
             for file in request.FILES.getlist('file'):
@@ -151,6 +154,12 @@ def view_change_order_status(request, order_id):
     type_works = order.type_work.all()
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     map_html = get_map(order.cadastral_numbers)
+
+    document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
+    screenshot_name = f"{document_cipher}-map"
+    document_igi_name_upload = f'{document_cipher}-igi'
+    document_igdi_name_upload = f'{document_cipher}-igdi'
+
     if request.method == 'POST':
         objectname_form = OrderForm(request.POST, instance=order)
         if objectname_form.is_valid():
@@ -166,7 +175,10 @@ def view_change_order_status(request, order_id):
         'order_form': objectname_form,
         'order': order,
         'map_html': map_html,
-        'lengt_unit': order.get_length_unit_display()
+        'lengt_unit': order.get_length_unit_display(),
+        'screenshot_name': screenshot_name,
+        'document_igi_name_upload': document_igi_name_upload,
+        'document_igdi_name_upload': document_igdi_name_upload
     }
 
     return render(request, 'zakaz/change_order_status.html', context=context)
@@ -174,8 +186,7 @@ def view_change_order_status(request, order_id):
 
 def get_map(number_list):
     m = folium.Map(location=[55.7558, 37.6173], zoom_start=6, zoom_control=False,
-                   control_scale=True,
-                   )
+                   control_scale=True)
 
     m.options.update({'max_width': '100%'})
     m.get_root().html.add_child(
@@ -214,6 +225,7 @@ def get_map(number_list):
     center_lng = (bounds[0][1] + bounds[1][1]) / 2
     m.location = [center_lat, center_lng]
     m.fit_bounds(bounds)
+
     map_html = m._repr_html_()
 
     # order = get_object_or_404(Order, id=order_id)
@@ -275,25 +287,49 @@ def generate_docx(document_path, placeholders):
     return document
 
 
-def add_table(document):
+def add_table(document, coordinates_dict):
     for paragraph in document.paragraphs:
         if '_таблица_координат' in paragraph.text:
-            # Добавляем пустую таблицу 2 на 3.
-            table = document.add_table(rows=2, cols=3)
-            # Добавляем ячейки в таблицу.
-            for row in table.rows:
-                for cell in row.cells:
-                    cell.text = ''
-            # Вставляем таблицу после абзаца, содержащего "_таблица координат".
-            paragraph.insert_paragraph_before('Table Grid', style='Normal')
+            for key in coordinates_dict:
+                document.add_paragraph(f'Координаты углов участка {key}', style='Normal')
+                table = document.add_table(rows=len(coordinates_dict[key]) + 1, cols=3)
+
+                # Добавляем границы таблицы
+                table.style = 'Table Grid'
+
+                # Выравниваем таблицу по центру
+                table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+                # Добавляем строку с названиями столбцов и выравниваем их по центру
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Номер точки'
+                hdr_cells[1].text = 'Координата Х'
+                hdr_cells[2].text = 'Координата У'
+                for cell in hdr_cells:
+                    cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+                # Добавляем данные в ячейки таблицы и выравниваем их по центру
+                for i, coord in enumerate(coordinates_dict[key]):
+                    row_cells = table.rows[i + 1].cells
+                    row_cells[0].text = str(i + 1)
+                    row_cells[1].text = str(coord[0])
+                    row_cells[2].text = str(coord[1])
+                    for cell in row_cells:
+                        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+                # Вставляем таблицу после абзаца, содержащего "_таблица координат".
+                document.add_paragraph('', style='Normal')
+
+                # Удаляем абзац с заполнителем таблицы
+                paragraph._element.clear()
             break
 
 
 # Скачивание DOCX
-def download_docx(request, document_name, document_path, document_cipher, placeholders):
+def download_docx(request, document_name, document_path, document_cipher, placeholders, coordinates_dict):
     document = generate_docx(document_path, placeholders)
 
-    add_table(document)
+    add_table(document, coordinates_dict)
 
     output = io.BytesIO()
     document.save(output)
@@ -329,26 +365,12 @@ def download_igi_docx(request, pk):
         cadastral_num = cadastral_numbers[i]
         coordinates_dict[cadastral_num] = coords[0]
 
-    print(coordinates_dict)
-
-    # data = []
-    # for i, number in enumerate(cadastral_numbers):
-    #     data.append(f"{number}: {coordinates[i][0]}")
-    #
-    # formatted_data = '\n'.join(data)
-    data = ""
-    for key, value in coordinates_dict.items():
-        data += f"\nКоординаты углов участка {key}\n"
-        data += "Номер точки\tКоордината Х\tКоордината У\n"
-        for i, point in enumerate(value):
-            data += f"{i + 1}\t\t{point[0]}\t\t{point[1]}\n"
-
     document_name = 'IGI'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
 
     if department:
         placeholders = {
-            '_шифр-иги': document_cipher,
+            '_шифр-иги': f'{document_cipher}-ИГИ',
             '_должность_руководителя_ведомства': department.director_position,
             '_название_ведомства': department.name,
             '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
@@ -359,8 +381,7 @@ def download_igi_docx(request, pk):
             '_название_объекта_полное': order.object_name,
             '_местоположение_объекта': location,
             '_кадастровый_номер': ', '.join(cadastral_numbers),
-            # '_таблица_координат': data,
-            '_шифр-тема': document_cipher
+            '_шифр-тема': f'{document_cipher}-ИГИ'
         }
     else:
         placeholders = {}
@@ -369,12 +390,65 @@ def download_igi_docx(request, pk):
 
     placeholders['_обзорная_схема'] = BytesIO(screenshot)
 
-    return download_docx(request, document_name, document_path, document_cipher, placeholders)
+    return download_docx(request, document_name, document_path, document_cipher, placeholders, coordinates_dict)
+
+
+# Скачиваем ШИФР-ИГДИ
+def download_igdi_docx(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    department = order.region.region_department.first()
+    location = f"{order.region}, {order.area}, {order.city}, {order.street}, д.{order.house_number}"
+    if order.building:
+        location += f" {order.building}"
+
+    date = datetime.datetime.now()
+    document_cipher = f"{date.strftime('%Y%m%d')}-{order.pk:03d}"
+
+    cadastral_numbers = order.cadastral_numbers
+    coordinates = json.loads(order.coordinates)
+
+    coordinates_dict = {}
+
+    for i, coords in enumerate(coordinates):
+        cadastral_num = cadastral_numbers[i]
+        coordinates_dict[cadastral_num] = coords[0]
+
+    document_name = 'IGDI'
+    document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
+
+    if department:
+        placeholders = {
+            '_шифр-игди': f'{document_cipher}-ИГДИ',
+            '_должность_руководителя_ведомства': department.director_position,
+            '_название_ведомства': department.name,
+            '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
+            '_тел_ведомства': str(department.phone_number),
+            '_почта_ведомства': department.email,
+            '_дата_текущая': date.strftime("%Y-%m-%d"),
+            '_имя_руководителя_ведомства': department.director_name,
+            '_название_объекта_полное': order.object_name,
+            '_местоположение_объекта': location,
+            '_кадастровый_номер': ', '.join(cadastral_numbers),
+            '_шифр-тема': f'{document_cipher}-ИГДИ'
+        }
+    else:
+        placeholders = {}
+
+    screenshot = get_map_screenshot(order.map)
+
+    placeholders['_обзорная_схема'] = BytesIO(screenshot)
+
+    return download_docx(request, document_name, document_path, document_cipher, placeholders, coordinates_dict)
+
+
+def download_all_docx(request, pk):
+    download_igi_docx(request, pk)
+    download_igdi_docx(request, pk)
 
 
 # Получение скриншота карты
 def get_map_screenshot(map_html):
-    data_url = 'data:text/html;charset=utf-8,{}'.format(urlquote(map_html))
+    data_url = f"data:text/html;charset=utf-8,{urlquote(map_html)}"
 
     driver = webdriver.Chrome()
     driver.set_window_size(1024, 748)
@@ -391,11 +465,11 @@ def get_map_screenshot(map_html):
 def download_map(request, pk):
     order = get_object_or_404(Order, pk=pk)
 
-    screenshot_name = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
+    # screenshot_name = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
     screenshot = get_map_screenshot(order.map)
 
     response = HttpResponse(content_type='image/png')
-    response['Content-Disposition'] = f'attachment; filename="{screenshot_name}.png"'
+    # response['Content-Disposition'] = f'attachment; filename="{screenshot_name}-map.png"'
     response.write(screenshot)
 
     return response

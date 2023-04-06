@@ -154,7 +154,7 @@ class Order(models.Model):
     cadastral_numbers = ArrayField(models.CharField(
         'Кадастровый номер',
         max_length=50,
-    ), blank=True, null=True, verbose_name='Кадастровые номера')
+    ), blank=True, null=True, verbose_name='Кадастровые номера',)
     region = models.ForeignKey(
         Region,
         related_name='orders',
@@ -277,7 +277,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', null=True, blank=True)
 
     def __str__(self):
-        return f'Заказ для {self.user.company_name}'
+        return f'Заказ для {self.user}'
 
     class Meta:
         verbose_name = 'Заказ'

@@ -116,10 +116,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function ValueReplace () {
 	regex = /[a-zA-Z0-9-@"№#!;$%^:&?*({,><~_=+`|/.../^\x5c})]+$/;
+
 	let name = document.getElementById('id_name');
 	let surname = document.getElementById('id_surname');
 	let father_name = document.getElementById('id_father_name');
 	let purpose_building = document.getElementById('id_purpose_building')
+
 	name.oninput = function (){
 		this.value = this.value.replace(regex, '')
 	}
@@ -159,6 +161,29 @@ function EditCadastral(id) {
 }
 
 
+function ChangeCadastral(id) {
+	let cadastral = document.getElementById(`cadastral_number${id}`)
+	const regex = new RegExp('[0-9]{2}:[0-9]{2}:[0-9]{5,7}:[0-9]{1,4}')
+	let edit = document.getElementById(`edit${id}`);
+
+	if (regex.test(cadastral.value)) {
+		edit.disabled = false;
+	}
+	else {
+		edit.disabled=true;
+	}
+}
+
+
+function Agreement() {
+	let check = document.getElementById('agreement');
+	let btn = document.getElementById('send-order');
+	check.onchange = function() {
+		(check.checked) ? btn.disabled=false : btn.disabled=true
+	}
+}
+
+window.onload = Agreement()
 window.onload = DisableFloor()
 window.onload = ValueReplace()
 
