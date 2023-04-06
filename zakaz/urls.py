@@ -4,7 +4,7 @@ from zakaz.views import (view_order_pages, view_change_order_status, view_order_
                          view_order,
                          download_igi_docx,
                          ajax_validate_cadastral_number,
-                         ajax_download_map, download_map, download_xlsx, download_igdi_docx)
+                         ajax_download_map, download_map, download_xlsx, download_igdi_docx, download_all_docx)
 
 app_name = 'zakaz'
 
@@ -17,6 +17,7 @@ urlpatterns = [
     path('change_order_status/<int:order_id>/', view_change_order_status, name="change_order_status"),
     path('download_igi_docx/<int:pk>/', download_igi_docx, name='download_igi_docx'),
     path('download_igdi_docx/<int:pk>/', download_igdi_docx, name='download_igdi_docx'),
+    path('download_all_docx/<int:pk>/', download_all_docx, name='download_all_docx'),
     path('download_map/<int:pk>/', download_map, name='download_map'),
     path('download_xlsx/<int:pk>/', download_xlsx, name='download_xlsx'),
 ]

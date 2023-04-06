@@ -201,10 +201,10 @@
 
                             <div class="row">
                                 <div class="col-6">
-                                    {#                                    <a href="{% url 'zakaz:download_map' order.pk %}" id="download-map"#}
-                                    {#                                       class="btn btn-bd-primary w-100">Скачать карту</a>#}
-                                    <a href="#" id="download-map" data-screenshot-name="{{ screenshot_name }}"
-                                       class="btn btn-bd-primary w-100">Скачать карту</a>
+                                                                        <a href="{% url 'zakaz:download_map' order.pk %}"
+                                                                           class="btn btn-bd-primary w-100">Скачать карту</a>
+{#                                    <a href="#" id="download-map" data-screenshot-name="{{ screenshot_name }}"#}
+{#                                       class="btn btn-bd-primary w-100">Скачать карту</a>#}
 
 
                                 </div>
@@ -226,12 +226,12 @@
                                 <div class="card-title">
                                     <h5>Назначение здания</h5>
                                 </div>
-                                {{order_form.purpose_building}}
-                                    <datalist id="purpose_building">
-                                        {% for purpose in purpose_building%}
-                                            <option value="{{purpose}}">
-                                        {% endfor %}
-                                    </datalist>
+                                {{ order_form.purpose_building }}
+                                <datalist id="purpose_building">
+                                    {% for purpose in purpose_building %}
+                                        <option value="{{ purpose }}">
+                                    {% endfor %}
+                                </datalist>
                             </div>
                             <div>
                                 <div class="card-title">
@@ -326,38 +326,47 @@
                                     <div class="card-title">
                                         <h5>Комментарий</h5>
                                         {{ order_form.comment }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        {% if order.object_name %}
-                            <div class="card-body">
-                                <h5 class="card-title">Выгрузка документов</h5>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <a href="#" id="download-igi" data-igi-name="{{ document_igi_name_upload }}"
-                                           class="btn btn-bd-primary w-100">Загрузить документы ИГИ</a>
-                                    </div>
-                                    <div class="col-4">
-                                        <a href="#" id="download-igdi" data-igdi-name="{{ document_igdi_name_upload }}"
-                                           class="btn btn-bd-primary w-100">Загрузить документы ИГДИ</a>
-                                    </div>
-                                    <div class="col-4">
-                                        <a href="{% url 'zakaz:download_igdi_docx' order.pk %}"
-                                           class="btn btn-bd-primary w-100">Загрузить все документы</a>
                                     </div>
                                 </div>
                             </div>
-                        {% else %}
-                            <div class="card-body">
-                                <h5 class="card-title">Выгрузка документов</h5>
-                                <p class="small">Для загрузки документа вы должны заполнить поле "Название объекта" в
-                                    форме</p>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <a class="btn btn-bd-primary w-100 disabled">Загрузить DOCX</a>
+                            <div class="card">
+                                {% if order.object_name %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">Выгрузка документов</h5>
+                                        <div class="row">
+                                            <div class="col-4">
+{#                                                <a href="#" id="download-igi"#}
+{#                                                   data-igi-name="{{ document_igi_name_upload }}"#}
+{#                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГИ</a>#}
+                                                <a href="{% url 'zakaz:download_igi_docx' order.pk %}"
+                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГИ</a>
+                                            </div>
+                                            <div class="col-4">
+                                                <a href="{% url 'zakaz:download_igdi_docx' order.pk %}"
+                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГДИ</a>
+{#                                                <a href="#" id="download-igdi"#}
+{#                                                   data-igdi-name="{{ document_igdi_name_upload }}"#}
+{#                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГДИ</a>#}
+                                            </div>
+                                            <div class="col-4">
+                                                <a href="{% url 'zakaz:download_all_docx' order.pk %}"
+                                                   class="btn btn-bd-primary w-100">Загрузить все документы</a>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                {% else %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">Выгрузка документов</h5>
+                                        <p class="small">Для загрузки документа вы должны заполнить поле "Название
+                                            объекта" в
+                                            форме</p>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <a class="btn btn-bd-primary w-100 disabled">Загрузить DOCX</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -368,6 +377,9 @@
         <div id="wait-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body text-center">
                         <p>Подождите, пожалуйста...</p>
                         <div class="spinner-container">
@@ -390,46 +402,56 @@
             }, 3000);
         }
 
-    {#    <script src="{% static 'js/application.js' %}"></script>#}
-    <script>
-        function downloadFile(url, fileName) {
-            $('#wait-modal').modal('show');
-            fetch(url)
-                .then(response => response.blob())
-                .then(blob => {
-                    $('#wait-modal').modal('hide');
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileName;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                });
-        }
-
-        $(document).on('click', '#download-map', function (e) {
-            e.preventDefault();
-            const fileName = $(this).data('screenshot-name') + '.png';
-            const url = "{% url 'zakaz:download_map' order.pk %}";
-            downloadFile(url, fileName);
-        });
-
-        $(document).on('click', '#download-igi', function (e) {
-            e.preventDefault();
-            const fileName = $(this).data('igi-name') + '.docx';
-            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";
-            downloadFile(url, fileName);
-        });
-
-        $(document).on('click', '#download-igdi', function (e) {
-            e.preventDefault();
-            const fileName = $(this).data('igdi-name') + '.docx';
-            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";
-            downloadFile(url, fileName);
-        });
-
+        {#    <script src="{% static 'js/application.js' %}"></script>#}
     </script>
+{#    <script>#}
+{#        let xhr;#}
+{##}
+{#        function downloadFile(url, fileName) {#}
+{#            $('#wait-modal').modal('show');#}
+{#            xhr = fetch(url)#}
+{#                .then(response => response.blob())#}
+{#                .then(blob => {#}
+{#                    $('#wait-modal').modal('hide');#}
+{#                    const url = URL.createObjectURL(blob);#}
+{#                    const a = document.createElement('a');#}
+{#                    a.href = url;#}
+{#                    a.download = fileName;#}
+{#                    a.style.display = 'none';#}
+{#                    document.body.appendChild(a);#}
+{#                    a.click();#}
+{#                    document.body.removeChild(a);#}
+{#                    URL.revokeObjectURL(url);#}
+{#                });#}
+{#        }#}
+{##}
+{#        $(document).on('click', '#download-map', function (e) {#}
+{#            e.preventDefault();#}
+{#            const fileName = $(this).data('screenshot-name') + '.png';#}
+{#            const url = "{% url 'zakaz:download_map' order.pk %}";#}
+{#            downloadFile(url, fileName);#}
+{#        });#}
+{##}
+{#        $(document).on('click', '#download-igi', function (e) {#}
+{#            e.preventDefault();#}
+{#            const fileName = $(this).data('igi-name') + '.docx';#}
+{#            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";#}
+{#            downloadFile(url, fileName);#}
+{#        });#}
+{##}
+{#        $(document).on('click', '#download-igdi', function (e) {#}
+{#            e.preventDefault();#}
+{#            const fileName = $(this).data('igdi-name') + '.docx';#}
+{#            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";#}
+{#            downloadFile(url, fileName);#}
+{#        });#}
+{##}
+{#        $(document).on('click', '#wait-modal .btn-close', function () {#}
+{#            xhr.abort();#}
+{#            $('#wait-modal').modal('hide');#}
+{#        });#}
+{#    </script>#}
+
+
+
 {% endblock %}
