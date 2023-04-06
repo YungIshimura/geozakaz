@@ -61,78 +61,24 @@
                                     </div>
                                 {% endfor %}
                             {% endwith %}
+                            <hr>    
                             <div>
-                                <div class="card-title">
-                                    <h5>Габариты здания</h5>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <div class="col-sm-4 mb-3 mb-sm-0">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="{{ form.length.id_for_label }}"
-                                                           class="form-label">Длина</label>
-                                                    {{ order_form.length }}
-                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                         style="width: 110px; height: 35px;">
-
-                                                        {{ order_form.length_unit }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-sm-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="{{ form.width.id_for_label }}"
-                                                           class="form-label">Ширина</label>
-                                                    {{ order_form.width }}
-                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                         style="width: 110px; height: 35px">
-                                                        {{ order_form.width_unit }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="w-100"></div>
-
-                                    <div class="col-sm-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3" id='width'>
-                                                    <label for="{{ form.height.id_for_label }}"
-                                                           class="form-label">Высота</label>
-                                                    {{ order_form.height }}
-                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                         style="width: 110px; height: 35px">
-                                                        {{ order_form.height_unit }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
+                                <div class='row justify-content-center' style='margin-top:15px;'>
+                                    <div class="col-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
                                                     <label for="{{ form.square.id_for_label }}"
-                                                           class="form-label">Площадь</label>
+                                                        class="form-label">Площадь</label>
                                                     {{ order_form.square }}
                                                     <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                         style="width: 110px; height: 35px">
+                                                        style="width: 110px; height: 35px">
                                                         {{ order_form.square_unit }}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                                 <div>
                                     <div class="card-title">
@@ -181,12 +127,76 @@
                                         </div>
                                     </div>
                                 </div>
+                                <input type="checkbox" id="agreement" name="agreement">
+                                <label for='agreement'> <a href="{% url 'users:agreement' %}" target='_blank'>Согласен с политикой конфиденциальности</a></label>
                             </div>
                         </div>
+                    </div>
+                    <div class="input-file-row" style='margin-left:10px;'>
+                        <label class="input-file">
+                            <div class="card-title">
+                                <h5>* Добавьте файл/файлы</h5>
+                            </div>
+                            {{ order_files_form.file }}
+                            <span>Выбрать</span>
+                        </label>
+                        <div class="input-file-list"></div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="card" style='min-width: 300px;'>
+                        <div class="card-title">
+                            <h5>Габариты здания</h5>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-sm">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="{{ form.length.id_for_label }}"
+                                                   class="form-label">Длина</label>
+                                            {{ order_form.length }}
+                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                 style="width: 110px; height: 35px;">
+
+                                                {{ order_form.length_unit }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-sm">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="{{ form.width.id_for_label }}"
+                                                   class="form-label">Ширина</label>
+                                            {{ order_form.width }}
+                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                 style="width: 110px; height: 35px">
+                                                {{ order_form.width_unit }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3" id='width'>
+                                            <label for="{{ form.height.id_for_label }}"
+                                                   class="form-label">Высота</label>
+                                            {{ order_form.height }}
+                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                 style="width: 110px; height: 35px">
+                                                {{ order_form.height_unit }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card-body">
                             <div style="max-width: 500px">
                                 <div class="card-title">
@@ -293,20 +303,8 @@
                                         {{ order_form.comment }}
                                     </div>
                                 </div>
-                                <input type="checkbox" id="agreement" name="agreement">
-                                <label for='agreement'> <a href="{% url 'users:agreement' %}" target='_blank'>Согласен с политикой конфиденциальности</a></label>
                             </div>
                         </div>
-                    </div>
-                    <div class="input-file-row" style='margin-left:10px;'>
-                        <label class="input-file">
-                            <div class="card-title">
-                                <h5>* Добавьте файл/файлы</h5>
-                            </div>
-                            {{ order_files_form.file }}
-                            <span>Выбрать</span>
-                        </label>
-                        <div class="input-file-list"></div>
                     </div>
                 </div>
                 <div>
