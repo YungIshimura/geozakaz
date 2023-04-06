@@ -163,3 +163,16 @@ visibility: hidden !important;
 .custom-button:hover {
 	background-color: #012970;
 }
+
+@media only screen and (max-width: 768px) {
+	.custom-input-group {
+		display: block;
+	}
+	.custom-input-group-append {
+		margin-top: 10px;
+	}
+	.custom-form-control {
+		min-width: 225px !important;
+		border-radius: 12px !important;
+	}
+}

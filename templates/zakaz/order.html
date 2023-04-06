@@ -52,11 +52,11 @@
                             <label for="{{ form.cadastral_numbers.id_for_label }}">Кадастровый номер</label>
                             {% with order_form.cadastral_numbers.value|split:"," as cadastral_numbers %}
                                 {% for cadastral_number in cadastral_numbers %}
-                                    <div class="input-group mb-3" id='{{forloop.counter}}'>
-                                        <input type="text" name="cadastral_numbers" value="{{ cadastral_number }}" class="form-control" required="" readonly='' id="cadastral_number{{forloop.counter}}" style='background-color:lightgray;'>
-                                        <div class="input-group-append">
-                                            <button id='edit{{forloop.counter}}' type='button' onClick='EditCadastral({{forloop.counter}})' class='btn btn-outline-secondary custom-button' onclick='EditCadastral();' style='margin-left: 10px; margin-right:5px;'><i class='bx bxs-edit'></i></button>
-                                            <button id='delete{{forloop.counter}}' type='button' onClick='DeleteCadastral({{forloop.counter}});' class='btn btn-outline-secondary custom-button'><i class='bx bxs-x-circle'></i></button>`
+                                    <div class="input-group mb-3 custom-input-group" id='{{forloop.counter}}'>
+                                        <input type="text" name="cadastral_numbers" value="{{ cadastral_number }}" class="form-control custom-form-control" required="" readonly='' id="cadastral_number{{forloop.counter}}" style='background-color:lightgray;'>
+                                        <div class="input-group-append custom-input-group-append">
+                                            <button id='edit{{forloop.counter}}' type='button' onClick='EditCadastral({{forloop.counter}})' class='btn btn-outline-secondary custom-button' onclick='EditCadastral();' style='margin-left: 10px; text-align: center; line-height: 10px;'><i class='bx bxs-edit'></i></button>
+                                            <button id='delete{{forloop.counter}}' type='button' onClick='DeleteCadastral({{forloop.counter}});' class='btn btn-outline-secondary custom-button' style='margin-left: 10px; text-align: center; line-height: 10px;'><i class='bx bxs-x-circle'></i></button>`
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -184,16 +184,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="input-file-row">
-                        <label class="input-file">
-                            <div class="card-title">
-                                <h5>* Добавьте файл/файлы</h5>
-                            </div>
-                            {{ order_files_form.file }}
-                            <span>Выбрать</span>
-                        </label>
-                        <div class="input-file-list"></div>
-                    </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="card" style='min-width: 300px;'>
@@ -307,6 +297,16 @@
                                 <label for='agreement'> <a href="{% url 'users:agreement' %}" target='_blank'>Согласен с политикой конфиденциальности</a></label>
                             </div>
                         </div>
+                    </div>
+                    <div class="input-file-row" style='margin-left:10px;'>
+                        <label class="input-file">
+                            <div class="card-title">
+                                <h5>* Добавьте файл/файлы</h5>
+                            </div>
+                            {{ order_files_form.file }}
+                            <span>Выбрать</span>
+                        </label>
+                        <div class="input-file-list"></div>
                     </div>
                 </div>
                 <div>
