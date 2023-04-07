@@ -3,7 +3,7 @@ from django.urls import path
 from zakaz.views import (view_order_pages, view_change_order_status, view_order_cadastral,
                          view_order,
                          download_igi_docx, city_autocomplete,
-                         ajax_validate_cadastral_number, region_autocomplete, area_autocomplete,
+                         ajax_validate_cadastral_number, region_autocomplete,  area_autocomplete,
                          ajax_download_map, download_map, download_xlsx, download_igdi_docx, download_all_docx)
 
 app_name = 'zakaz'

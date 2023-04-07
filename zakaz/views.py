@@ -63,7 +63,7 @@ def city_autocomplete(request):
     citys = []
     for city in qs.citys.all():
         citys.append(f'{region}, {area}, {city.name}')
-        
+
     return JsonResponse(citys, safe=False)
 
 
@@ -187,7 +187,6 @@ def view_change_order_status(request, order_id):
     order = get_object_or_404(Order.objects.select_related(
         'city', 'area', 'region', 'work_objective', 'user'),
         id=order_id)
-    type_works = order.type_work.all()
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
     map_html = get_map(order.cadastral_numbers)
 
@@ -197,18 +196,20 @@ def view_change_order_status(request, order_id):
     # document_igdi_name_upload = f'{document_cipher}-igdi'
 
     if request.method == 'POST':
-        objectname_form = OrderForm(request.POST, instance=order)
-        if objectname_form.is_valid():
-            order = objectname_form.save()
+        order_form = OrderForm(request.POST, instance=order)
+        if order_form.is_valid():
+            order.object_name = request.POST.get('object_name')
+            order = order_form.save()
             company_number_slug = order.user.company_number_slug
             return JsonResponse({'success': True})
     else:
-        objectname_form = OrderForm(instance=order)
+        order_form = OrderForm(instance=order)
 
     context = {
-        'type_works': type_works,
+        'purpose_building': PurposeBuilding.objects.all(),
+        'type_works': order.type_work.all(),
         'files': files,
-        'order_form': objectname_form,
+        'order_form': order_form,
         'order': order,
         'map_html': map_html,
         'lengt_unit': order.get_length_unit_display(),
