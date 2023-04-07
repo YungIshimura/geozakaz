@@ -201,10 +201,10 @@
 
                             <div class="row">
                                 <div class="col-6">
-                                                                        <a href="{% url 'zakaz:download_map' order.pk %}"
-                                                                           class="btn btn-bd-primary w-100">Скачать карту</a>
-{#                                    <a href="#" id="download-map" data-screenshot-name="{{ screenshot_name }}"#}
-{#                                       class="btn btn-bd-primary w-100">Скачать карту</a>#}
+                                    <a href="{% url 'zakaz:download_map' order.pk %}"
+                                       class="btn btn-bd-primary w-100">Скачать карту</a>
+                                    {#                                    <a href="#" id="download-map" data-screenshot-name="{{ screenshot_name }}"#}
+                                    {#                                       class="btn btn-bd-primary w-100">Скачать карту</a>#}
 
 
                                 </div>
@@ -239,7 +239,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 mb-3 mb-sm-0">
-                                        <div class="card-body grid">
+                                        <div class="card-body grid" id="TypeWork">
                                             {% for type_work in order_form.type_work.field.queryset %}
                                                 <div class="form-check form-check-inline card-body"
                                                      style='width:200px;'>
@@ -335,21 +335,17 @@
                                         <h5 class="card-title">Выгрузка документов</h5>
                                         <div class="row">
                                             <div class="col-4">
-{#                                                <a href="#" id="download-igi"#}
-{#                                                   data-igi-name="{{ document_igi_name_upload }}"#}
-{#                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГИ</a>#}
-                                                <a href="{% url 'zakaz:download_igi_docx' order.pk %}"
+                                                <a href="{% url 'zakaz:download_igi_docx' order.pk %}" id="download-igi"
                                                    class="btn btn-bd-primary w-100">Загрузить документы ИГИ</a>
                                             </div>
                                             <div class="col-4">
                                                 <a href="{% url 'zakaz:download_igdi_docx' order.pk %}"
+                                                   id="download-igdi"
                                                    class="btn btn-bd-primary w-100">Загрузить документы ИГДИ</a>
-{#                                                <a href="#" id="download-igdi"#}
-{#                                                   data-igdi-name="{{ document_igdi_name_upload }}"#}
-{#                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГДИ</a>#}
                                             </div>
                                             <div class="col-4">
                                                 <a href="{% url 'zakaz:download_all_docx' order.pk %}"
+                                                   id="download-all-docx"
                                                    class="btn btn-bd-primary w-100">Загрузить все документы</a>
                                             </div>
                                         </div>
@@ -361,8 +357,14 @@
                                             объекта" в
                                             форме</p>
                                         <div class="row">
-                                            <div class="col-6">
-                                                <a class="btn btn-bd-primary w-100 disabled">Загрузить DOCX</a>
+                                            <div class="col-4">
+                                                <a class="btn btn-bd-primary w-100 disabled">Загрузить документы ИГИ</a>
+                                            </div>
+                                            <div class="col-4">
+                                                <a class="btn btn-bd-primary w-100 disabled">Загрузить документы ИГДИ</a>
+                                            </div>
+                                            <div class="col-4">
+                                                <a class="btn btn-bd-primary w-100 disabled">Загрузить все документы</a>
                                             </div>
                                         </div>
                                     </div>
@@ -404,53 +406,119 @@
 
         {#    <script src="{% static 'js/application.js' %}"></script>#}
     </script>
-{#    <script>#}
-{#        let xhr;#}
-{##}
-{#        function downloadFile(url, fileName) {#}
-{#            $('#wait-modal').modal('show');#}
-{#            xhr = fetch(url)#}
-{#                .then(response => response.blob())#}
-{#                .then(blob => {#}
-{#                    $('#wait-modal').modal('hide');#}
-{#                    const url = URL.createObjectURL(blob);#}
-{#                    const a = document.createElement('a');#}
-{#                    a.href = url;#}
-{#                    a.download = fileName;#}
-{#                    a.style.display = 'none';#}
-{#                    document.body.appendChild(a);#}
-{#                    a.click();#}
-{#                    document.body.removeChild(a);#}
-{#                    URL.revokeObjectURL(url);#}
-{#                });#}
-{#        }#}
-{##}
-{#        $(document).on('click', '#download-map', function (e) {#}
-{#            e.preventDefault();#}
-{#            const fileName = $(this).data('screenshot-name') + '.png';#}
-{#            const url = "{% url 'zakaz:download_map' order.pk %}";#}
-{#            downloadFile(url, fileName);#}
-{#        });#}
-{##}
-{#        $(document).on('click', '#download-igi', function (e) {#}
-{#            e.preventDefault();#}
-{#            const fileName = $(this).data('igi-name') + '.docx';#}
-{#            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";#}
-{#            downloadFile(url, fileName);#}
-{#        });#}
-{##}
-{#        $(document).on('click', '#download-igdi', function (e) {#}
-{#            e.preventDefault();#}
-{#            const fileName = $(this).data('igdi-name') + '.docx';#}
-{#            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";#}
-{#            downloadFile(url, fileName);#}
-{#        });#}
-{##}
-{#        $(document).on('click', '#wait-modal .btn-close', function () {#}
-{#            xhr.abort();#}
-{#            $('#wait-modal').modal('hide');#}
-{#        });#}
-{#    </script>#}
+    <script>
+        const checkboxes = document.querySelectorAll('#TypeWork input[type="checkbox"]');
+        const downloadLinkIgi = document.querySelector('#download-igi');
+        const downloadLinkIgdi = document.querySelector('#download-igdi');
+        const downloadLinkAll = document.querySelector('#download-all-docx');
+
+        // Проверяем состояние чекбоксов при загрузке страницы
+        checkboxes.forEach((checkbox) => {
+            if (checkbox.checked === false) {
+                if (checkbox.value === '2') {
+                    downloadLinkIgi.href = '#';
+                    downloadLinkIgi.classList.add('disabled');
+                } else if (checkbox.value === '1') {
+                    downloadLinkIgdi.href = '#';
+                    downloadLinkIgdi.classList.add('disabled');
+                }
+            } else {
+                if (checkbox.value === '2') {
+                    downloadLinkIgi.href = '{% url "zakaz:download_igi_docx" order.pk %}';
+                    downloadLinkIgi.classList.remove('disabled');
+                } else if (checkbox.value === '1') {
+                    downloadLinkIgdi.href = '{% url "zakaz:download_igdi_docx" order.pk %}';
+                    downloadLinkIgdi.classList.remove('disabled');
+                }
+            }
+            // Проверяем состояние чекбоксов и определяем, должна ли быть активной ссылка "Download All"
+            if (document.querySelector('#TypeWork input[value="1"]').checked && document.querySelector('#TypeWork input[value="2"]').checked) {
+                downloadLinkAll.href = '{% url "zakaz:download_all_docx" order.pk %}';
+                downloadLinkAll.classList.remove('disabled');
+            } else {
+                downloadLinkAll.href = '#';
+                downloadLinkAll.classList.add('disabled');
+            }
+
+            // Добавляем обработчик изменения состояния чекбокса
+            checkbox.addEventListener('change', () => {
+                if (checkbox.value === '2') {
+                    if (checkbox.checked === true) {
+                        downloadLinkIgi.href = '{% url "zakaz:download_igi_docx" order.pk %}';
+                        downloadLinkIgi.classList.remove('disabled');
+                    } else {
+                        downloadLinkIgi.href = '#';
+                        downloadLinkIgi.classList.add('disabled');
+                    }
+                }
+                if (checkbox.value === '1') {
+                    if (checkbox.checked === true) {
+                        downloadLinkIgdi.href = '{% url "zakaz:download_igdi_docx" order.pk %}';
+                        downloadLinkIgdi.classList.remove('disabled');
+                    } else {
+                        downloadLinkIgdi.href = '#';
+                        downloadLinkIgdi.classList.add('disabled');
+                    }
+                }
+
+                // Проверяем состояние обоих чекбоксов и активируем/деактивируем ссылку download-all
+                if (document.querySelector('#TypeWork input[value="2"]').checked === true && document.querySelector('#TypeWork input[value="1"]').checked === true) {
+                    downloadLinkAll.href = '{% url "zakaz:download_all_docx" order.pk %}';
+                    downloadLinkAll.classList.remove('disabled');
+                } else {
+                    downloadLinkAll.href = '#';
+                    downloadLinkAll.classList.add('disabled');
+                }
+            });
+        });
+    </script>
+    {#    <script>#}
+    {#        let xhr;#}
+    {##}
+    {#        function downloadFile(url, fileName) {#}
+    {#            $('#wait-modal').modal('show');#}
+    {#            xhr = fetch(url)#}
+    {#                .then(response => response.blob())#}
+    {#                .then(blob => {#}
+    {#                    $('#wait-modal').modal('hide');#}
+    {#                    const url = URL.createObjectURL(blob);#}
+    {#                    const a = document.createElement('a');#}
+    {#                    a.href = url;#}
+    {#                    a.download = fileName;#}
+    {#                    a.style.display = 'none';#}
+    {#                    document.body.appendChild(a);#}
+    {#                    a.click();#}
+    {#                    document.body.removeChild(a);#}
+    {#                    URL.revokeObjectURL(url);#}
+    {#                });#}
+    {#        }#}
+    {##}
+    {#        $(document).on('click', '#download-map', function (e) {#}
+    {#            e.preventDefault();#}
+    {#            const fileName = $(this).data('screenshot-name') + '.png';#}
+    {#            const url = "{% url 'zakaz:download_map' order.pk %}";#}
+    {#            downloadFile(url, fileName);#}
+    {#        });#}
+    {##}
+    {#        $(document).on('click', '#download-igi', function (e) {#}
+    {#            e.preventDefault();#}
+    {#            const fileName = $(this).data('igi-name') + '.docx';#}
+    {#            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";#}
+    {#            downloadFile(url, fileName);#}
+    {#        });#}
+    {##}
+    {#        $(document).on('click', '#download-igdi', function (e) {#}
+    {#            e.preventDefault();#}
+    {#            const fileName = $(this).data('igdi-name') + '.docx';#}
+    {#            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";#}
+    {#            downloadFile(url, fileName);#}
+    {#        });#}
+    {##}
+    {#        $(document).on('click', '#wait-modal .btn-close', function () {#}
+    {#            xhr.abort();#}
+    {#            $('#wait-modal').modal('hide');#}
+    {#        });#}
+    {#    </script>#}
 
 
 
