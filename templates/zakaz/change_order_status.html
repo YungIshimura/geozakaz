@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load verbose_name %}
 {% load static %}
 {% block content %}
 
@@ -21,9 +22,18 @@
                     {{ order.date.year }}{{ order.date.month }}{{ order.date.day }}-{{ order.pk }}</li>
             </ol>
         </nav>
-        <form action="#" method='POST' enctype='multipart/form-data'
-              id="form-data">
+        <form action="#" method='POST' enctype='multipart/form-data' id="form-data">
             {% csrf_token %}
+            {% if order_form.errors %}
+                {% for field in order_form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger text-center">
+                            <span>{% verbose_name_tag order_model field.name %} {{ error|lower }} </span>
+                            <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
             {% include 'inc/_alerts.html' %}
             <div class="row">
                 <div class="col-sm-6 mb-sm-0">
@@ -33,74 +43,35 @@
                                 <h5>Участок</h5>
                             </div>
                             <label for="{{ form.cadastral_numbers.id_for_label }}">Кадастровый номер</label>
-                            <div class="input-group mb-3">
-                                {{ order_form.cadastral_numbers }}
-                                <div class="input-group-append">
-                                    <button id='edit' type='button' class='btn btn-outline-secondary custom-button'
-                                            onclick='EditCadastral();' style='margin-left: 10px; margin-right:5px;'><i
-                                            class='bx bxs-edit'></i></button>
-                                    <button id='delete' type='button' class='btn btn-outline-secondary custom-button'><i
-                                            class='bx bxs-x-circle'></i></button>
-                                    `
-                                </div>
-                            </div>
+                            {% with order_form.cadastral_numbers.value|split:"," as cadastral_numbers %}
+                                {% for cadastral_number in cadastral_numbers %}
+                                    <div class="input-group mb-3 custom-input-group" id='{{ forloop.counter }}'>
+                                        <input type="text" name="cadastral_numbers" value="{{ cadastral_number }}"
+                                               onchange='ChangeCadastral({{ forloop.counter }})x'
+                                               class="form-control custom-form-control" required="" readonly=''
+                                               id="cadastral_number{{ forloop.counter }}"
+                                               style='background-color:lightgray;'>
+                                        <div class="input-group-append custom-input-group-append">
+                                            <button id='edit{{ forloop.counter }}' type='button'
+                                                    onClick='EditCadastral({{ forloop.counter }})'
+                                                    class='btn btn-outline-secondary custom-button'
+                                                    onclick='EditCadastral();'
+                                                    style='margin-left: 10px; text-align: center; line-height: 10px;'><i
+                                                    class='bx bxs-edit'></i></button>
+                                            <button id='delete{{ forloop.counter }}' type='button'
+                                                    onClick='DeleteCadastral({{ forloop.counter }});'
+                                                    class='btn btn-outline-secondary custom-button'
+                                                    style='margin-left: 10px; text-align: center; line-height: 10px;'><i
+                                                    class='bx bxs-x-circle'></i></button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endwith %}
+                            <hr>
+
                             <div>
-                                <div class="card-title">
-                                    <h5>Габариты здания</h5>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <div class="col-sm-4 mb-3 mb-sm-0">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="{{ form.length.id_for_label }}"
-                                                           class="form-label">Длина</label>
-                                                    {{ order_form.length }}
-                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                         style="width: 110px; height: 35px;">
-
-                                                        {{ order_form.length_unit }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="{{ form.width.id_for_label }}"
-                                                           class="form-label">Ширина</label>
-                                                    {{ order_form.width }}
-                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                         style="width: 110px; height: 35px">
-                                                        {{ order_form.width_unit }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="w-100"></div>
-
-                                    <div class="col-sm-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3" id='width'>
-                                                    <label for="{{ form.height.id_for_label }}"
-                                                           class="form-label">Высота</label>
-                                                    {{ order_form.height }}
-                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                         style="width: 110px; height: 35px">
-                                                        {{ order_form.height_unit }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
+                                <div class='row justify-content-center' style='margin-top:15px;'>
+                                    <div class="col-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
@@ -115,7 +86,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                                 <div>
                                     <div class="card-title">
@@ -131,6 +101,7 @@
                                     <label for="{{ form.city.id_for_label }}">Населенный пункт</label>
                                     {{ order_form.city }}
                                     <br>
+                                    </select>
                                     <div class="mb-3">
                                         <label for="{{ form.street.id_for_label }}">Улица</label>
                                         {{ order_form.street }}
@@ -163,11 +134,14 @@
                                         </div>
                                     </div>
                                 </div>
+                                <input type="checkbox" id="agreement" name="agreement">
+                                <label for='agreement'> <a href="{% url 'users:agreement' %}" target='_blank'>Согласен с
+                                    политикой конфиденциальности</a></label>
                             </div>
                         </div>
                     </div>
                     {% if files %}
-                        <div class="card" style="height: 220px; overflow-y: scroll;">
+                        <div class="card" style="height: 250px; overflow-y: scroll;">
 
                             <div class="card-body">
                                 <h5 class="card-title" style="padding: 0 0 15px 0"></h5>
@@ -184,9 +158,7 @@
                                     {% endfor %}
                                     <div class="input-file-list"></div>
                                 </div>
-
                             </div>
-
                         </div>
                     {% endif %}
 
@@ -201,10 +173,10 @@
 
                             <div class="row">
                                 <div class="col-6">
-                                                                        <a href="{% url 'zakaz:download_map' order.pk %}"
-                                                                           class="btn btn-bd-primary w-100">Скачать карту</a>
-{#                                    <a href="#" id="download-map" data-screenshot-name="{{ screenshot_name }}"#}
-{#                                       class="btn btn-bd-primary w-100">Скачать карту</a>#}
+                                    <a href="{% url 'zakaz:download_map' order.pk %}"
+                                       class="btn btn-bd-primary w-100">Скачать карту</a>
+                                    {#                                    <a href="#" id="download-map" data-screenshot-name="{{ screenshot_name }}"#}
+                                    {#                                       class="btn btn-bd-primary w-100">Скачать карту</a>#}
 
 
                                 </div>
@@ -221,6 +193,58 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="card" style='min-width: 300px;'>
+                        <div class="card-title">
+                            <h5>Габариты здания</h5>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-sm">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="{{ form.length.id_for_label }}"
+                                                   class="form-label">Длина</label>
+                                            {{ order_form.length }}
+                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                 style="width: 110px; height: 35px;">
+
+                                                {{ order_form.length_unit }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="{{ form.width.id_for_label }}"
+                                                   class="form-label">Ширина</label>
+                                            {{ order_form.width }}
+                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                 style="width: 110px; height: 35px">
+                                                {{ order_form.width_unit }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3" id='width'>
+                                            <label for="{{ form.height.id_for_label }}"
+                                                   class="form-label">Высота</label>
+                                            {{ order_form.height }}
+                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
+                                                 style="width: 110px; height: 35px">
+                                                {{ order_form.height_unit }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card-body">
                             <div style="max-width: 500px">
                                 <div class="card-title">
@@ -259,6 +283,13 @@
                                         <h5>Цель работ</h5>
                                     </div>
                                     {{ order_form.work_objective }}
+                                </div>
+                                <div style="max-width: 500px">
+                                    <div class="card-title">
+                                        <h5>Название объекта</h5>
+                                    </div>
+                                    <input class='form-control' name="object_name"
+                                           value='{{ order.object_name }}'/>
                                 </div>
                                 <hr>
                                 <div>
@@ -335,18 +366,18 @@
                                         <h5 class="card-title">Выгрузка документов</h5>
                                         <div class="row">
                                             <div class="col-4">
-{#                                                <a href="#" id="download-igi"#}
-{#                                                   data-igi-name="{{ document_igi_name_upload }}"#}
-{#                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГИ</a>#}
+                                                {#                                                <a href="#" id="download-igi"#}
+                                                {#                                                   data-igi-name="{{ document_igi_name_upload }}"#}
+                                                {#                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГИ</a>#}
                                                 <a href="{% url 'zakaz:download_igi_docx' order.pk %}"
                                                    class="btn btn-bd-primary w-100">Загрузить документы ИГИ</a>
                                             </div>
                                             <div class="col-4">
                                                 <a href="{% url 'zakaz:download_igdi_docx' order.pk %}"
                                                    class="btn btn-bd-primary w-100">Загрузить документы ИГДИ</a>
-{#                                                <a href="#" id="download-igdi"#}
-{#                                                   data-igdi-name="{{ document_igdi_name_upload }}"#}
-{#                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГДИ</a>#}
+                                                {#                                                <a href="#" id="download-igdi"#}
+                                                {#                                                   data-igdi-name="{{ document_igdi_name_upload }}"#}
+                                                {#                                                   class="btn btn-bd-primary w-100">Загрузить документы ИГДИ</a>#}
                                             </div>
                                             <div class="col-4">
                                                 <a href="{% url 'zakaz:download_all_docx' order.pk %}"
@@ -371,7 +402,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </form>
 
         <div id="wait-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -397,60 +427,115 @@
                 $.ajax({
                     url: '{% url 'zakaz:change_order_status' order.pk %}',
                     type: 'POST',
-                    data: $('#form-data').serialize()
+                    data: $('#form-data').serialize(),
+                    success: function (response) {
+                        document.getElementById('teg-ok').style.display = 'block';
+                        setTimeout(function () {
+                            document.getElementById('teg-ok').style.display = 'none';
+                        }, 3000)
+                    },
+                    error: function (response) {
+                        document.getElementById('teg-error').style.display = 'block';
+                        setTimeout(function () {
+                            document.getElementById('teg-error').style.display = 'none';
+                        }, 3000)
+                    }
                 });
             }, 3000);
         }
 
-        {#    <script src="{% static 'js/application.js' %}"></script>#}
+        $(document).ready(function () {
+            $('#form-data').on('input', saveFormData);
+        });
     </script>
-{#    <script>#}
-{#        let xhr;#}
-{##}
-{#        function downloadFile(url, fileName) {#}
-{#            $('#wait-modal').modal('show');#}
-{#            xhr = fetch(url)#}
-{#                .then(response => response.blob())#}
-{#                .then(blob => {#}
-{#                    $('#wait-modal').modal('hide');#}
-{#                    const url = URL.createObjectURL(blob);#}
-{#                    const a = document.createElement('a');#}
-{#                    a.href = url;#}
-{#                    a.download = fileName;#}
-{#                    a.style.display = 'none';#}
-{#                    document.body.appendChild(a);#}
-{#                    a.click();#}
-{#                    document.body.removeChild(a);#}
-{#                    URL.revokeObjectURL(url);#}
-{#                });#}
-{#        }#}
-{##}
-{#        $(document).on('click', '#download-map', function (e) {#}
-{#            e.preventDefault();#}
-{#            const fileName = $(this).data('screenshot-name') + '.png';#}
-{#            const url = "{% url 'zakaz:download_map' order.pk %}";#}
-{#            downloadFile(url, fileName);#}
-{#        });#}
-{##}
-{#        $(document).on('click', '#download-igi', function (e) {#}
-{#            e.preventDefault();#}
-{#            const fileName = $(this).data('igi-name') + '.docx';#}
-{#            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";#}
-{#            downloadFile(url, fileName);#}
-{#        });#}
-{##}
-{#        $(document).on('click', '#download-igdi', function (e) {#}
-{#            e.preventDefault();#}
-{#            const fileName = $(this).data('igdi-name') + '.docx';#}
-{#            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";#}
-{#            downloadFile(url, fileName);#}
-{#        });#}
-{##}
-{#        $(document).on('click', '#wait-modal .btn-close', function () {#}
-{#            xhr.abort();#}
-{#            $('#wait-modal').modal('hide');#}
-{#        });#}
-{#    </script>#}
+    <script>
+        function downloadFile(url, fileName) {
+            $('#wait-modal').modal('show');
+            fetch(url)
+                .then(response => response.blob())
+                .then(blob => {
+                    $('#wait-modal').modal('hide');
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+        }
+
+        $(document).on('click', '#download-map', function (e) {
+            e.preventDefault();
+            const fileName = $(this).data('screenshot-name') + '.png';
+            const url = "{% url 'zakaz:download_map' order.pk %}";
+            downloadFile(url, fileName);
+        });
+
+        $(document).on('click', '#download-igi', function (e) {
+            e.preventDefault();
+            const fileName = $(this).data('igi-name') + '.docx';
+            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";
+            downloadFile(url, fileName);
+        });
+
+        $(document).on('click', '#download-igdi', function (e) {
+            e.preventDefault();
+            const fileName = $(this).data('igdi-name') + '.docx';
+            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";
+            downloadFile(url, fileName);
+        });
+
+    </script>
+    {#    <script>#}
+    {#        let xhr;#}
+    {##}
+    {#        function downloadFile(url, fileName) {#}
+    {#            $('#wait-modal').modal('show');#}
+    {#            xhr = fetch(url)#}
+    {#                .then(response => response.blob())#}
+    {#                .then(blob => {#}
+    {#                    $('#wait-modal').modal('hide');#}
+    {#                    const url = URL.createObjectURL(blob);#}
+    {#                    const a = document.createElement('a');#}
+    {#                    a.href = url;#}
+    {#                    a.download = fileName;#}
+    {#                    a.style.display = 'none';#}
+    {#                    document.body.appendChild(a);#}
+    {#                    a.click();#}
+    {#                    document.body.removeChild(a);#}
+    {#                    URL.revokeObjectURL(url);#}
+    {#                });#}
+    {#        }#}
+    {##}
+    {#        $(document).on('click', '#download-map', function (e) {#}
+    {#            e.preventDefault();#}
+    {#            const fileName = $(this).data('screenshot-name') + '.png';#}
+    {#            const url = "{% url 'zakaz:download_map' order.pk %}";#}
+    {#            downloadFile(url, fileName);#}
+    {#        });#}
+    {##}
+    {#        $(document).on('click', '#download-igi', function (e) {#}
+    {#            e.preventDefault();#}
+    {#            const fileName = $(this).data('igi-name') + '.docx';#}
+    {#            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";#}
+    {#            downloadFile(url, fileName);#}
+    {#        });#}
+    {##}
+    {#        $(document).on('click', '#download-igdi', function (e) {#}
+    {#            e.preventDefault();#}
+    {#            const fileName = $(this).data('igdi-name') + '.docx';#}
+    {#            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";#}
+    {#            downloadFile(url, fileName);#}
+    {#        });#}
+    {##}
+    {#        $(document).on('click', '#wait-modal .btn-close', function () {#}
+    {#            xhr.abort();#}
+    {#            $('#wait-modal').modal('hide');#}
+    {#        });#}
+    {#    </script>#}
 
 
 
