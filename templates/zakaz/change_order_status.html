@@ -58,11 +58,6 @@
                                                     onclick='EditCadastral();'
                                                     style='margin-left: 10px; text-align: center; line-height: 10px;'><i
                                                     class='bx bxs-edit'></i></button>
-                                            <button id='delete{{ forloop.counter }}' type='button'
-                                                    onClick='DeleteCadastral({{ forloop.counter }});'
-                                                    class='btn btn-outline-secondary custom-button'
-                                                    style='margin-left: 10px; text-align: center; line-height: 10px;'><i
-                                                    class='bx bxs-x-circle'></i></button>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -141,7 +136,7 @@
                         </div>
                     </div>
                     {% if files %}
-                        <div class="card" style="height: 250px; overflow-y: scroll;">
+                        <div class="card" style="height: 230px; overflow-y: scroll;">
 
                             <div class="card-body">
                                 <h5 class="card-title" style="padding: 0 0 15px 0"></h5>
