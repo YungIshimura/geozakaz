@@ -47,7 +47,7 @@
                                 {% for cadastral_number in cadastral_numbers %}
                                     <div class="input-group mb-3 custom-input-group" id='{{ forloop.counter }}'>
                                         <input type="text" name="cadastral_numbers" value="{{ cadastral_number }}"
-                                               onchange='ChangeCadastral({{ forloop.counter }})x'
+                                               onchange='ChangeCadastral({{ forloop.counter }}); reloadPage()'
                                                class="form-control custom-form-control" required="" readonly=''
                                                id="cadastral_number{{ forloop.counter }}"
                                                style='background-color:lightgray;'>
@@ -58,11 +58,6 @@
                                                     onclick='EditCadastral();'
                                                     style='margin-left: 10px; text-align: center; line-height: 10px;'><i
                                                     class='bx bxs-edit'></i></button>
-                                            <button id='delete{{ forloop.counter }}' type='button'
-                                                    onClick='DeleteCadastral({{ forloop.counter }});'
-                                                    class='btn btn-outline-secondary custom-button'
-                                                    style='margin-left: 10px; text-align: center; line-height: 10px;'><i
-                                                    class='bx bxs-x-circle'></i></button>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -141,7 +136,7 @@
                         </div>
                     </div>
                     {% if files %}
-                        <div class="card" style="height: 250px; overflow-y: scroll;">
+                        <div class="card" style="height: 230px; overflow-y: scroll;">
 
                             <div class="card-body">
                                 <h5 class="card-title" style="padding: 0 0 15px 0"></h5>
@@ -161,39 +156,41 @@
                             </div>
                         </div>
                     {% endif %}
-
-                    <div class="card">
-
-                        <div class="card-body">
-                            <h5 class="card-title" style="padding: 0 0 15px 0;"></h5>
-                            <div>
-                                {{ map_html | safe }}
-                            </div>
-                            <br>
-
-                            <div class="row">
-                                <div class="col-6">
-                                    <a href="{% url 'zakaz:download_map' order.pk %}"
-                                       class="btn btn-bd-primary w-100">Скачать карту</a>
-                                    {#                                    <a href="#" id="download-map" data-screenshot-name="{{ screenshot_name }}"#}
-                                    {#                                       class="btn btn-bd-primary w-100">Скачать карту</a>#}
-
-
+                    {% if map_html %}
+                        <div class="card">
+                            <div class="card-body">
+                                <div>
+                                    {{ map_html | safe }}
                                 </div>
-                                <div class="col-6">
-                                    <a href="{% url 'zakaz:download_xlsx' order.pk %}"
-                                       class="btn btn-bd-primary w-100">Скачать координаты</a>
+                                <br>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a href="{% url 'zakaz:download_map' order.pk %}"
+                                           class="btn btn-bd-primary w-100">Скачать карту</a>
+                                        {#                                    <a href="#" id="download-map" data-screenshot-name="{{ screenshot_name }}"#}
+                                        {#                                       class="btn btn-bd-primary w-100">Скачать карту</a>#}
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="{% url 'zakaz:download_xlsx' order.pk %}"
+                                           class="btn btn-bd-primary w-100">Скачать координаты</a>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
-
-                    </div>
-
+                    {% else %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"
+                                    style="padding: 0 0 10px 0; margin-top: 25px; text-align: center">Для загрузки карты
+                                    добавьте
+                                    кадастровый номер</h5>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="col-sm-6">
-                    <div class="card" style='min-width: 300px;'>
-                        <div class="card-title">
+                    <div class="card" style='min-width: 300px'>
+                        <div class="card-title" style="margin-left: 25px">
                             <h5>Габариты здания</h5>
                         </div>
                         <div class="row justify-content-center">
@@ -288,7 +285,7 @@
                                     <div class="card-title">
                                         <h5>Название объекта</h5>
                                     </div>
-                                    <input class='form-control' name="object_name"
+                                    <input class='form-control' name="object_name" id="object-name"
                                            value='{{ order.object_name }}'/>
                                 </div>
                                 <hr>
@@ -418,6 +415,17 @@
         </div>
     </section>
     <script>
+
+        var objectName = document.getElementById('object-name');
+        objectName.addEventListener('change', function () {
+            var inputValue = objectName.value;
+            if (inputValue) {
+                reloadPage()
+            } else {
+                reloadPage()
+            }
+        });
+
         function saveFormData() {
             clearTimeout(saveFormData.timer);
             saveFormData.timer = setTimeout(function () {
@@ -444,6 +452,54 @@
         $(document).ready(function () {
             $('#form-data').on('input', saveFormData);
         });
+
+        function reloadPage() {
+            setTimeout(function () {
+                location.reload();
+            }, 4000);
+        }
+
+    </script>
+    <script>
+        function downloadFile(url, fileName) {
+            $('#wait-modal').modal('show');
+            fetch(url)
+                .then(response => response.blob())
+                .then(blob => {
+                    $('#wait-modal').modal('hide');
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+        }
+
+        $(document).on('click', '#download-map', function (e) {
+            e.preventDefault();
+            const fileName = $(this).data('screenshot-name') + '.png';
+            const url = "{% url 'zakaz:download_map' order.pk %}";
+            downloadFile(url, fileName);
+        });
+
+        $(document).on('click', '#download-igi', function (e) {
+            e.preventDefault();
+            const fileName = $(this).data('igi-name') + '.docx';
+            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";
+            downloadFile(url, fileName);
+        });
+
+        $(document).on('click', '#download-igdi', function (e) {
+            e.preventDefault();
+            const fileName = $(this).data('igdi-name') + '.docx';
+            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";
+            downloadFile(url, fileName);
+        });
+
     </script>
 {#    <script>#}
 {#        function downloadFile(url, fileName) {#}
@@ -530,5 +586,6 @@
 
 
     </script>
+    <script src="{% static 'js/order.js' %}"></script>
 
 {% endblock %}

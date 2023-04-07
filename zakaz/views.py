@@ -222,7 +222,10 @@ def view_change_order_status(request, order_id):
         'city', 'area', 'region', 'work_objective', 'user'),
         id=order_id)
     files = OrderFile.objects.select_related('order').filter(order=order.pk)
-    map_html = get_map(order.cadastral_numbers)
+    if order.cadastral_numbers:
+        map_html = get_map(order.cadastral_numbers)
+    else:
+        map_html = False
 
     # document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
     # screenshot_name = f"{document_cipher}-map"
@@ -232,6 +235,7 @@ def view_change_order_status(request, order_id):
     if request.method == 'POST':
         order_form = OrderForm(request.POST, instance=order)
         if order_form.is_valid():
+
             order.object_name = request.POST.get('object_name')
             order = order_form.save()
             company_number_slug = order.user.company_number_slug
