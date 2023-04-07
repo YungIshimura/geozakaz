@@ -17,7 +17,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 from .rosreestr2 import GetArea
 from .validators import validate_number
-from .models import OrderFile, Order, Region, PurposeBuilding, Area
+from .models import OrderFile, Order, Region, PurposeBuilding, Area, City
 from .forms import OrderForm, OrderFileForm, CadastralNumberForm
 from django.contrib import messages
 import folium
@@ -27,7 +27,6 @@ from docx import Document
 from docx.shared import Inches, Pt
 from django.http import HttpResponse
 from django.conf import settings
-from selenium import webdriver
 from urllib.parse import quote as urlquote
 from io import BytesIO
 from PIL import Image
@@ -68,13 +67,7 @@ def city_autocomplete(request):
 
 
 def ajax_download_map(request):
-    cadastral_number = request.POST.get('cadastral_number', None)
-    response = {
-        'is_valid': True
-    }
-    GetArea(cadastral_number)
-
-    return JsonResponse(response)
+    pass
 
 
 def ajax_validate_cadastral_number(request):
@@ -94,15 +87,27 @@ def ajax_validate_cadastral_number(request):
 
 def view_order_cadastral(request, company_slug, company_number_slug):
     context = {}
-    if request.method == 'POST':
-        form = CadastralNumberForm(request.POST)
-        if form.is_valid():
-            cadastral_numbers = request.POST.getlist('cadastral_numbers')
-            response = HttpResponseRedirect(
-                reverse('zakaz:order',
-                        args=[company_slug, company_number_slug]))
-            response.set_cookie('cadastral_numbers', cadastral_numbers)
-            return response
+    response = HttpResponseRedirect(
+            reverse('zakaz:order',
+                    args=[company_slug, company_number_slug]))
+    request.session.modified = True
+    try:
+        request.session.pop('cadastral_numbers')
+        request.session.pop('address')
+    except:
+        pass
+
+    if 'cadastral_numbers' in request.POST:
+        cadastral_numbers = request.POST.getlist('cadastral_numbers')
+        request.session['cadastral_numbers'] = cadastral_numbers
+
+        return response
+
+    if 'address' in request.POST:
+        address = request.POST.getlist('address')
+        request.session['address'] = address
+
+        return response
 
     else:
         form = CadastralNumberForm()
@@ -112,7 +117,7 @@ def view_order_cadastral(request, company_slug, company_number_slug):
     return render(request, 'zakaz/customer_home.html', context=context)
 
 
-# @login_required(login_url='users:user_login')
+
 def view_order(request, company_slug, company_number_slug):
     coordinates = []
     context = {}
@@ -120,50 +125,59 @@ def view_order(request, company_slug, company_number_slug):
     user_company = get_object_or_404(
         User, company_number_slug=company_number_slug
     )
+    cadastral_numbers = request.session['cadastral_numbers'] if 'cadastral_numbers' in request.session else None
+    address = request.session['address'] if 'address' in request.session else None
 
-    cadastral_numbers = eval(request.COOKIES.get('cadastral_numbers'))
-    cadastral_region = Region.objects.get(
-        cadastral_region_number=cadastral_numbers[0].split(':')[0])
-    cadastral_area = Area.objects.get(
-        cadastral_area_number=cadastral_numbers[0].split(':')[1])
 
-    for number in cadastral_numbers:
-        areas = GetArea(number)
-        coordinates += areas.get_coord()
+    if address:
+        region, area, city = address[0].split(', ')
+
+    if cadastral_numbers:
+        cadastral_region = Region.objects.get(
+            cadastral_region_number=cadastral_numbers[0].split(':')[0])
+        cadastral_area = Area.objects.get(
+            cadastral_area_number=cadastral_numbers[0].split(':')[1])
+        for number in cadastral_numbers:
+            areas = GetArea(number)
+            coordinates += areas.get_coord()
 
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
         if order_form.is_valid() and order_files_form.is_valid():
             order = order_form.save()
-            order.cadastral_numbers = request.POST.getlist('cadastral_numbers')
             order.user = user_company
-            order.coordinates = coordinates
-
-            img_data = get_map_screenshot(order.cadastral_numbers)._to_png()
-            img_file = SimpleUploadedFile(name='map.png', content=img_data, content_type='image/png')
-            order.map = img_file
-
+            if cadastral_numbers:
+                order.coordinates = coordinates
+                order.cadastral_numbers = cadastral_numbers
+                img_data = get_map_screenshot(order.cadastral_numbers)._to_png()
+                img_file = SimpleUploadedFile(name='map.png', content=img_data, content_type='image/png')
+                order.map = img_file
             order.save()
+
             for file in request.FILES.getlist('file'):
                 OrderFile.objects.create(order=order, file=file)
             messages.success(request, 'Ваша заявка отправлена')
 
-            return redirect(request.path)
+            return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
 
         else:
             messages.error(request, 'Проверьте правильность введённых данных')
+            print(order_form.errors)
     else:
         order_form = OrderForm(initial={
-            'cadastral_numbers': cadastral_numbers,
-            'region': cadastral_region.id,
-            'area': cadastral_area.id})
-        order_files_form = OrderFileForm()
+            'cadastral_numbers': cadastral_numbers if cadastral_numbers else None,
+            'region': cadastral_region.id if cadastral_numbers else Region.objects.get(name=region).id, 
+            'area': cadastral_area.id if cadastral_numbers else Area.objects.get(name=area).id,
+            'city': None if cadastral_numbers else City.objects.get(name=city).id})
 
+        order_files_form = OrderFileForm()
+    
     context['user_company'] = user_company
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
     context['purpose_building'] = PurposeBuilding.objects.all()
+    context['cadastral_numbers'] = cadastral_numbers
 
     return render(request, 'zakaz/order.html', context=context)
 

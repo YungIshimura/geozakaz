@@ -8,8 +8,7 @@ from .validators import validate_number
 
 class CadastralNumberForm(forms.Form):
     cadastral_number = forms.CharField(
-        validators=[validate_number],
-        required=False,
+        # validators=[validate_number],
         widget=forms.TextInput(
             attrs={'placeholder': 'Введите кадастровый номер', 'name': 'query'}
         ))
@@ -17,9 +16,8 @@ class CadastralNumberForm(forms.Form):
 
 class OrderForm(forms.ModelForm):
     cadastral_numbers = SimpleArrayField(forms.CharField(
-        validators=[validate_number],
+        # validators=[validate_number],
         widget=forms.TextInput(attrs={'placeholder': 'Кадастровый номер'}),
-        required=True,
     ))
 
     street = forms.CharField(
@@ -144,6 +142,8 @@ class OrderForm(forms.ModelForm):
         super(OrderForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+        self.fields['cadastral_numbers'].required = False
 
         self.fields['purpose_building'].empty_label = 'Нажмите, чтобы выбрать назначение здания'
         self.fields['work_objective'].empty_label = 'Нажмите, чтобы выбрать цель работ'
