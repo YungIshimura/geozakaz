@@ -1,3 +1,6 @@
+import datetime
+import os
+
 from django.db import models
 from django.core.validators import MinValueValidator
 from smart_selects.db_fields import ChainedForeignKey
@@ -6,6 +9,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 
 User = get_user_model()
+
+
+def get_image_path(instance, filename):
+    date = datetime.datetime.now().strftime('%Y%m%d')
+    path = f'{date}-{instance.pk:03d}'
+    filename = f'{path}-map.png'
+    return os.path.join(path, filename)
 
 
 class TypeWork(models.Model):
@@ -269,11 +279,16 @@ class Order(models.Model):
         blank=True,
         null=True)
 
-    map = models.TextField(
-        'Карта участка',
+    # map = models.TextField(
+    #     'Карта участка',
+    #     null=True,
+    #     blank=True
+    # )
+    map = models.ImageField(
+        upload_to=get_image_path,
         null=True,
-        blank=True
-    )
+        blank=True)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', null=True, blank=True)
 
     def __str__(self):
