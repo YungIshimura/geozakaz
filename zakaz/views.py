@@ -1,10 +1,10 @@
 import datetime
 import json
-import mimetypes
 import time
 import zipfile
 
 import openpyxl as openpyxl
+from django.core.files.base import ContentFile
 from django.http import JsonResponse, Http404
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect
@@ -17,7 +17,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 from .rosreestr2 import GetArea
 from .validators import validate_number
-from .models import OrderFile, Order, Region, PurposeBuilding, Area, City
+from .models import OrderFile, Order, Region, PurposeBuilding, Area, City, get_image_path
 from .forms import OrderForm, OrderFileForm, CadastralNumberForm
 from django.contrib import messages
 import folium
@@ -30,7 +30,7 @@ from django.conf import settings
 from urllib.parse import quote as urlquote
 from io import BytesIO
 from PIL import Image
-from django.core.files.uploadedfile import SimpleUploadedFile
+from selenium import webdriver
 
 User = get_user_model()
 
@@ -150,9 +150,29 @@ def view_order(request, company_slug, company_number_slug):
             if cadastral_numbers:
                 order.coordinates = coordinates
                 order.cadastral_numbers = cadastral_numbers
-                img_data = get_map_screenshot(order.cadastral_numbers)._to_png()
-                img_file = SimpleUploadedFile(name='map.png', content=img_data, content_type='image/png')
-                order.map = img_file
+
+                # img_data = get_map_screenshot(order.cadastral_numbers)._to_png()
+                # img_file = SimpleUploadedFile(name='map.png', content=img_data, content_type='image/png')
+                # order.map = img_file
+
+                tmp_html = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.html')
+                tmp_png = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.png')
+
+                get_map_screenshot(order.cadastral_numbers).save(tmp_html)
+
+                driver = webdriver.Chrome()
+                driver.get(f'file://{tmp_html}')
+                time.sleep(1)
+                driver.save_screenshot(tmp_png)
+                driver.quit()
+
+                img_path = get_image_path(order, 'map.png')
+                with open(tmp_png, 'rb') as f:
+                    order.map.save(img_path, ContentFile(f.read()), save=True)
+
+                os.remove(tmp_html)
+                os.remove(tmp_png)
+
             order.save()
 
             for file in request.FILES.getlist('file'):
