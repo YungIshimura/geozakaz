@@ -32,6 +32,7 @@ from io import BytesIO
 from PIL import Image
 from selenium import webdriver
 
+driver = webdriver.Chrome() 
 User = get_user_model()
 
 
