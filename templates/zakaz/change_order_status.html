@@ -47,8 +47,8 @@
                                 {% for cadastral_number in cadastral_numbers %}
                                     <div class="input-group mb-3 custom-input-group" id='{{ forloop.counter }}'>
                                         <input type="text" name="cadastral_numbers" value="{{ cadastral_number }}"
-                                               onchange='ChangeCadastral({{ forloop.counter }}); reloadPage()'
-                                               class="form-control custom-form-control" required="" readonly=''
+                                               onchange='ChangeCadastral({{ forloop.counter }})'
+                                               class="form-control custom-form-control" readonly=''
                                                id="cadastral_number{{ forloop.counter }}"
                                                style='background-color:lightgray;'>
                                         <div class="input-group-append custom-input-group-append">
@@ -56,32 +56,30 @@
                                                     onClick='EditCadastral({{ forloop.counter }})'
                                                     class='btn btn-outline-secondary custom-button'
                                                     onclick='EditCadastral();'
-                                                    style='margin-left: 10px; text-align: center; line-height: 10px;'><i
-                                                    class='bx bxs-edit'></i></button>
+                                                    style='margin-left: 10px; text-align: center; line-height: 10px;'>
+                                                <i class='bx bxs-edit'></i></button>
+
+                                            <button id='delete{{ forloop.counter }}' type='button'
+                                                    onClick='DeleteCadastral({{ forloop.counter }})'
+                                                    class='btn btn-outline-secondary custom-button'
+                                                    style='margin-left: 10px; text-align: center; line-height: 10px;'>
+                                                <i class='bx bxs-x-circle'></i></button>
                                         </div>
                                     </div>
                                 {% endfor %}
+                                <div id="new-cadastral" style="display: none; margin-bottom: 20px">
+                                    <input type="text" name="new_cadastral_numbers"
+                                           class="form-control custom-form-control"
+                                           style='background-color:white; max-width: 570px' onchange="reloadPage()">
+                                </div>
+                                <button id='add-cadastral' type='button'
+                                        class='btn btn-outline-secondary custom-button'
+                                        style='margin-left: 10px; text-align: center; line-height: 10px;'>
+                                    <i class='bi bi-plus'></i></button>
                             {% endwith %}
                             <hr>
 
                             <div>
-                                <div class='row justify-content-center' style='margin-top:15px;'>
-                                    <div class="col-6">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="{{ form.square.id_for_label }}"
-                                                           class="form-label">Площадь</label>
-                                                    {{ order_form.square }}
-                                                    <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                         style="width: 110px; height: 35px">
-                                                        {{ order_form.square_unit }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div>
                                     <div class="card-title">
                                         <h5>Адрес объекта</h5>
@@ -128,9 +126,71 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div>
+                                        <div class="row" style="margin-top:25px; text-align: left;">
+                                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                                <div class="card ">
+                                                    <div class="card-body">
+                                                        <div class="mb-3">
+                                                            <label for="{{ form.phone_number.id_for_label }}">Номер
+                                                                телефона</label>
+                                                            {{ order_form.phone_number }}
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="mb-3">
+                                                            <label for="{{ form.email.id_for_label }}">Электронная
+                                                                почта</label>
+                                                            {{ order_form.email }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-5">
+                                            <div class="col-sm-4 mb-3 mb-sm-0">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="mb-3">
+                                                            <label for="{{ form.name.id_for_label }}">Имя</label>
+                                                            {{ order_form.name }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="mb-3">
+                                                            <label for="{{ form.surname.id_for_label }}">Фамилия</label>
+                                                            {{ order_form.surname }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="card">
+                                                    <div class="card-body">
+
+                                                        <div class="mb-3">
+                                                            <label for="{{ form.father_name.id_for_label }}">*
+                                                                Отчество</label>
+                                                            {{ order_form.father_name }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <input type="checkbox" id="agreement" name="agreement">
-                                <label for='agreement'> <a href="{% url 'users:agreement' %}" target='_blank'>Согласен с
+                                <label for='agreement'> <a href="{% url 'users:agreement' %}" target='_blank'>Согласен
+                                    с
                                     политикой конфиденциальности</a></label>
                             </div>
                         </div>
@@ -146,7 +206,8 @@
                                             <svg width="28" height="33" viewBox="0 0 28 33" fill="none"
                                                  xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M17.8501 1L27.1176 9.72913M27.1176 9.72913H19.5351C19.0882 9.72913 18.6596 9.56192 18.3436 9.26428C18.0276 8.96663 17.8501 8.56295 17.8501 8.14202V1H2.68501C2.23812 1 1.80953 1.16721 1.49353 1.46486C1.17753 1.7625 1 2.16619 1 2.58711V30.3616C1 30.7826 1.17753 31.1862 1.49353 31.4839C1.80953 31.7815 2.23812 31.9487 2.68501 31.9487H25.4326C25.8795 31.9487 26.3081 31.7815 26.6241 31.4839C26.9401 31.1862 27.1176 30.7826 27.1176 30.3616V9.72913Z"
-                                                      stroke="#2D9CDB" stroke-linecap="round" stroke-linejoin="round"/>
+                                                      stroke="#2D9CDB" stroke-linecap="round"
+                                                      stroke-linejoin="round"/>
                                             </svg>
                                             <span style="margin-left: 10px; color: #0d6efd">{{ file.file }}</span>
                                         </a></p>
@@ -181,7 +242,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title"
-                                    style="padding: 0 0 10px 0; margin-top: 25px; text-align: center">Для загрузки карты
+                                    style="padding: 0 0 10px 0; margin-top: 25px; text-align: center">Для загрузки
+                                    карты
                                     добавьте
                                     кадастровый номер</h5>
                             </div>
@@ -200,10 +262,8 @@
                                         <div class="mb-3">
                                             <label for="{{ form.length.id_for_label }}"
                                                    class="form-label">Длина</label>
-                                            {{ order_form.length }}
-                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                 style="width: 110px; height: 35px;">
-
+                                            <div class="btn-group" role="group" aria-label="Basic example">
+                                                {{ order_form.length }}
                                                 {{ order_form.length_unit }}
                                             </div>
                                         </div>
@@ -217,11 +277,9 @@
                                         <div class="mb-3">
                                             <label for="{{ form.width.id_for_label }}"
                                                    class="form-label">Ширина</label>
-                                            {{ order_form.width }}
-                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                 style="width: 110px; height: 35px">
-                                                {{ order_form.width_unit }}
-                                            </div>
+                                            <div class="btn-group" role="group" aria-label="Basic example">
+                                                {{ order_form.width }}
+                                                {{ order_form.width_unit }}                                                    </div>
                                         </div>
                                     </div>
                                 </div>
@@ -232,9 +290,8 @@
                                         <div class="mb-3" id='width'>
                                             <label for="{{ form.height.id_for_label }}"
                                                    class="form-label">Высота</label>
-                                            {{ order_form.height }}
-                                            <div class="btn-group mt-2" role="group" aria-label="Basic example"
-                                                 style="width: 110px; height: 35px">
+                                            <div class="btn-group" role="group" aria-label="Basic example">
+                                                {{ order_form.height }}
                                                 {{ order_form.height_unit }}
                                             </div>
                                         </div>
@@ -289,67 +346,24 @@
                                            value='{{ order.object_name }}'/>
                                 </div>
                                 <hr>
-                                <div>
-                                    <div class="row" style="margin-top:25px; text-align: left;">
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <div class="card ">
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="{{ form.phone_number.id_for_label }}">Номер
-                                                            телефона</label>
-                                                        {{ order_form.phone_number }}
-                                                    </div>
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="{{ form.email.id_for_label }}">Электронная
-                                                            почта</label>
-                                                        {{ order_form.email }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-5">
-                                        <div class="col-sm-4 mb-3 mb-sm-0">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="{{ form.name.id_for_label }}">Имя</label>
-                                                        {{ order_form.name }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="mb-3">
-                                                        <label for="{{ form.surname.id_for_label }}">Фамилия</label>
-                                                        {{ order_form.surname }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="card">
-                                                <div class="card-body">
-
-                                                    <div class="mb-3">
-                                                        <label for="{{ form.father_name.id_for_label }}">*
-                                                            Отчество</label>
-                                                        {{ order_form.father_name }}
+                                <div class='row justify-content-center' style='margin-top:15px;'>
+                                    <div class="col-6  mt-5">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="{{ form.square.id_for_label }}"
+                                                           class="form-label">Площадь</label>
+                                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                                        {{ order_form.square }}
+                                                        {{ order_form.square_unit }}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <hr>
                                 <div>
                                     <div class="card-title">
                                         <h5>Комментарий</h5>
@@ -364,18 +378,22 @@
                                         <div class="row justify-content-center">
                                             <div class="col-8">
                                                 <a href="{% url 'zakaz:download_igi_docx' order.pk %}"
-                                                   class="btn btn-bd-primary w-100" id="download-igi">Загрузить документы ИГИ</a>
+                                                   class="btn btn-bd-primary w-100" id="download-igi">Загрузить
+                                                    документы ИГИ</a>
                                             </div>
                                             <div class="col-8">
                                                 <a href="{% url 'zakaz:download_igdi_docx' order.pk %}"
-                                                   class="btn btn-bd-primary w-100" id="download-igdi">Загрузить документы ИГДИ</a>
+                                                   class="btn btn-bd-primary w-100" id="download-igdi">Загрузить
+                                                    документы ИГДИ</a>
                                             </div>
                                             <div class="col-8">
                                                 <a href="{% url 'zakaz:download_all_docx' order.pk %}"
-                                                   class="btn btn-bd-primary w-100" id="download-all">Загрузить все документы</a>
+                                                   class="btn btn-bd-primary w-100" id="download-all">Загрузить все
+                                                    документы</a>
                                             </div>
                                             <div class="col-8">
-                                                <a class="btn btn-bd-primary w-100 disabled" id="download-none">Загрузить документы</a>
+                                                <a class="btn btn-bd-primary w-100 disabled" id="download-none">Загрузить
+                                                    документы</a>
                                             </div>
                                         </div>
                                     </div>
@@ -415,6 +433,26 @@
         </div>
     </section>
     <script>
+
+        function DeleteCadastral(id) {
+            let cadastral_number = document.getElementById(`cadastral_number${id}`);
+            console.log(cadastral_number)
+            let index = array.indexOf(cadastral_number.value);
+            console.log(index)
+            document.getElementById(id).remove();
+            array.splice(index, 1);
+        }
+
+        var addButton = document.getElementById('add-cadastral');
+
+        addButton.addEventListener('click', function () {
+            if (document.getElementById('new-cadastral').style.display === "none") {
+                document.getElementById('new-cadastral').style.display = "block";
+            } else {
+                document.getElementById('new-cadastral').style.display = "none";
+            }
+
+        });
 
         var objectName = document.getElementById('object-name');
         objectName.addEventListener('change', function () {
@@ -501,47 +539,47 @@
         });
 
     </script>
-{#    <script>#}
-{#        function downloadFile(url, fileName) {#}
-{#            $('#wait-modal').modal('show');#}
-{#            fetch(url)#}
-{#                .then(response => response.blob())#}
-{#                .then(blob => {#}
-{#                    $('#wait-modal').modal('hide');#}
-{#                    const url = URL.createObjectURL(blob);#}
-{#                    const a = document.createElement('a');#}
-{#                    a.href = url;#}
-{#                    a.download = fileName;#}
-{#                    a.style.display = 'none';#}
-{#                    document.body.appendChild(a);#}
-{#                    a.click();#}
-{#                    document.body.removeChild(a);#}
-{#                    URL.revokeObjectURL(url);#}
-{#                });#}
-{#        }#}
-{##}
-{#        $(document).on('click', '#download-map', function (e) {#}
-{#            e.preventDefault();#}
-{#            const fileName = $(this).data('screenshot-name') + '.png';#}
-{#            const url = "{% url 'zakaz:download_map' order.pk %}";#}
-{#            downloadFile(url, fileName);#}
-{#        });#}
-{##}
-{#        $(document).on('click', '#download-igi', function (e) {#}
-{#            e.preventDefault();#}
-{#            const fileName = $(this).data('igi-name') + '.docx';#}
-{#            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";#}
-{#            downloadFile(url, fileName);#}
-{#        });#}
-{##}
-{#        $(document).on('click', '#download-igdi', function (e) {#}
-{#            e.preventDefault();#}
-{#            const fileName = $(this).data('igdi-name') + '.docx';#}
-{#            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";#}
-{#            downloadFile(url, fileName);#}
-{#        });#}
-{##}
-{#    </script>#}
+    {#    <script>#}
+    {#        function downloadFile(url, fileName) {#}
+    {#            $('#wait-modal').modal('show');#}
+    {#            fetch(url)#}
+    {#                .then(response => response.blob())#}
+    {#                .then(blob => {#}
+    {#                    $('#wait-modal').modal('hide');#}
+    {#                    const url = URL.createObjectURL(blob);#}
+    {#                    const a = document.createElement('a');#}
+    {#                    a.href = url;#}
+    {#                    a.download = fileName;#}
+    {#                    a.style.display = 'none';#}
+    {#                    document.body.appendChild(a);#}
+    {#                    a.click();#}
+    {#                    document.body.removeChild(a);#}
+    {#                    URL.revokeObjectURL(url);#}
+    {#                });#}
+    {#        }#}
+    {##}
+    {#        $(document).on('click', '#download-map', function (e) {#}
+    {#            e.preventDefault();#}
+    {#            const fileName = $(this).data('screenshot-name') + '.png';#}
+    {#            const url = "{% url 'zakaz:download_map' order.pk %}";#}
+    {#            downloadFile(url, fileName);#}
+    {#        });#}
+    {##}
+    {#        $(document).on('click', '#download-igi', function (e) {#}
+    {#            e.preventDefault();#}
+    {#            const fileName = $(this).data('igi-name') + '.docx';#}
+    {#            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";#}
+    {#            downloadFile(url, fileName);#}
+    {#        });#}
+    {##}
+    {#        $(document).on('click', '#download-igdi', function (e) {#}
+    {#            e.preventDefault();#}
+    {#            const fileName = $(this).data('igdi-name') + '.docx';#}
+    {#            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";#}
+    {#            downloadFile(url, fileName);#}
+    {#        });#}
+    {##}
+    {#    </script>#}
     <script>
         const checkboxes = document.querySelectorAll('#TypeWork input[type="checkbox"]');
         const downloadLinkIgi = document.querySelector('#download-igi');
