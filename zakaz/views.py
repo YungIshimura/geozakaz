@@ -32,7 +32,7 @@ from io import BytesIO
 from PIL import Image
 from selenium import webdriver
 
-driver = webdriver.Chrome() 
+# driver = webdriver.Chrome() 
 User = get_user_model()
 
 
@@ -42,7 +42,7 @@ def region_autocomplete(request):
         regions = []
         for region in qs:
             regions.append(region.name)
-
+        
         return JsonResponse(regions, safe=False)
 
 

@@ -38,7 +38,7 @@
                                             {% csrf_token %}
                                             <div class="input-group mb-3">
                                                 <input type="text" name="cadastral_number"
-                                                    placeholder="Введите кадастровый номер или адрес участка" id="id_cadastral_number">
+                                                    placeholder="Введите кадастровый номер или адрес участка" id="id_cadastral_number"> <p id="empty-message" style='margin-left:10px;'></p>
                                                 <div class="input-group-append">
                                                     <button type='submit' style='position:absolute; right:5px; width: 30px; height:30px; margin-top:3.5px; color: white; background-color: #012970;'  onclick='AddCadastralNumber();' id='btn' disabled
                                                             class='btn btn-outline-secondary custom-btn'>+</button>
@@ -50,7 +50,7 @@
                                             <br>
                                             <div style='display:flex; flex-direction: column; align-items:center;' id='test33'>
                                                 <div class='cadastal_numbers' id='cadastal_numbers'><div>
-                                                <button type="submit" style='background-color: #012970; margin-top:10px;' id='order-btn' class='btn btn-primary'>Создать заявку</button>
+                                                <button type="submit" style='background-color: #012970; margin-top:10px;' id='order-btn' disabled class='btn btn-primary'>Создать заявку</button>
                                             </div>
                                         </form> 
                                     </div>
@@ -78,7 +78,7 @@
                 cadastral = document.getElementById('id_cadastral_number')
                 button = document.getElementById('btn');        
                 error = document.getElementById('input__error')
-                if (cadastral && cadastral.value.length > 5 && cadastral.value.includes(":")) {
+                if (!isNaN(cadastral.value) || cadastral.value.includes(":")) {
                     $.ajax({
                         data: $(this).serialize(),
                         url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
@@ -98,12 +98,14 @@
                     });
                     return false;
                 }   
-                else {
+                if (isNaN(cadastral.value)) {
+                    $('#btn').css('display', 'none')
                     $(function () {
                         let input = document.getElementById('id_cadastral_number')
                         $("#id_cadastral_number").autocomplete({
                             source: "{% url 'zakaz:region_autocomplete' %}",
                             minLength: 2,
+                            
                             select: function( event, ui ) {
                                 $('#id_cadastral_number').attr('id', 'wait-area')
                                 let selected_value = ui.item.value
@@ -130,6 +132,7 @@
                                                                     select: function(response) {
                                                                         document.getElementById('wait-city').disabled=false;
                                                                         $("#wait-city").attr('name', 'address');
+                                                                        document.getElementById('order-btn').disabled = false;
                                                                     }
                                                                 })
                                                             }
@@ -141,6 +144,13 @@
                                         }
                                     })
                                 }
+                            },
+                            response: function(event, ui) {
+                                if (ui.content.length === 0) {
+                                    $("#empty-message").text("Не найдено");
+                                } else {
+                                    $("#empty-message").empty();
+                                }
                             }
                         })
                     });
@@ -148,21 +158,6 @@
             }); 
         });
         </script>
-
-        {% comment %} <script>
-            $(function () {
-                $('#btn').on('click', function () {
-                    let cadastal_number = document.getElementById('select')
-                    
-                    $.ajax({
-                        data: {'cadastral_number': cadastal_number.lastChild.value, csrfmiddlewaretoken: '{{ csrf_token }}'},
-                        url: "{% url 'zakaz:ajax_download_map' %}",
-                        method: 'POST',
-                    });
-                });
-            });
-        </script> {% endcomment %}
-
     </div>
 
 {% endblock %}
