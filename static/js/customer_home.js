@@ -19,7 +19,7 @@ function AddCadastralNumber() {
         div.id = id;
         div.innerHTML = `<input id='cadastral_number${id}' type='text' name='cadastral_numbers' class='form-control' onchange='VaidateCadastral(${id});' readonly value='${cadatral_number.value}' style='border-radius:8px; text-align:center;'>
         <button id='edit${id}' type='button' onClick='EditCadastral(${id})' style='margin:auto 5px auto 5px;'><i class='bx bxs-edit btn btn-outline-secondary'></i></button>
-        <button id='delete' type='button' onClick='DeleteCadastral(${id});'><i class='bx bxs-x-circle btn btn-outline-secondary'></i></button>`
+        <button id='delete${id}' type='button' onClick='DeleteCadastral(${id});'><i class='bx bxs-x-circle btn btn-outline-secondary' id='test_test'></i></button>`
     
         my_div = document.getElementById("cadastal_numbers");
         my_div.parentNode.insertBefore(div, my_div);
@@ -46,18 +46,26 @@ function DeleteCadastral(id) {
 function EditCadastral(id) {
     let cadastral = document.getElementById(`cadastral_number${id}`);
     let edit = document.getElementById(`edit${id}`)
+    let delete_button = document.getElementById(`delete${id}`)
+    let delete_icon = document.getElementById('test_test')
     if (flag) {
         edit.innerHTML = "<i class='bx bxs-check-circle btn btn-outline-secondary'></i>";
         cadastral.readOnly = false;
         cadastral.style.cssText = 'background-color:lightgray';
+        delete_button.disabled = true;
+        delete_icon.style.cssText = 'background-color:lightgray';
+        let index = array.indexOf(cadastral.value);
+        array.splice(index);
         flag--;
     }
     else {
-        let [a, new_cadastral] = VaidateCadastral(id);
-        if (a) {
+        let [validate_flag, new_cadastral] = VaidateCadastral(id);
+        if (validate_flag) {
             edit.innerHTML = "<i class='bx bxs-edit btn btn-outline-secondary'></i>";
             cadastral.readOnly = true;
             cadastral.style.cssText = 'border-radius:8px; text-align:center;'
+            delete_button.disabled = false;
+            delete_icon.style.cssText = 'background-color:white';
             let index = array.indexOf(cadastral.value);
             array.splice(index);
             array.push(new_cadastral);
