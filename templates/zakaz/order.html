@@ -13,14 +13,14 @@
     <script src="/static/smart-selects/admin/js/chainedfk.js"></script>
     <script src="/static/smart-selects/admin/js/bindfields.js"></script>
     <link rel='stylesheet' href="{% static 'css/order.css' %}">
+
     {#    <div class="mb-5 mt-5">#}
     {#        <h1>Создайте заявку</h1>#}
     {#    </div>#}
     <div class="d-flex py-4">
         <a class="logo d-flex align-items-center w-auto">
             {% if user_company.company_name %}
-                <span class="d-none d-lg-block">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button
-                        type="button" class="btn btn-primary mb-2" style='background-color: #012970;'>Изменить</button></span>
+                <span class="d-none d-lg-block">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button type="button" class="btn btn-primary mb-2" style='background-color: #012970;' onclick="location.href='{% url 'zakaz:rates'%}'">Изменить</button></span>
             {% else %}
                 <span class="d-none d-lg-block">Заявка</span>
 
@@ -342,4 +342,18 @@
         </form>
     </section>
     <script src="{% static 'js/order.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $("#id_phone_number").mask("+7(999)999-99-99", {placeholder: ''});
+        });
+    </script>
+    <script>
+        $('#id_phone_number').on('input', function() {
+            $(this).val($(this).val().replace(/[A-Za-zА-Яа-яЁё]/, ''))
+        });
+    </script>
+
 {% endblock %}
