@@ -262,6 +262,10 @@ def view_change_order_status(request, order_id):
     return render(request, 'zakaz/change_order_status.html', context=context)
 
 
+def view_rates(request):
+    return render(request, 'zakaz/rates.html')
+
+
 def get_map(number_list):
     m = folium.Map(location=[55.7558, 37.6173], zoom_start=6, zoom_control=False,
                    control_scale=True)
