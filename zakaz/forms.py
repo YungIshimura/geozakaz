@@ -46,7 +46,7 @@ class OrderForm(forms.ModelForm):
 
     square_unit = forms.ChoiceField(
         choices=Order.SQUARE_UNIT,
-        widget=forms.RadioSelect(),
+        widget=forms.Select(attrs={'class': "custom-btn-check"})
     )
 
     length = forms.DecimalField(
@@ -57,7 +57,7 @@ class OrderForm(forms.ModelForm):
 
     length_unit = forms.ChoiceField(
         choices=Order.LENGTH_AND_WIDTH_UNIT,
-        widget=forms.RadioSelect()
+        widget=forms.Select()
     )
 
     width = forms.DecimalField(
@@ -68,7 +68,7 @@ class OrderForm(forms.ModelForm):
 
     width_unit = forms.ChoiceField(
         choices=Order.LENGTH_AND_WIDTH_UNIT,
-        widget=forms.RadioSelect()
+        widget=forms.Select()
     )
 
     height = forms.DecimalField(
@@ -79,7 +79,7 @@ class OrderForm(forms.ModelForm):
 
     height_unit = forms.ChoiceField(
         choices=Order.HEIGHT_UNIT,
-        widget=forms.RadioSelect()
+        widget=forms.Select()
     )
 
     type_work = forms.ModelMultipleChoiceField(

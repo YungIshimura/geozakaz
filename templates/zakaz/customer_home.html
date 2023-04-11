@@ -7,29 +7,36 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="{% static 'js/customer_home.js' %}"></script>
+    <style>
+    body{
+        overflow: hidden;
+    }
+    </style>
     <div class="container">
-
-        <section class="section register d-flex flex-column align-items-center justify-content-center py-4" style='min-height:85vh;'>
+        <section class="section register d-flex flex-column align-items-center justify-content-center py-4"
+                 style='min-height:84vh'>
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                    <div class="col-lg-5 col-md-6 d-flex flex-column align-items-center justify-content-center">
 
                         {% include 'inc/_alerts.html' %}
 
                         <div class="d-flex justify-content-center py-4">
                             <a href="#" class="logo d-flex align-items-center w-auto">
                                 <img src="{% static 'img/logo.png' %}" alt="">
-                                <span class="d-none d-lg-block">Геозаказ</span>
+                                <span class="d-none d-lg-block" style="font-size: 50px">Геозаказ</span>
                             </a>
                         </div>
 
-                        <div class="card mb-3"> 
+                        <div class="card mb-3 border-0" style="box-shadow: none">
                             <div class="alert alert-danger text-center" style='display:none;' id='input__error'>
                                 <span>Проверьте правильность введённых данных</span>
                             </div>
-                            <div class="card-body" style='min-width:430px;'>
+                            <div class="card-body" style='min-width:430px; background-color: #f6f9ff'>
                                 <div class="pt-4 pb-2">
-                                    <p class="text-center">Введите кадастровый номер или адрес участка. Есть выписка / техническое задание?<br>Просто перетащите на это окно</p>
+                                    <p class="text-center" style="font-size: 20px">Введите кадастровый номер или адрес
+                                        участка. Есть выписка /
+                                        техническое задание?<br>Просто перетащите на это окно</p>
                                 </div>
                                 <div class="col-12 cadastal-container">
                                     <div class="search-bar">
@@ -38,125 +45,144 @@
                                             {% csrf_token %}
                                             <div class="input-group mb-3">
                                                 <input type="text" name="cadastral_number"
-                                                    placeholder="Введите кадастровый номер или адрес участка" id="id_cadastral_number"> <p id="empty-message" style='margin-left:10px;'></p>
+                                                       placeholder="Введите кадастровый номер или адрес участка"
+                                                       id="id_cadastral_number" style="font-size: 15px">
+                                                <p id="empty-message" style='margin-left:10px;'></p>
                                                 <div class="input-group-append">
-                                                    <button type='submit' style='position:absolute; right:5px; width: 30px; height:30px; top:4px; color: white; background-color: #012970;'  onclick='AddCadastralNumber();' id='btn' disabled
-                                                            class='btn btn-outline-secondary custom-btn'>+</button>
+                                                    <button type='submit'
+                                                            style='cursor: pointer; position:absolute; right:5px;
+                                                            width: 35px; height:35px; top:2px; color: white;
+                                                            background-color: #012970;'
+                                                            onclick='AddCadastralNumber();' id='btn' disabled
+                                                            class='btn btn-outline-secondary custom-btn'>+
+                                                    </button>
                                                 </div>
                                             </div>
+                                            <div style="text-align: center">
+                                                <a href='#' class='#' style="font-size: 20px;">Загрузить выписку /
+                                                    техническое задание</a>
 
-                                            <a href='#' class='#'>Загрузить выписку / техническое задание</a>
-                                            <br>
-                                            <br>
-                                            <div style='display:flex; flex-direction: column; align-items:center;' id='test33'>
-                                                <div class='cadastal_numbers' id='cadastal_numbers'><div>
-                                                <button type="submit" style='background-color: #012970; margin-top:10px;' id='order-btn' disabled class='btn btn-primary'>Создать заявку</button>
                                             </div>
-                                        </form> 
+                                            <br>
+                                            <br>
+                                            <div style='display:flex; flex-direction: column; align-items:center; font-size: 15px'
+                                                 id='test33'>
+                                                <div class='cadastal_numbers' id='cadastal_numbers'>
+                                                    <div style="margin-left: 25px">
+                                                        <button type="submit"
+                                                                style='background-color: #012970; margin-top:40px; cursor: pointer'
+                                                                id='order-btn' disabled class='btn btn-primary btn-lg'>
+                                                            Создать
+                                                            заявку
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
 
                                 {% if not request.user.is_authenticated %}
-                                    <div class="col-12">
-                                        <p class="small mb-0"><a href="{% url 'users:user_login' %}">Войти</a> или <a href="{% url 'users:user_register' %}">создать учетную запись</a></p>
+                                    <div class="col-12" style="margin-top: 20px; text-align: center">
+                                        <p class="mb-0"><a href="{% url 'users:user_login' %}">Войти</a> или <a
+                                                href="{% url 'users:user_register' %}">создать учетную запись</a></p>
                                     </div>
 
                                 {% endif %}
-
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
-
         </section>
         <script>
             $(document).ready(function () {
-                $('#id_cadastral_number, #123').on('input', function(){
-                cadastral = document.getElementById('id_cadastral_number')
-                button = document.getElementById('btn');        
-                error = document.getElementById('input__error')
-                if (!isNaN(cadastral.value) || cadastral.value.includes(":")) {
-                    $.ajax({
-                        data: $(this).serialize(),
-                        url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
-                        success: function (response) {
-                            if (response.is_valid == true || cadastral.value == '') {
-                                button.disabled = false;
-                                setTimeout(() => { error.style.cssText = 'display:none; padding-bottom:10px;'; }, 1500);
-                            } 
-                            else {
-                                button.disabled = true;
-                                setTimeout(() => { error.style.cssText = 'display:block; padding-bottom:10px;'; }, 1500);
-                            }
-                        },
-                        error: function (response) {
-                            console.log(response.responseJSON.errors)
-                        }
-                    });
-                    return false;
-                }   
-                if (isNaN(cadastral.value)) {
-                    $('#btn').css('display', 'none')
-                    $(function () {
-                        let input = document.getElementById('id_cadastral_number')
-                        $("#id_cadastral_number").autocomplete({
-                            source: "{% url 'zakaz:region_autocomplete' %}",
-                            minLength: 2,
-                            
-                            select: function( event, ui ) {
-                                $('#id_cadastral_number').attr('id', 'wait-area')
-                                let selected_value = ui.item.value
-                                document.getElementById('btn').style.cssText = 'display:none;'
-                                ui.item.value += ', '
-                                if (ui.item.value) {
-                                    $.ajax({
-                                        url: "{% url 'zakaz:area_autocomplete' %}",
-                                        data: {'region': selected_value},
-                                        success: function(response){
-                                            $("#wait-area").autocomplete({
-                                                source: response,   
-                                                select: function(event, ui) {
-                                                    $('#wait-area').attr('id', 'wait-city')
-                                                    ui.item.value += ', '
-                                                    if (ui.item.value) {
-                                                        $.ajax({
-                                                            url: "{% url 'zakaz:city_autocomplete' %}",
-                                                            data: {"region": ui.item.value},
-                                                            success: function(response) {
-                                                                $('#wait-city').autocomplete({
-                                                                    source:response,
-                                                                    minLength: 2,
-                                                                    select: function(response) {
-                                                                        document.getElementById('wait-city').disabled=false;
-                                                                        $("#wait-city").attr('name', 'address');
-                                                                        document.getElementById('order-btn').disabled = false;
-                                                                    }
-                                                                })
-                                                            }
-                                                        })
-                                                    }
-                                                    
-                                                }
-                                            })
-                                        }
-                                    })
+                $('#id_cadastral_number, #123').on('input', function () {
+                    cadastral = document.getElementById('id_cadastral_number')
+                    button = document.getElementById('btn');
+                    error = document.getElementById('input__error')
+                    if (!isNaN(cadastral.value) || cadastral.value.includes(":")) {
+                        $.ajax({
+                            data: $(this).serialize(),
+                            url: "{% url 'zakaz:ajax_validate_cadastral_number' %}",
+                            success: function (response) {
+                                if (response.is_valid == true || cadastral.value == '') {
+                                    button.disabled = false;
+                                    setTimeout(() => {
+                                        error.style.cssText = 'display:none; padding-bottom:10px;';
+                                    }, 1500);
+                                } else {
+                                    button.disabled = true;
+                                    setTimeout(() => {
+                                        error.style.cssText = 'display:block; padding-bottom:10px;';
+                                    }, 1500);
                                 }
                             },
-                            response: function(event, ui) {
-                                if (ui.content.length === 0) {
-                                    $("#empty-message").text("Не найдено");
-                                } else {
-                                    $("#empty-message").empty();
-                                }
+                            error: function (response) {
+                                console.log(response.responseJSON.errors)
                             }
-                        })
-                    });
-                }
-            }); 
-        });
+                        });
+                        return false;
+                    }
+                    if (isNaN(cadastral.value)) {
+                        $('#btn').css('display', 'none')
+                        $(function () {
+                            let input = document.getElementById('id_cadastral_number')
+                            $("#id_cadastral_number").autocomplete({
+                                source: "{% url 'zakaz:region_autocomplete' %}",
+                                minLength: 2,
+
+                                select: function (event, ui) {
+                                    $('#id_cadastral_number').attr('id', 'wait-area')
+                                    let selected_value = ui.item.value
+                                    document.getElementById('btn').style.cssText = 'display:none;'
+                                    ui.item.value += ', '
+                                    if (ui.item.value) {
+                                        $.ajax({
+                                            url: "{% url 'zakaz:area_autocomplete' %}",
+                                            data: {'region': selected_value},
+                                            success: function (response) {
+                                                $("#wait-area").autocomplete({
+                                                    source: response,
+                                                    select: function (event, ui) {
+                                                        $('#wait-area').attr('id', 'wait-city')
+                                                        ui.item.value += ', '
+                                                        if (ui.item.value) {
+                                                            $.ajax({
+                                                                url: "{% url 'zakaz:city_autocomplete' %}",
+                                                                data: {"region": ui.item.value},
+                                                                success: function (response) {
+                                                                    $('#wait-city').autocomplete({
+                                                                        source: response,
+                                                                        minLength: 2,
+                                                                        select: function (response) {
+                                                                            document.getElementById('wait-city').disabled = false;
+                                                                            $("#wait-city").attr('name', 'address');
+                                                                            document.getElementById('order-btn').disabled = false;
+                                                                        }
+                                                                    })
+                                                                }
+                                                            })
+                                                        }
+
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }
+                                },
+                                response: function (event, ui) {
+                                    if (ui.content.length === 0) {
+                                        $("#empty-message").text("Не найдено");
+                                    } else {
+                                        $("#empty-message").empty();
+                                    }
+                                }
+                            })
+                        });
+                    }
+                });
+            });
         </script>
     </div>
 

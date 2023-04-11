@@ -240,6 +240,7 @@ def view_change_order_status(request, order_id):
         if order_form.is_valid():
 
             order.object_name = request.POST.get('object_name')
+            order.cadastral_numbers += request.POST.getlist('new_cadastral_numbers')
             order = order_form.save()
             company_number_slug = order.user.company_number_slug
             return JsonResponse({'success': True})
