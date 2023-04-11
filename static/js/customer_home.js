@@ -17,9 +17,9 @@ function AddCadastralNumber() {
         div.style.cssText = 'display:flex;';
         div.className='input-group';
         div.id = id;
-        div.innerHTML = `<input id='cadastral_number${id}' type='text' name='cadastral_numbers' class='form-control' onchange='VaidateCadastral(${id});' readonly value='${cadatral_number.value}' style='border-radius:8px; text-align:center;'>
-        <button id='edit${id}' type='button' onClick='EditCadastral(${id})' style='margin:auto 5px auto 5px;'><i class='bx bxs-edit btn btn-outline-secondary'></i></button>
-        <button id='delete${id}' type='button' onClick='DeleteCadastral(${id});'><i class='bx bxs-x-circle btn btn-outline-secondary' id='test_test'></i></button>`
+        div.innerHTML = `<input id='cadastral_number${id}' type='text' name='cadastral_numbers' class='form-control' onchange='VaidateCadastral(${id});' readonly value='${cadatral_number.value}' style='border-radius:8px; text-align:center; font-size: 15px'>
+        <button id='edit${id}' type='button' onClick='EditCadastral(${id})' style='margin:auto 5px auto 5px;'><i class='bx bxs-edit btn btn-outline-secondary btn-lg'></i></button>
+        <button id='delete${id}' type='button' onClick='DeleteCadastral(${id});'><i class='bx bxs-x-circle btn btn-outline-secondary btn-lg' id='test_test'></i></button>`
     
         my_div = document.getElementById("cadastal_numbers");
         my_div.parentNode.insertBefore(div, my_div);
