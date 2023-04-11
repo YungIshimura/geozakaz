@@ -20,7 +20,7 @@
     <div class="d-flex py-4">
         <a class="logo d-flex align-items-center w-auto">
             {% if user_company.company_name %}
-                <span class="d-none d-lg-block">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button type="button" class="btn btn-primary mb-2" style='background-color: #012970;'>Изменить</button></span>
+                {% comment %} <span class="d-none d-lg-block">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button type="button" class="btn btn-primary mb-2" style='background-color: #012970;' onclick="location.href='{% url 'zakaz:rates'%}'">Изменить</button></span> {% endcomment %}
             {% else %}
                 <span class="d-none d-lg-block">Заявка</span>
 
@@ -326,7 +326,12 @@
 
     <script>
         $(document).ready(function(){
-        $("#id_phone_number").mask("+7(999)999-99-99", {placeholder: ''});
+            $("#id_phone_number").mask("+7(999)999-99-99", {placeholder: ''});
+        });
+    </script>
+    <script>
+        $('#id_phone_number').on('input', function() {
+            $(this).val($(this).val().replace(/[A-Za-zА-Яа-яЁё]/, ''))
         });
     </script>
 
