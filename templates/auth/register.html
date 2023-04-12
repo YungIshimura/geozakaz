@@ -55,9 +55,8 @@
                                             <div class="form-check-input" style="border: 0px">
                                                 {{ form.agreement }}
                                             </div>
-                                            <label for="{{ form.agreement.id_for_label }}">Я
-                                                принимаю условия <a href="{% url 'users:agreement' %}">пользовательского
-                                                    соглашения</a></label>
+                                            <label for="{{ form.agreement.id_for_label }}">Согласен с условиями <a href="{% url 'users:agreement' %}">пользовательского
+                                                    соглашения, политикой конфиденциальности</a></label>
                                         </div>
                                     </div>
 
@@ -83,4 +82,20 @@
         </section>
 
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $("#id_phone_number").mask("+7 (999) 999-99-99", {placeholder: ''});
+        });
+    </script>
+    <script>
+        $('#id_phone_number').on('input', function() {
+            $(this).val($(this).val().replace(/[A-Za-zА-Яа-яЁё]/, ''))
+        });
+    </script>
+
 {% endblock %}
+
