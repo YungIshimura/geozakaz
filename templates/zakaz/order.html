@@ -344,5 +344,24 @@
             </div>
         </form>
     </section>
+    <script>
+
+
+        document.getElementById('id_square_unit').addEventListener('change', function () {
+            if (document.getElementById("id_square_unit").value === 'sq_m') {
+                document.getElementById("id_square").value = {{ squares_m }};
+            } else if ((document.getElementById("id_square_unit").value === 'hectometer')) {
+                document.getElementById("id_square").value = {{ squares_h }};
+            }
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById("id_square_unit").value = 'hectometer';
+            document.getElementById("id_square").value = {{ squares_h }};
+        });
+
+
+    </script>
     <script src="{% static 'js/order.js' %}"></script>
 {% endblock %}

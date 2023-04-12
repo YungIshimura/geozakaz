@@ -321,11 +321,6 @@
                                     <h5>Назначение здания</h5>
                                 </div>
                                 {{ order_form.purpose_building }}
-                                <datalist id="purpose_building">
-                                    {% for purpose in purpose_building %}
-                                        <option value="{{ purpose }}">
-                                    {% endfor %}
-                                </datalist>
                             </div>
                             <div>
                                 <div class="card-title">
@@ -432,6 +427,7 @@
         </div>
     </section>
     <script>
+
 
         function DeleteCadastral(id) {
             let cadastral_number = document.getElementById(`cadastral_number${id}`);

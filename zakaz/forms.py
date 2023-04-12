@@ -38,9 +38,9 @@ class OrderForm(forms.ModelForm):
     )
 
     square = forms.DecimalField(
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(0.1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Площадь'}),
-        required=True
+        required=True,
     )
 
     square_unit = forms.ChoiceField(
