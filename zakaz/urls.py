@@ -1,7 +1,7 @@
 from django.urls import path
 
 from zakaz.views import (view_order_pages, view_change_order_status, view_order_cadastral,
-                         view_order,
+                         view_order, view_rates,
                          download_igi_docx, city_autocomplete,
                          ajax_validate_cadastral_number, region_autocomplete,  area_autocomplete,
                          ajax_download_map, download_map, download_xlsx, download_igdi_docx, download_all_docx)
@@ -18,6 +18,7 @@ urlpatterns = [
     path('order/<slug:company_slug>/<slug:company_number_slug>/form', view_order, name='order'),
     path('order_pages/<slug:company_number_slug>/', view_order_pages, name='order_pages'),
     path('change_order_status/<int:order_id>/', view_change_order_status, name="change_order_status"),
+    path('rates', view_rates, name='rates'),
     path('download_igi_docx/<int:pk>/', download_igi_docx, name='download_igi_docx'),
     path('download_igdi_docx/<int:pk>/', download_igdi_docx, name='download_igdi_docx'),
     path('download_all_docx/<int:pk>/', download_all_docx, name='download_all_docx'),

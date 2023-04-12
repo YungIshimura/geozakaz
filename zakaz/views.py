@@ -186,13 +186,15 @@ def view_order(request, company_slug, company_number_slug):
 
         else:
             messages.error(request, 'Проверьте правильность введённых данных')
-            print(order_form.errors)
     else:
         order_form = OrderForm(initial={
             'cadastral_numbers': cadastral_numbers if cadastral_numbers else None,
             'region': cadastral_region.id if cadastral_numbers else Region.objects.get(name=region).id,
             'area': cadastral_area.id if cadastral_numbers else Area.objects.get(name=area).id,
-            'city': None if cadastral_numbers else City.objects.get(name=city).id})
+            'city': None if cadastral_numbers else City.objects.get(name=city).id,
+            'square_unit': Order.SQUARE_UNIT[0][0],
+        })
+        
 
         order_files_form = OrderFileForm()
 
@@ -264,6 +266,10 @@ def view_change_order_status(request, order_id):
     }
 
     return render(request, 'zakaz/change_order_status.html', context=context)
+
+
+def view_rates(request):
+    return render(request, 'zakaz/rates.html')
 
 
 def get_map(number_list):

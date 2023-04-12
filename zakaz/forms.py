@@ -4,6 +4,7 @@ from django.contrib.postgres.forms import SimpleArrayField
 from .models import TypeWork, Order, OrderFile, WorkObjective, PurposeBuilding
 from django.core.validators import MinValueValidator
 from .validators import validate_number
+from phonenumber_field.formfields import PhoneNumberField
 
 
 class CadastralNumberForm(forms.Form):
@@ -107,11 +108,7 @@ class OrderForm(forms.ModelForm):
         required=False
     )
 
-    phone_number = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'placeholder': '+79001232222'}),
-        required=True
-    )
+    phone_number = PhoneNumberField()
 
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={'placeholder': 'Введите адрес почты'}),
