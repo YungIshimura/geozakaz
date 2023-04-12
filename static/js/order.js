@@ -47,25 +47,25 @@ function DisableFloor() {
 	}
 }
 
-$(window).load(function() {
-	$('#id_user_purpose_building').prop('required', true);
-	$('#id_purpose_building').prop('required', false);
-})
-
-$('#id_purpose_building').change(function(){
-	let value = $(this).val();
-	$('#user-purpose').css({"display": 'none' })
-	$('#user-purpose-title').css({"display": 'none' })
-	$('#id_user_purpose_building').prop('required', false);
-	$('#id_purpose_building').prop('required', true);
-	if (value.length == 0) {
-		$('#user-purpose').css({"display": 'block' })
-		$('#user-purpose-title').css({"display": 'block' })
-		$('#id_user_purpose_building').prop('required', true);
-		$('#id_purpose_building').prop('required', false);
-	}
-
-});
+// $(window).load(function() {
+// 	$('#id_user_purpose_building').prop('required', true);
+// 	$('#id_purpose_building').prop('required', false);
+// })
+//
+// $('#id_purpose_building').change(function(){
+// 	let value = $(this).val();
+// 	$('#user-purpose').css({"display": 'none' })
+// 	$('#user-purpose-title').css({"display": 'none' })
+// 	$('#id_user_purpose_building').prop('required', false);
+// 	$('#id_purpose_building').prop('required', true);
+// 	if (value.length == 0) {
+// 		$('#user-purpose').css({"display": 'block' })
+// 		$('#user-purpose-title').css({"display": 'block' })
+// 		$('#id_user_purpose_building').prop('required', true);
+// 		$('#id_purpose_building').prop('required', false);
+// 	}
+//
+// });
 
 
 function ValueReplace () {

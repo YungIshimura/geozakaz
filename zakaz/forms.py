@@ -63,23 +63,25 @@ class OrderForm(forms.ModelForm):
     width = forms.DecimalField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': ' Ширина'}),
-        required=True
+        required=False
     )
 
     width_unit = forms.ChoiceField(
         choices=Order.LENGTH_AND_WIDTH_UNIT,
-        widget=forms.Select()
+        widget=forms.Select(),
+        required=False
     )
 
     height = forms.DecimalField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Высота'}),
-        required=True
+        required=False
     )
 
     height_unit = forms.ChoiceField(
         choices=Order.HEIGHT_UNIT,
-        widget=forms.Select()
+        widget=forms.Select(),
+        required=False
     )
 
     type_work = forms.ModelMultipleChoiceField(
@@ -116,7 +118,7 @@ class OrderForm(forms.ModelForm):
     )
 
     purpose_building = forms.CharField(
-        widget=forms.TextInput(attrs={'list': 'purpose_building', 'placeholder': 'Выберите/Введите назначение здания'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Выберите/Введите назначение здания'}),
         required=True,
     )
 
