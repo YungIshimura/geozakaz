@@ -1,7 +1,7 @@
 from django import forms
 
 from django.contrib.postgres.forms import SimpleArrayField
-from .models import TypeWork, Order, OrderFile, WorkObjective
+from .models import TypeWork, Order, OrderFile, WorkObjective, PurposeBuilding
 from django.core.validators import MinValueValidator
 from .validators import validate_number
 
@@ -118,8 +118,9 @@ class OrderForm(forms.ModelForm):
         required=True
     )
 
-    purpose_building = forms.CharField(
-        widget=forms.TextInput(attrs={'list': 'purpose_building', 'placeholder': 'Выберите/Введите назначение здания'}),
+    purpose_building = forms.ModelChoiceField(
+        queryset=PurposeBuilding.objects.all(),
+        widget=forms.Select(attrs={'list': 'purpose_building', 'placeholder': 'Выберите/Введите назначение здания'}),
         required=True,
     )
 

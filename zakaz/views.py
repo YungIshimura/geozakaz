@@ -31,8 +31,7 @@ from urllib.parse import quote as urlquote
 from io import BytesIO
 from PIL import Image
 from selenium import webdriver
-
-# driver = webdriver.Chrome() 
+# driver = webdriver.Chrome()
 User = get_user_model()
 
 
@@ -42,7 +41,7 @@ def region_autocomplete(request):
         regions = []
         for region in qs:
             regions.append(region.name)
-        
+
         return JsonResponse(regions, safe=False)
 
 
@@ -89,8 +88,8 @@ def ajax_validate_cadastral_number(request):
 def view_order_cadastral(request, company_slug, company_number_slug):
     context = {}
     response = HttpResponseRedirect(
-            reverse('zakaz:order',
-                    args=[company_slug, company_number_slug]))
+        reverse('zakaz:order',
+                args=[company_slug, company_number_slug]))
     request.session.modified = True
     try:
         request.session.pop('cadastral_numbers')
@@ -118,17 +117,16 @@ def view_order_cadastral(request, company_slug, company_number_slug):
     return render(request, 'zakaz/customer_home.html', context=context)
 
 
-
 def view_order(request, company_slug, company_number_slug):
     coordinates = []
     context = {}
+    square = 0
 
     user_company = get_object_or_404(
         User, company_number_slug=company_number_slug
     )
     cadastral_numbers = request.session['cadastral_numbers'] if 'cadastral_numbers' in request.session else None
     address = request.session['address'] if 'address' in request.session else None
-
 
     if address:
         region, area, city = address[0].split(', ')
@@ -140,6 +138,9 @@ def view_order(request, company_slug, company_number_slug):
             cadastral_area_number=cadastral_numbers[0].split(':')[1])
         for number in cadastral_numbers:
             areas = GetArea(number)
+
+            square = areas.attrs['area_value'] / 1000
+            print(square)
             coordinates += areas.get_coord()
 
     if request.method == 'POST':
@@ -187,13 +188,14 @@ def view_order(request, company_slug, company_number_slug):
             print(order_form.errors)
     else:
         order_form = OrderForm(initial={
+            'square': square,
             'cadastral_numbers': cadastral_numbers if cadastral_numbers else None,
-            'region': cadastral_region.id if cadastral_numbers else Region.objects.get(name=region).id, 
+            'region': cadastral_region.id if cadastral_numbers else Region.objects.get(name=region).id,
             'area': cadastral_area.id if cadastral_numbers else Area.objects.get(name=area).id,
             'city': None if cadastral_numbers else City.objects.get(name=city).id})
 
         order_files_form = OrderFileForm()
-    
+
     context['user_company'] = user_company
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
@@ -236,7 +238,6 @@ def view_change_order_status(request, order_id):
     if request.method == 'POST':
         order_form = OrderForm(request.POST, instance=order)
         if order_form.is_valid():
-
             order.object_name = request.POST.get('object_name')
             order.cadastral_numbers += request.POST.getlist('new_cadastral_numbers')
             order = order_form.save()
