@@ -67,6 +67,12 @@ def city_autocomplete(request):
     return JsonResponse(citys, safe=False)
 
 
+def purpose_building_autocomplete(request):
+    purpose_buildings = PurposeBuilding.objects.all().values_list('purpose', flat=True)
+    purpose_building_options = list(purpose_buildings)
+    return JsonResponse(purpose_building_options, safe=False)
+
+
 def ajax_download_map(request):
     pass
 
@@ -153,10 +159,6 @@ def view_order(request, company_slug, company_number_slug):
             if cadastral_numbers:
                 order.coordinates = coordinates
                 order.cadastral_numbers = cadastral_numbers
-
-                # img_data = get_map_screenshot(order.cadastral_numbers)._to_png()
-                # img_file = SimpleUploadedFile(name='map.png', content=img_data, content_type='image/png')
-                # order.map = img_file
 
                 tmp_html = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.html')
                 tmp_png = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.png')
@@ -307,18 +309,17 @@ def get_map(number_list):
 
     m.get_root().html.add_child(
         folium.Element("<style>.leaflet-popup-close-button {display: none;}</style>"))
-    bounds = [[min(all_place_lat), min(all_place_lng)], [
-        max(all_place_lat), max(all_place_lng)]]
-    center_lat = (bounds[0][0] + bounds[1][0]) / 2
-    center_lng = (bounds[0][1] + bounds[1][1]) / 2
-    m.location = [center_lat, center_lng]
-    m.fit_bounds(bounds)
+    if all_place_lat and all_place_lng:
+        bounds = [[min(all_place_lat), min(all_place_lng)], [max(all_place_lat), max(all_place_lng)]]
+    else:
+        bounds = None
+    if bounds:
+        center_lat = (bounds[0][0] + bounds[1][0]) / 2
+        center_lng = (bounds[0][1] + bounds[1][1]) / 2
+        m.location = [center_lat, center_lng]
+        m.fit_bounds(bounds)
 
     map_html = m._repr_html_()
-
-    # order = get_object_or_404(Order, id=order_id)
-    # order.map = map_html
-    # order.save()
 
     return map_html
 
@@ -496,8 +497,9 @@ def download_igi_docx(request, pk):
     coordinates_dict = {}
 
     for i, coords in enumerate(coordinates):
-        cadastral_num = cadastral_numbers[i]
-        coordinates_dict[cadastral_num] = coords[0]
+        if i < len(cadastral_numbers):
+            cadastral_num = cadastral_numbers[i]
+            coordinates_dict[cadastral_num] = coords[0]
 
     document_name = 'IGI'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
@@ -542,8 +544,9 @@ def download_igdi_docx(request, pk):
     coordinates_dict = {}
 
     for i, coords in enumerate(coordinates):
-        cadastral_num = cadastral_numbers[i]
-        coordinates_dict[cadastral_num] = coords[0]
+        if i < len(cadastral_numbers):
+            cadastral_num = cadastral_numbers[i]
+            coordinates_dict[cadastral_num] = coords[0]
 
     document_name = 'IGDI'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')

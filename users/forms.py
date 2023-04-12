@@ -3,7 +3,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import validate_email
 from django.utils.translation import gettext_lazy as _
 from .models import User
-from phonenumber_field.formfields import PhoneNumberField
 
 
 # Форма регистрации пользователя
@@ -45,11 +44,6 @@ class UserRegistrationForm(UserCreationForm):
         except forms.ValidationError:
             raise forms.ValidationError('Введите действительный адрес электронной почты')
         return email
-    # def clean_email(self):
-    #     email = self.cleaned_data['email']
-    #     if User.objects.filter(email=email).exists():
-    #         raise forms.ValidationError(_('Этот email уже используется.'))
-    #     return email
 
 
 # Форма авторизации пользователя

@@ -41,7 +41,7 @@ class OrderForm(forms.ModelForm):
     square = forms.DecimalField(
         validators=[MinValueValidator(0.1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Площадь'}),
-        required=True,
+        required=True
     )
 
     square_unit = forms.ChoiceField(
@@ -63,23 +63,25 @@ class OrderForm(forms.ModelForm):
     width = forms.DecimalField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': ' Ширина'}),
-        required=True
+        required=False
     )
 
     width_unit = forms.ChoiceField(
         choices=Order.LENGTH_AND_WIDTH_UNIT,
-        widget=forms.Select()
+        widget=forms.Select(),
+        required=False
     )
 
     height = forms.DecimalField(
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Высота'}),
-        required=True
+        required=False
     )
 
     height_unit = forms.ChoiceField(
         choices=Order.HEIGHT_UNIT,
-        widget=forms.Select()
+        widget=forms.Select(),
+        required=False
     )
 
     type_work = forms.ModelMultipleChoiceField(

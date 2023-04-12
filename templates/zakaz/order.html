@@ -20,9 +20,9 @@
     <div class="d-flex py-4">
         <a class="logo d-flex align-items-center w-auto">
             {% if user_company.company_name %}
-                <span class="d-none d-lg-block"
-                      style="font-size: 20px">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button
-                        type="button" class="btn btn-primary mb-2" style='background-color: #012970;'>Изменить</button></span>
+                <span class="d-none d-lg-block">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button
+                        type="button" class="btn btn-primary mb-2" style='background-color: #012970;'
+                        onclick="location.href='{% url 'zakaz:rates' %}'">Изменить</button></span>
             {% else %}
                 <span class="d-none d-lg-block">Заявка</span>
 
@@ -37,7 +37,8 @@
                 {% for field in order_form %}
                     {% for error in field.errors %}
                         <div class="alert alert-danger text-center">
-                            {% comment %} <span>{% verbose_name_tag order_model field.name %} {{ error|lower }} </span> {% endcomment %}
+                            {% comment %}
+                                <span>{% verbose_name_tag order_model field.name %} {{ error|lower }} </span> {% endcomment %}
                             <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>
                         </div>
                     {% endfor %}
@@ -221,58 +222,58 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="card" style='min-width: 300px;'>
-                        <div class="card-title" style="margin-left: 20px">
-                            <h5>Габариты здания</h5>
-                        </div>
-                        <div class="row justify-content-center">
-                            <div class="col-sm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="{{ form.length.id_for_label }}"
-                                                   class="form-label">Длина</label>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                {{ order_form.length }}
-                                                {{ order_form.length_unit }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="{{ form.width.id_for_label }}"
-                                                   class="form-label">Ширина</label>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                {{ order_form.width }}
-                                                {{ order_form.width_unit }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="mb-3" id='width'>
-                                            <label for="{{ form.height.id_for_label }}"
-                                                   class="form-label">Высота</label>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                {{ order_form.height }}
-                                                {{ order_form.height_unit }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="card-body">
                             <div style="max-width: 500px">
                                 <div class="card-title">
                                     <h5>Назначение здания</h5>
+                                </div>
+                                {{ order_form.purpose_building }}
+                            </div>
+                            <div class="card-title" \>
+                                <h5>Габариты здания</h5>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-sm">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="{{ form.length.id_for_label }}"
+                                                       class="form-label">Длина</label>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                    {{ order_form.length }}
+                                                    {{ order_form.length_unit }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="{{ form.width.id_for_label }}"
+                                                       class="form-label">Ширина</label>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                    {{ order_form.width }}
+                                                    {{ order_form.width_unit }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="mb-3" id='width'>
+                                                <label for="{{ form.height.id_for_label }}"
+                                                       class="form-label">Высота</label>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                    {{ order_form.height }}
+                                                    {{ order_form.height_unit }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 {{ order_form.purpose_building }}
                                 <datalist id="purpose_building">
@@ -289,8 +290,8 @@
                                     <div class="col-sm-4 mb-3 mb-sm-0">
                                         <div class="card-body grid">
                                             {% for type_work in order_form.type_work.field.queryset %}
-                                                <div class="form-check form-check-inline card-body"
-                                                     style='width:200px;'>
+                                                <div class="form-check form-check-inline"
+                                                     style='width:200px; margin-bottom: -15px; margin-right: 4rem;'>
                                                     <input class="form-check-input" type="checkbox"
                                                            id="inlineCheckbox{{ type_work.id }}"
                                                            value="{{ type_work.id }}" name='type_work'>
@@ -344,6 +345,7 @@
                 </div>
             </div>
         </form>
+
     </section>
     <script>
 
@@ -367,14 +369,94 @@
     <script src="{% static 'js/order.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
 
     <script>
-        $(document).ready(function(){
-            $("#id_phone_number").mask("+7(999)999-99-99", {placeholder: ''});
+        $(document).ready(function () {
+            const phoneInput = $("#id_phone_number");
+            const purposeInput = $("#id_purpose_building");
+            const lengthUnit = $("#id_length_unit");
+            const widthUnit = $("#id_width_unit");
+            const heightUnit = $("#id_height_unit");
+            const lengthInput = $("#id_length");
+            const widthInput = $("#id_width");
+            const heightInput = $("#id_height");
+
+            // Инициализируем маску на поле #id_phone_number
+            phoneInput.mask("+7(999)999-99-99", {placeholder: ''});
+
+            // Задаем Autocomplete для поля #id_purpose_building
+            purposeInput.autocomplete({
+                source: "{% url 'zakaz:purpose_building_autocomplete' %}",
+                minLength: 0,
+                select: function (event, ui) {
+                    const selectedValue = ui.item.value;
+                    resetFields();
+
+                    switch (selectedValue) {
+                        case "Трубопровод":
+                            widthInput.attr("disabled", true);
+                            widthUnit.hide();
+                            heightInput.attr("disabled", true);
+                            heightUnit.hide();
+                            lengthUnit.val("m");
+                            widthUnit.val("");
+                            heightUnit.val("");
+                            widthInput.val("");
+                            heightInput.val("");
+                            break;
+                        case "Полигон ТБО":
+                            lengthUnit.val("m");
+                            lengthUnit.find("option:eq(1)").hide();
+                            heightInput.attr("disabled", true);
+                            heightUnit.hide();
+                            widthUnit.val("m");
+                            widthUnit.find("option:eq(1)").hide();
+                            break;
+                        case "Школа":
+                        case "Жилой многоэтажный дом":
+                            lengthUnit.val("m");
+                            lengthUnit.find("option:eq(1)").hide();
+                            widthUnit.val("m");
+                            widthUnit.find("option:eq(1)").hide();
+                            heightUnit.val("floor");
+                            heightUnit.find("option:eq(0)").hide();
+                            break;
+                    }
+                }
+            }).on("click", function () {
+                $(this).autocomplete("search", "");
+            });
+
+            // Проверяем, если пользователь вводит значение сам, то сбрасываем поля
+            purposeInput.on("input", function () {
+                const selectedValue = $(this).val().trim();
+                if (selectedValue.length > 0 && !$(this).data("ui-autocomplete").menu.active) {
+                    resetFields();
+                }
+            });
+
+            function resetFields() {
+                lengthUnit.find("option").show();
+                widthUnit.find("option").show();
+                heightUnit.find("option").show();
+                lengthUnit.attr("disabled", false);
+                widthInput.attr("disabled", false);
+                heightInput.attr("disabled", false);
+                lengthUnit.show();
+                widthUnit.show();
+                heightUnit.show();
+                lengthUnit.val("m");
+                widthUnit.val("m");
+                heightUnit.val("m");
+                lengthInput.val("");
+                widthInput.val("");
+                heightInput.val("");
+            }
         });
     </script>
     <script>
-        $('#id_phone_number').on('input', function() {
+        $('#id_phone_number').on('input', function () {
             $(this).val($(this).val().replace(/[A-Za-zА-Яа-яЁё]/, ''))
         });
     </script>
