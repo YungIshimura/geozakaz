@@ -259,7 +259,8 @@ def view_change_order_status(request, order_id:int):
 
 
 def view_rates(request):
-    return render(request, 'zakaz/rates.html')
+    refer = request.META.get('HTTP_REFERER')
+    return render(request, 'zakaz/rates.html', context={'refer': refer})
 
 
 # Скачивание DOCX

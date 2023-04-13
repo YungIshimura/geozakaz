@@ -1,49 +1,48 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<style>
-</style>
+<a href="{{refer}}" class="link-primary" style='margin-left:50px;'>Назад</a>
 <div class='container' style='margin-bottom:120px;'>
-<div class="row row-cols-1 row-cols-md-3 g-4">
-  <div class="col">
-    <div class="card">
-      <img src="{% static 'img/test.jpg' %}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <div class='d-flex justify-content-between'>
-          <h5 class="card-title">Стандарт</h5>
-          <h5 class="card-title">300 рублей</h5>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col">
+      <div class="card">
+        <img src="{% static 'img/test.jpg' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <div class='d-flex justify-content-between'>
+            <h5 class="card-title">Стандарт</h5>
+            <h5 class="card-title">300 рублей</h5>
+          </div>
+          <p class="card-text">{% lorem 1 b %}</p>
+          <a class="btn btn-primary" href="#" role="button">Подробнее</a>
         </div>
-        <p class="card-text">{% lorem 1 b %}</p>
-        <a class="btn btn-primary" href="#" role="button">Подробнее</a>
       </div>
     </div>
+    <div class="col">
+      <div class="card">
+        <img src="{% static 'img/test.jpg' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <div class='d-flex justify-content-between'>
+            <h5 class="card-title">Про</h5>
+            <h5 class="card-title">500 рублей</h5>
+          </div>
+          <p class="card-text">{% lorem 1 b %}</p>
+          <a class="btn btn-primary" href="#" role="button">Подробнее</a>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <img src="{% static 'img/test.jpg' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <div class='d-flex justify-content-between'>
+            <h5 class="card-title">Премиум</h5>
+            <h5 class="card-title">750 рублей</h5>
+          </div>
+          <p class="card-text">{% lorem 1 b %}</p>
+          <a class="btn btn-primary" href="#" role="button">Подробнее</a>
+        </div>
+      </div>
+    </div>``
   </div>
-  <div class="col">
-    <div class="card">
-      <img src="{% static 'img/test.jpg' %}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <div class='d-flex justify-content-between'>
-          <h5 class="card-title">Про</h5>
-          <h5 class="card-title">500 рублей</h5>
-        </div>
-        <p class="card-text">{% lorem 1 b %}</p>
-        <a class="btn btn-primary" href="#" role="button">Подробнее</a>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card">
-      <img src="{% static 'img/test.jpg' %}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <div class='d-flex justify-content-between'>
-          <h5 class="card-title">Премиум</h5>
-          <h5 class="card-title">750 рублей</h5>
-        </div>
-        <p class="card-text">{% lorem 1 b %}</p>
-        <a class="btn btn-primary" href="#" role="button">Подробнее</a>
-      </div>
-    </div>
-  </div>``
-</div>
 </div>
 {% endblock %}
