@@ -64,11 +64,8 @@ def city_autocomplete(request):
 def purpose_building_autocomplete(request):
     purpose_buildings = PurposeBuilding.objects.all().values_list('purpose', flat=True)
     purpose_building_options = list(purpose_buildings)
+
     return JsonResponse(purpose_building_options, safe=False)
-
-
-def ajax_download_map(request):
-    pass
 
 
 def ajax_validate_cadastral_number(request):
