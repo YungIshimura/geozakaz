@@ -3,8 +3,9 @@ from django.urls import path
 from zakaz.views import (view_order_pages, view_change_order_status, view_order_cadastral,
                          view_order, view_rates,
                          download_igi_docx, city_autocomplete,
-                         ajax_validate_cadastral_number, region_autocomplete,  area_autocomplete,
-                         download_map, download_xlsx, download_igdi_docx, download_all_docx)
+                         ajax_validate_cadastral_number, region_autocomplete, area_autocomplete,
+                         download_map, download_xlsx, download_igdi_docx, download_all_docx,
+                         purpose_building_autocomplete)
 
 app_name = 'zakaz'
 
@@ -23,4 +24,5 @@ urlpatterns = [
     path('download_all_docx/<int:pk>/', download_all_docx, name='download_all_docx'),
     path('download_map/<int:pk>/', download_map, name='download_map'),
     path('download_xlsx/<int:pk>/', download_xlsx, name='download_xlsx'),
+    path('purpose_building_autocomplete/', purpose_building_autocomplete, name='purpose_building_autocomplete'),
 ]

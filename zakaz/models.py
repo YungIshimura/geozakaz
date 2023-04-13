@@ -214,7 +214,7 @@ class Order(models.Model):
     length = models.DecimalField(
         'Длина',
         max_digits=8,
-        decimal_places=3
+        decimal_places=3,
     )
     length_unit = models.CharField(
         'Еденица длины',
@@ -224,22 +224,30 @@ class Order(models.Model):
     width = models.DecimalField(
         'Ширина',
         max_digits=8,
-        decimal_places=3
+        decimal_places=3,
+        null=True,
+        blank=True
     )
     width_unit = models.CharField(
         'Еденица ширины',
         max_length=10,
         choices=LENGTH_AND_WIDTH_UNIT,
+        null=True,
+        blank=True
     )
     height = models.DecimalField(
         'Высота',
         max_digits=8,
-        decimal_places=3
+        decimal_places=3,
+        null=True,
+        blank=True
     )
     height_unit = models.CharField(
         'Еденица высота',
         max_length=10,
         choices=HEIGHT_UNIT,
+        null=True,
+        blank=True
     )
     type_work = models.ManyToManyField(
         TypeWork,
@@ -279,11 +287,6 @@ class Order(models.Model):
         blank=True,
         null=True)
 
-    # map = models.TextField(
-    #     'Карта участка',
-    #     null=True,
-    #     blank=True
-    # )
     map = models.ImageField(
         upload_to=get_image_path,
         null=True,

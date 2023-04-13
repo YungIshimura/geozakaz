@@ -61,6 +61,16 @@ def city_autocomplete(request):
     return JsonResponse(citys, safe=False)
 
 
+def purpose_building_autocomplete(request):
+    purpose_buildings = PurposeBuilding.objects.all().values_list('purpose', flat=True)
+    purpose_building_options = list(purpose_buildings)
+    return JsonResponse(purpose_building_options, safe=False)
+
+
+def ajax_download_map(request):
+    pass
+
+
 def ajax_validate_cadastral_number(request):
     cadastral_number = request.GET.get('cadastral_number', None)
     try:
@@ -142,10 +152,6 @@ def view_order(request, company_slug:str, company_number_slug:str):
             if cadastral_numbers:
                 order.coordinates = coordinates
                 order.cadastral_numbers = cadastral_numbers
-
-                # img_data = get_map_screenshot(order.cadastral_numbers)._to_png()
-                # img_file = SimpleUploadedFile(name='map.png', content=img_data, content_type='image/png')
-                # order.map = img_file
 
                 tmp_html = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.html')
                 tmp_png = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.png')
@@ -296,8 +302,9 @@ def download_igi_docx(request, pk:int):
     coordinates_dict = {}
 
     for i, coords in enumerate(coordinates):
-        cadastral_num = cadastral_numbers[i]
-        coordinates_dict[cadastral_num] = coords[0]
+        if i < len(cadastral_numbers):
+            cadastral_num = cadastral_numbers[i]
+            coordinates_dict[cadastral_num] = coords[0]
 
     document_name = 'IGI'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')
@@ -342,8 +349,9 @@ def download_igdi_docx(request, pk:int):
     coordinates_dict = {}
 
     for i, coords in enumerate(coordinates):
-        cadastral_num = cadastral_numbers[i]
-        coordinates_dict[cadastral_num] = coords[0]
+        if i < len(cadastral_numbers):
+            cadastral_num = cadastral_numbers[i]
+            coordinates_dict[cadastral_num] = coords[0]
 
     document_name = 'IGDI'
     document_path = os.path.join(settings.MEDIA_ROOT, f'{document_name}.docx')

@@ -205,8 +205,7 @@
                                     </div>
                                 </div>
                                 <input type="checkbox" id="agreement" name="agreement">
-                                <label for='agreement'> <a href="{% url 'users:agreement' %}" target='_blank'>Согласен
-                                    с
+                                <label for='agreement'> <a href="{% url 'users:agreement' %}" target='_blank'>Согласен с
                                     политикой конфиденциальности</a></label>
                             </div>
                         </div>
@@ -235,6 +234,7 @@
                     {% endif %}
                     {% if map_html %}
                         <div class="card">
+                            <h5 class="card-title" style="padding: 0 0 15px 0"></h5>
                             <div class="card-body">
                                 <div>
                                     {{ map_html | safe }}
@@ -244,8 +244,6 @@
                                     <div class="col-6">
                                         <a href="{% url 'zakaz:download_map' order.pk %}"
                                            class="btn btn-bd-primary w-100">Скачать карту</a>
-                                        {#                                    <a href="#" id="download-map" data-screenshot-name="{{ screenshot_name }}"#}
-                                        {#                                       class="btn btn-bd-primary w-100">Скачать карту</a>#}
                                     </div>
                                     <div class="col-6">
                                         <a href="{% url 'zakaz:download_xlsx' order.pk %}"
@@ -258,8 +256,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title"
-                                    style="padding: 0 0 10px 0; margin-top: 25px; text-align: center">Для загрузки
-                                    карты
+                                    style="padding: 0 0 10px 0; margin-top: 25px; text-align: center">Для загрузки карты
                                     добавьте
                                     кадастровый номер</h5>
                             </div>
@@ -268,64 +265,58 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="card" style='min-width: 300px'>
-                        <div class="card-title" style="margin-left: 25px">
-                            <h5>Габариты здания</h5>
-                        </div>
-                        <div class="row justify-content-center">
-                            <div class="col-sm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="{{ form.length.id_for_label }}"
-                                                   class="form-label">Длина</label>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                {{ order_form.length }}
-                                                {{ order_form.length_unit }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="{{ form.width.id_for_label }}"
-                                                   class="form-label">Ширина</label>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                {{ order_form.width }}
-                                                {{ order_form.width_unit }}                                                    </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="mb-3" id='width'>
-                                            <label for="{{ form.height.id_for_label }}"
-                                                   class="form-label">Высота</label>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                {{ order_form.height }}
-                                                {{ order_form.height_unit }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="card-body">
                             <div style="max-width: 500px">
                                 <div class="card-title">
                                     <h5>Назначение здания</h5>
                                 </div>
                                 {{ order_form.purpose_building }}
-                                <datalist id="purpose_building">
-                                    {% for purpose in purpose_building %}
-                                        <option value="{{ purpose }}">
-                                    {% endfor %}
-                                </datalist>
+                            </div>
+                            <div class="card-title">
+                                <h5>Габариты здания</h5>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-sm">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="{{ form.length.id_for_label }}"
+                                                       class="form-label">Длина</label>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                    {{ order_form.length }}
+                                                    {{ order_form.length_unit }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="{{ form.width.id_for_label }}"
+                                                       class="form-label">Ширина</label>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                    {{ order_form.width }}
+                                                    {{ order_form.width_unit }}                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="mb-3" id='width'>
+                                                <label for="{{ form.height.id_for_label }}"
+                                                       class="form-label">Высота</label>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                    {{ order_form.height }}
+                                                    {{ order_form.height_unit }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <div class="card-title">
@@ -335,8 +326,9 @@
                                     <div class="col-sm-4 mb-3 mb-sm-0">
                                         <div class="card-body grid">
                                             {% for type_work in order_form.type_work.field.queryset %}
-                                                <div class="form-check form-check-inline card-body"
-                                                     style='width:200px;' id="TypeWork">
+                                                <div class="form-check form-check-inline"
+                                                     style='width:200px; margin-bottom: -15px; margin-right: 4rem;'
+                                                     id="TypeWork">
                                                     <input class="form-check-input" type="checkbox"
                                                            id="inlineCheckbox{{ type_work.id }}"
                                                            value="{{ type_work.id }}" name='type_work'
@@ -359,7 +351,7 @@
                                         <h5>Название объекта</h5>
                                     </div>
                                     <input class='form-control' name="object_name" id="object-name"
-                                           value='{{ order.object_name }}'/>
+                                           value='{% if order.object_name %}{{ order.object_name }}{% endif %}'/>
                                 </div>
 
                                 <hr>
@@ -415,24 +407,38 @@
                 </div>
         </form>
 
-        <div id="wait-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false">
-            <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade" id="MessageOk" tabindex="-1" role="dialog" aria-labelledby="MessageOkLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <p>Подождите, пожалуйста...</p>
-                        <div class="spinner-container">
-                            <div class="spinner"></div>
+                    <div class="modal-body" style="padding: 0;">
+                        <div class="alert alert-success text-center border-0 mb-0" role="alert">
+                            Данные сохранены
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <script>
 
+        <div class="modal fade no-modal-bg" id="message-modal" tabindex="-1" role="dialog"
+             aria-labelledby="message-modal-label"
+             aria-hidden="true" data-bs-backdrop="false">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content text-center border-0 mb-0 pt-5">
+                    <div class="modal-body" style="padding: 0;">
+                        <div id="message" class="alert" role="alert"></div>
+                        <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"
+                           style="cursor: pointer;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <script>
         function DeleteCadastral(id) {
             let cadastral_number = document.getElementById(`cadastral_number${id}`);
             console.log(cadastral_number)
@@ -471,16 +477,10 @@
                     type: 'POST',
                     data: $('#form-data').serialize(),
                     success: function (response) {
-                        document.getElementById('teg-ok').style.display = 'block';
-                        setTimeout(function () {
-                            document.getElementById('teg-ok').style.display = 'none';
-                        }, 3000)
+                        showMessageModal("success", 'Данные сохранены');
                     },
                     error: function (response) {
-                        document.getElementById('teg-error').style.display = 'block';
-                        setTimeout(function () {
-                            document.getElementById('teg-error').style.display = 'none';
-                        }, 3000)
+                        showMessageModal("error", 'Проверьте данные');
                     }
                 });
             }, 3000);
@@ -496,89 +496,159 @@
             }, 4000);
         }
 
-    </script>
-    <script>
-        function downloadFile(url, fileName) {
-            $('#wait-modal').modal('show');
-            fetch(url)
-                .then(response => response.blob())
-                .then(blob => {
-                    $('#wait-modal').modal('hide');
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileName;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                });
+        function showMessageModal(type, message) {
+            const messageModal = $("#message-modal");
+            const messageEl = $("#message");
+            messageEl.removeClass().addClass("alert");
+
+            if (type === "success") {
+                messageEl.addClass("alert-success");
+            } else if (type === "error") {
+                messageEl.addClass("alert-danger");
+            }
+
+            messageEl.text(message);
+            messageModal.modal("show");
+
+            const closeButton = document.getElementById("close-icon");
+            closeButton.addEventListener("click", hideModal);
+
+            // Закрываем модальное окно по истечению времени
+            setTimeout(hideModal, 1500);
         }
 
-        $(document).on('click', '#download-map', function (e) {
-            e.preventDefault();
-            const fileName = $(this).data('screenshot-name') + '.png';
-            const url = "{% url 'zakaz:download_map' order.pk %}";
-            downloadFile(url, fileName);
-        });
-
-        $(document).on('click', '#download-igi', function (e) {
-            e.preventDefault();
-            const fileName = $(this).data('igi-name') + '.docx';
-            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";
-            downloadFile(url, fileName);
-        });
-
-        $(document).on('click', '#download-igdi', function (e) {
-            e.preventDefault();
-            const fileName = $(this).data('igdi-name') + '.docx';
-            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";
-            downloadFile(url, fileName);
-        });
-
+        function hideModal() {
+            const messageModal = $("#message-modal");
+            messageModal.modal("hide");
+        }
     </script>
-    {#    <script>#}
-    {#        function downloadFile(url, fileName) {#}
-    {#            $('#wait-modal').modal('show');#}
-    {#            fetch(url)#}
-    {#                .then(response => response.blob())#}
-    {#                .then(blob => {#}
-    {#                    $('#wait-modal').modal('hide');#}
-    {#                    const url = URL.createObjectURL(blob);#}
-    {#                    const a = document.createElement('a');#}
-    {#                    a.href = url;#}
-    {#                    a.download = fileName;#}
-    {#                    a.style.display = 'none';#}
-    {#                    document.body.appendChild(a);#}
-    {#                    a.click();#}
-    {#                    document.body.removeChild(a);#}
-    {#                    URL.revokeObjectURL(url);#}
-    {#                });#}
-    {#        }#}
-    {##}
-    {#        $(document).on('click', '#download-map', function (e) {#}
-    {#            e.preventDefault();#}
-    {#            const fileName = $(this).data('screenshot-name') + '.png';#}
-    {#            const url = "{% url 'zakaz:download_map' order.pk %}";#}
-    {#            downloadFile(url, fileName);#}
-    {#        });#}
-    {##}
-    {#        $(document).on('click', '#download-igi', function (e) {#}
-    {#            e.preventDefault();#}
-    {#            const fileName = $(this).data('igi-name') + '.docx';#}
-    {#            const url = "{% url 'zakaz:download_igi_docx' order.pk %}";#}
-    {#            downloadFile(url, fileName);#}
-    {#        });#}
-    {##}
-    {#        $(document).on('click', '#download-igdi', function (e) {#}
-    {#            e.preventDefault();#}
-    {#            const fileName = $(this).data('igdi-name') + '.docx';#}
-    {#            const url = "{% url 'zakaz:download_igdi_docx' order.pk %}";#}
-    {#            downloadFile(url, fileName);#}
-    {#        });#}
-    {##}
-    {#    </script>#}
+    <script>
+        $(document).ready(function () {
+            const phoneInput = $("#id_phone_number");
+            const purposeInput = $("#id_purpose_building");
+            const lengthUnit = $("#id_length_unit");
+            const widthUnit = $("#id_width_unit");
+            const heightUnit = $("#id_height_unit");
+            const lengthInput = $("#id_length");
+            const widthInput = $("#id_width");
+            const heightInput = $("#id_height");
+
+            // Инициализируем маску на поле #id_phone_number
+            phoneInput.mask("+7(999)999-99-99", {placeholder: ''});
+
+            // Задаем Autocomplete для поля #id_purpose_building
+            purposeInput.autocomplete({
+                source: "{% url 'zakaz:purpose_building_autocomplete' %}",
+                minLength: 0,
+                select: function (event, ui) {
+                    const selectedValue = ui.item.value;
+                    resetFields();
+
+                    switch (selectedValue) {
+                        case "Трубопровод":
+                            widthInput.attr("disabled", true);
+                            widthUnit.hide();
+                            heightInput.attr("disabled", true);
+                            heightUnit.hide();
+                            lengthUnit.val("m");
+                            widthUnit.val("");
+                            heightUnit.val("");
+                            widthInput.val("");
+                            heightInput.val("");
+                            break;
+                        case "Полигон ТБО":
+                            lengthUnit.val("m");
+                            lengthUnit.find("option:eq(1)").hide();
+                            heightInput.attr("disabled", true);
+                            heightUnit.hide();
+                            widthUnit.val("m");
+                            widthUnit.find("option:eq(1)").hide();
+                            break;
+                        case "Школа":
+                        case "Жилой многоэтажный дом":
+                            lengthUnit.val("m");
+                            lengthUnit.find("option:eq(1)").hide();
+                            widthUnit.val("m");
+                            widthUnit.find("option:eq(1)").hide();
+                            heightUnit.val("floor");
+                            heightUnit.find("option:eq(0)").hide();
+                            break;
+                    }
+                }
+            }).on("click", function () {
+                $(this).autocomplete("search", "");
+            });
+
+            // Проверяем, если пользователь вводит значение сам, то сбрасываем поля
+            purposeInput.on("input", function () {
+                const selectedValue = $(this).val().trim();
+                if (selectedValue.length > 0 && !$(this).data("ui-autocomplete").menu.active) {
+                    resetFields();
+                }
+            });
+
+            checkBuildingPurpose();
+
+            function checkBuildingPurpose() {
+                const selectedValue = purposeInput.val().trim();
+                if (selectedValue.length > 0) {
+                    switch (selectedValue) {
+                        case "Трубопровод":
+                            widthInput.attr("disabled", true);
+                            widthUnit.hide();
+                            heightInput.attr("disabled", true);
+                            heightUnit.hide();
+                            lengthUnit.val("m");
+                            widthUnit.val("");
+                            heightUnit.val("");
+                            widthInput.val("");
+                            heightInput.val("");
+                            break;
+                        case "Полигон ТБО":
+                            lengthUnit.val("m");
+                            lengthUnit.find("option:eq(1)").hide();
+                            heightInput.attr("disabled", true);
+                            heightUnit.hide();
+                            widthUnit.val("m");
+                            widthUnit.find("option:eq(1)").hide();
+                            break;
+                        case "Школа":
+                        case "Жилой многоэтажный дом":
+                            lengthUnit.val("m");
+                            lengthUnit.find("option:eq(1)").hide();
+                            widthUnit.val("m");
+                            widthUnit.find("option:eq(1)").hide();
+                            heightUnit.val("floor");
+                            heightUnit.find("option:eq(0)").hide();
+                            break;
+                    }
+                }
+            }
+
+            function resetFields() {
+                lengthUnit.find("option").show();
+                widthUnit.find("option").show();
+                heightUnit.find("option").show();
+                lengthUnit.attr("disabled", false);
+                widthInput.attr("disabled", false);
+                heightInput.attr("disabled", false);
+                lengthUnit.show();
+                widthUnit.show();
+                heightUnit.show();
+                lengthUnit.val("m");
+                widthUnit.val("m");
+                heightUnit.val("m");
+                lengthInput.val("");
+                widthInput.val("");
+                heightInput.val("");
+            }
+        });
+    </script>
+    <script>
+        $('#id_phone_number').on('input', function () {
+            $(this).val($(this).val().replace(/[A-Za-zА-Яа-яЁё]/, ''))
+        });
+    </script>
     <script>
         const checkboxes = document.querySelectorAll('#TypeWork input[type="checkbox"]');
         const downloadLinkIgi = document.querySelector('#download-igi');
