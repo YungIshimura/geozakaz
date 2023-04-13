@@ -1,7 +1,7 @@
 from django import forms
 
 from django.contrib.postgres.forms import SimpleArrayField
-from .models import TypeWork, Order, OrderFile, WorkObjective, PurposeBuilding
+from .models import TypeWork, Order, OrderFile, WorkObjective
 from django.core.validators import MinValueValidator
 from .validators import validate_number
 from phonenumber_field.formfields import PhoneNumberField
@@ -39,6 +39,7 @@ class OrderForm(forms.ModelForm):
     )
 
     square = forms.DecimalField(
+        label='Площадь',
         validators=[MinValueValidator(0.1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Площадь'}),
         required=True
@@ -50,6 +51,7 @@ class OrderForm(forms.ModelForm):
     )
 
     length = forms.DecimalField(
+        label='Длина',
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Длина'}),
         required=True
@@ -115,6 +117,7 @@ class OrderForm(forms.ModelForm):
     )
 
     email = forms.EmailField(
+        label='Электронная почта',
         widget=forms.EmailInput(attrs={'placeholder': 'Введите адрес почты'}),
         required=True
     )
@@ -155,7 +158,6 @@ class OrderForm(forms.ModelForm):
         self.fields['width_unit'].widget.attrs['class'] = 'custom-btn-check'
 
         self.fields['work_objective'].widget.attrs['class'] = 'form-select'
-
 
 class OrderFileForm(forms.ModelForm):
     file = forms.FileField(
