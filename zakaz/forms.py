@@ -5,7 +5,7 @@ from .models import TypeWork, Order, OrderFile, WorkObjective, PurposeBuilding
 from django.core.validators import MinValueValidator
 from .validators import validate_number
 from phonenumber_field.formfields import PhoneNumberField
-
+from phonenumber_field.widgets import RegionalPhoneNumberWidget
 
 class CadastralNumberForm(forms.Form):
     cadastral_number = forms.CharField(
@@ -110,7 +110,9 @@ class OrderForm(forms.ModelForm):
         required=False
     )
 
-    phone_number = PhoneNumberField()
+    phone_number = PhoneNumberField(
+        widget=RegionalPhoneNumberWidget(attrs={'placeholder': '+7(900)000-00-00'})
+    )
 
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={'placeholder': 'Введите адрес почты'}),

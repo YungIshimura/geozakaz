@@ -1,36 +1,30 @@
 import datetime
+import io
 import json
+import os
 import time
 import zipfile
+from urllib.parse import quote as urlquote
 
 import openpyxl as openpyxl
-from django.core.files.base import ContentFile
-from django.http import JsonResponse, Http404
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib.auth.decorators import user_passes_test, login_required
-from django.shortcuts import HttpResponseRedirect, render
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import ValidationError
-from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from django.core.files.base import ContentFile
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
+                              redirect, render)
+from django.urls import reverse
+from selenium import webdriver
 
+from .forms import CadastralNumberForm, OrderFileForm, OrderForm
+from .map_funcs import add_table, generate_docx, get_map, get_map_screenshot
+from .models import (Area, City, Order, OrderFile, PurposeBuilding, Region,
+                     get_image_path)
 from .rosreestr2 import GetArea
 from .validators import validate_number
-from .models import OrderFile, Order, Region, PurposeBuilding, Area, City, get_image_path
-from .forms import OrderForm, OrderFileForm, CadastralNumberForm
-from django.contrib import messages
-import folium
-import io
-import os
-from docx import Document
-from docx.shared import Inches, Pt
-from django.http import HttpResponse
-from django.conf import settings
-from urllib.parse import quote as urlquote
-from io import BytesIO
-from PIL import Image
-from selenium import webdriver
 
 # driver = webdriver.Chrome()
 User = get_user_model()
@@ -70,11 +64,8 @@ def city_autocomplete(request):
 def purpose_building_autocomplete(request):
     purpose_buildings = PurposeBuilding.objects.all().values_list('purpose', flat=True)
     purpose_building_options = list(purpose_buildings)
+
     return JsonResponse(purpose_building_options, safe=False)
-
-
-def ajax_download_map(request):
-    pass
 
 
 def ajax_validate_cadastral_number(request):
@@ -92,11 +83,12 @@ def ajax_validate_cadastral_number(request):
     return JsonResponse(response)
 
 
-def view_order_cadastral(request, company_slug, company_number_slug):
+def view_order_cadastral(request, company_slug: str, company_number_slug: str):
     context = {}
     response = HttpResponseRedirect(
         reverse('zakaz:order',
                 args=[company_slug, company_number_slug]))
+
     request.session.modified = True
     try:
         request.session.pop('cadastral_numbers')
@@ -124,7 +116,7 @@ def view_order_cadastral(request, company_slug, company_number_slug):
     return render(request, 'zakaz/customer_home.html', context=context)
 
 
-def view_order(request, company_slug, company_number_slug):
+def view_order(request, company_slug: str, company_number_slug: str):
     coordinates = []
     context = {}
     square_cadastral_area = []
@@ -135,6 +127,7 @@ def view_order(request, company_slug, company_number_slug):
     )
     cadastral_numbers = request.session['cadastral_numbers'] if 'cadastral_numbers' in request.session else None
     address = request.session['address'] if 'address' in request.session else None
+
     if address:
         region, area, city = address[0].split(', ')
 
@@ -157,8 +150,10 @@ def view_order(request, company_slug, company_number_slug):
                 order.coordinates = coordinates
                 order.cadastral_numbers = cadastral_numbers
 
-                tmp_html = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.html')
-                tmp_png = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.png')
+                tmp_html = os.path.join(
+                    settings.BASE_DIR, 'tmp', f'map-{order.id}.html')
+                tmp_png = os.path.join(
+                    settings.BASE_DIR, 'tmp', f'map-{order.id}.png')
 
                 get_map_screenshot(order.cadastral_numbers).save(tmp_html)
 
@@ -185,6 +180,7 @@ def view_order(request, company_slug, company_number_slug):
 
         else:
             messages.error(request, 'Проверьте правильность введённых данных')
+
     else:
         order_form = OrderForm(initial={
             'cadastral_numbers': cadastral_numbers if cadastral_numbers else None,
@@ -207,7 +203,7 @@ def view_order(request, company_slug, company_number_slug):
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
-def view_order_pages(request, company_number_slug):
+def view_order_pages(request, company_number_slug: str):
     orders = Order.objects.filter(
         user__company_number_slug=company_number_slug
     ).select_related(
@@ -221,7 +217,7 @@ def view_order_pages(request, company_number_slug):
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
-def view_change_order_status(request, order_id):
+def view_change_order_status(request, order_id: int):
     square_cadastral_area = []
     order = get_object_or_404(Order.objects.select_related(
         'city', 'area', 'region', 'work_objective', 'user'),
@@ -254,7 +250,7 @@ def view_change_order_status(request, order_id):
             elif request.POST.get('square_unit') == "sq_m":
                 order.square = sum(square_cadastral_area)
             order = order_form.save()
-            company_number_slug = order.user.company_number_slug
+            order.user.company_number_slug
             return JsonResponse({'success': True})
     else:
         order_form = OrderForm(instance=order)
@@ -275,197 +271,12 @@ def view_change_order_status(request, order_id):
 
 
 def view_rates(request):
-    return render(request, 'zakaz/rates.html')
-
-
-def get_map(number_list):
-    m = folium.Map(location=[55.7558, 37.6173], zoom_start=6, zoom_control=False,
-                   control_scale=True)
-
-    m.options.update({'max_width': '100%'})
-    m.get_root().html.add_child(
-        folium.Element("<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
-
-    all_place_lat = []
-    all_place_lng = []
-    for number in number_list:
-        areas = GetArea(number)
-        coordinates = areas.get_coord()
-        if coordinates:
-            for coordinate in coordinates:
-                for addresses in coordinate:
-                    points = []
-                    for pt in addresses:
-                        place_lat = pt[1]
-                        place_lng = pt[0]
-                        all_place_lat.append(place_lat)
-                        all_place_lng.append(place_lng)
-                        points.append([place_lat, place_lng])
-                    folium.Polygon(points, color='red').add_to(m)
-
-                    center_point_lng = areas.center['x'],
-                    center_point_lat = areas.center['y'],
-                    folium.CircleMarker(
-                        location=[center_point_lat[0], center_point_lng[0]],
-                        popup=folium.Popup(f':{number.split(":")[-1]}', show=True),
-                        opacity=0,
-                    ).add_to(m)
-
-    m.get_root().html.add_child(
-        folium.Element("<style>.leaflet-popup-close-button {display: none;}</style>"))
-    if all_place_lat and all_place_lng:
-        bounds = [[min(all_place_lat), min(all_place_lng)], [max(all_place_lat), max(all_place_lng)]]
-    else:
-        bounds = None
-    if bounds:
-        center_lat = (bounds[0][0] + bounds[1][0]) / 2
-        center_lng = (bounds[0][1] + bounds[1][1]) / 2
-        m.location = [center_lat, center_lng]
-        m.fit_bounds(bounds)
-
-    map_html = m._repr_html_()
-
-    return map_html
-
-
-# Получаем объект карты, для сохранения скриншота к заказу
-def get_map_screenshot(number_list):
-    m = folium.Map(location=[55.7558, 37.6173], zoom_start=6, zoom_control=False,
-                   control_scale=True)
-
-    m.options.update({'max_width': '100%'})
-    m.get_root().html.add_child(
-        folium.Element("<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
-
-    all_place_lat = []
-    all_place_lng = []
-    for number in number_list:
-        areas = GetArea(number)
-        coordinates = areas.get_coord()
-        if coordinates:
-            for coordinate in coordinates:
-                for addresses in coordinate:
-                    points = []
-                    for pt in addresses:
-                        place_lat = pt[1]
-                        place_lng = pt[0]
-                        all_place_lat.append(place_lat)
-                        all_place_lng.append(place_lng)
-                        points.append([place_lat, place_lng])
-                    folium.Polygon(points, color='red').add_to(m)
-
-                    center_point_lng = areas.center['x'],
-                    center_point_lat = areas.center['y'],
-                    folium.CircleMarker(
-                        location=[center_point_lat[0], center_point_lng[0]],
-                        popup=folium.Popup(f':{number.split(":")[-1]}', show=True),
-                        opacity=0,
-                    ).add_to(m)
-
-    m.get_root().html.add_child(
-        folium.Element("<style>.leaflet-popup-close-button {display: none;}</style>"))
-    bounds = [[min(all_place_lat), min(all_place_lng)], [
-        max(all_place_lat), max(all_place_lng)]]
-    center_lat = (bounds[0][0] + bounds[1][0]) / 2
-    center_lng = (bounds[0][1] + bounds[1][1]) / 2
-    m.location = [center_lat, center_lng]
-    m.fit_bounds(bounds)
-
-    return m
-
-
-# Выгрузка DOCX
-# Замена заполнителей значениями в абзаце.
-def replace_placeholders(paragraph, placeholders):
-    for placeholder, value in placeholders.items():
-        if placeholder in paragraph.text:
-            for run in paragraph.runs:
-                if placeholder in run.text:
-                    if placeholder == '_обзорная_схема':
-                        run.text = ""
-                        width, height = Image.open(value).size
-                        run.add_picture(value, width=Inches(width / 192), height=Inches(height / 192))
-                    else:
-                        run.text = run.text.replace(placeholder, value)
-
-
-# Замена заполнителей значениями в таблице.
-def replace_placeholders_in_table(table, placeholders):
-    for row in table.rows:
-        for cell in row.cells:
-            for paragraph in cell.paragraphs:
-                replace_placeholders(paragraph, placeholders)
-
-
-# Замена заполнителей значениями в футере документа.
-def replace_placeholders_in_footer(document, placeholders):
-    sections = document.sections
-    for section in sections:
-        footer = section.footer
-        for paragraph in footer.paragraphs:
-            replace_placeholders(paragraph, placeholders)
-
-
-# Замена заполнителей значениями во всех абзацах и таблицах документа
-def replace_placeholders_in_document(document, placeholders):
-    for paragraph in document.paragraphs:
-        replace_placeholders(paragraph, placeholders)
-
-    for table in document.tables:
-        replace_placeholders_in_table(table, placeholders)
-
-    replace_placeholders_in_footer(document, placeholders)
-
-    return document
-
-
-# Генерация нового документа с заменой заполнителей значениями.
-def generate_docx(document_path, placeholders):
-    document = Document(document_path)
-    replace_placeholders_in_document(document, placeholders)
-    return document
-
-
-def add_table(document, coordinates_dict):
-    for paragraph in document.paragraphs:
-        if '_таблица_координат' in paragraph.text:
-            for key in coordinates_dict:
-                document.add_paragraph(f'Координаты углов участка {key}', style='Normal')
-                table = document.add_table(rows=len(coordinates_dict[key]) + 1, cols=3)
-
-                # Добавляем границы таблицы
-                table.style = 'Table Grid'
-
-                # Выравниваем таблицу по центру
-                table.alignment = WD_TABLE_ALIGNMENT.CENTER
-
-                # Добавляем строку с названиями столбцов и выравниваем их по центру
-                hdr_cells = table.rows[0].cells
-                hdr_cells[0].text = 'Номер точки'
-                hdr_cells[1].text = 'Координата Х'
-                hdr_cells[2].text = 'Координата У'
-                for cell in hdr_cells:
-                    cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-
-                # Добавляем данные в ячейки таблицы и выравниваем их по центру
-                for i, coord in enumerate(coordinates_dict[key]):
-                    row_cells = table.rows[i + 1].cells
-                    row_cells[0].text = str(i + 1)
-                    row_cells[1].text = str(coord[0])
-                    row_cells[2].text = str(coord[1])
-                    for cell in row_cells:
-                        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-
-                # Вставляем таблицу после абзаца, содержащего "_таблица координат".
-                document.add_paragraph('', style='Normal')
-
-                # Удаляем абзац с заполнителем таблицы
-                paragraph._element.clear()
-            break
+    refer = request.META.get('HTTP_REFERER')
+    return render(request, 'zakaz/rates.html', context={'refer': refer})
 
 
 # Скачивание DOCX
-def download_docx(request, document_name, document_path, document_cipher, placeholders, coordinates_dict):
+def download_docx(request, document_name: str, document_path: str, document_cipher: str, placeholders: dict, coordinates_dict: dict):
     document = generate_docx(document_path, placeholders)
 
     add_table(document, coordinates_dict)
@@ -485,7 +296,7 @@ def download_docx(request, document_name, document_path, document_cipher, placeh
 
 
 # Скачиваем ШИФР-ИГИ
-def download_igi_docx(request, pk):
+def download_igi_docx(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     department = order.region.region_department.first()
     location = f"{order.region}, {order.area}, {order.city}, {order.street}, д.{order.house_number}"
@@ -532,7 +343,7 @@ def download_igi_docx(request, pk):
 
 
 # Скачиваем ШИФР-ИГДИ
-def download_igdi_docx(request, pk):
+def download_igdi_docx(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     department = order.region.region_department.first()
     location = f"{order.region}, {order.area}, {order.city}, {order.street}, д.{order.house_number}"
@@ -579,7 +390,7 @@ def download_igdi_docx(request, pk):
 
 
 # Скачиваем архив с документами
-def download_all_docx(request, pk):
+def download_all_docx(request, pk: int):
     igi_docx = download_igi_docx(request, pk)
     igdi_docx = download_igdi_docx(request, pk)
 
@@ -599,20 +410,22 @@ def download_all_docx(request, pk):
 
 
 # Скачиваем карты
-def download_map(request, pk):
+def download_map(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     try:
         file_path = order.map.path
         with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type='application/octet-stream')
-            response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path)
+            response = HttpResponse(
+                fh.read(), content_type='application/octet-stream')
+            response['Content-Disposition'] = 'attachment; filename=' + \
+                os.path.basename(file_path)
             return response
     except:
         raise Http404
 
 
 # Скачиваем excel файл
-def download_xlsx(request, pk):
+def download_xlsx(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     cadastral_numbers = order.cadastral_numbers
 
@@ -643,8 +456,10 @@ def download_xlsx(request, pk):
     # Проходим по каждому ключу словаря coordinates_dict
     for key, coords in coordinates_dict.items():
         # Записываем заголовок строки с координатами углов участка
-        sheet.merge_cells(start_row=current_row, start_column=1, end_row=current_row, end_column=3)
-        sheet.cell(row=current_row, column=1, value=f'Координаты углов участка {key}')
+        sheet.merge_cells(start_row=current_row, start_column=1,
+                          end_row=current_row, end_column=3)
+        sheet.cell(row=current_row, column=1,
+                   value=f'Координаты углов участка {key}')
         current_row += 1
 
         # Записываем заголовки столбцов таблицы
@@ -667,7 +482,8 @@ def download_xlsx(request, pk):
     document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
 
     # Сохраняем файл и отправляем его пользователю
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename=coord.xlsx'
     response['Content-Disposition'] = f'attachment; filename="{document_cipher}-coord.xlsx"'
     workbook.save(response)

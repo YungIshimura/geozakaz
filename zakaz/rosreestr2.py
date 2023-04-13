@@ -39,7 +39,8 @@ class GetArea(Area):
                             "Area info is not loaded. Check the area type and try again"
                         )
             else:
-                self.log("Area info loaded from file: {}".format(feature_info_path))
+                self.log("Area info loaded from file: {}".format(
+                    feature_info_path))
             if data:
                 feature = data.get("feature")
                 if feature:
@@ -95,7 +96,8 @@ class NewPkkAreaMerger(PkkAreaMerger):
             if self.count > 1:
                 path = self._merge_tiles()
             else:
-                path = os.path.join(self.tile_dir, "%s_%s%s" % (0, 0, self.tile_format))
+                path = os.path.join(self.tile_dir, "%s_%s%s" %
+                                    (0, 0, self.tile_format))
             tile = Image.open(path)
             self.real_width = tile.width
             self.real_height = tile.height

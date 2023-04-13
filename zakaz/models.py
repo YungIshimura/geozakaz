@@ -292,7 +292,12 @@ class Order(models.Model):
         null=True,
         blank=True)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', null=True, blank=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        null=True,
+        blank=True)
 
     def __str__(self):
         return f'Заказ для {self.user}'
