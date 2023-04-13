@@ -117,9 +117,8 @@ class OrderForm(forms.ModelForm):
         required=True
     )
 
-    purpose_building = forms.ModelChoiceField(
-        queryset=PurposeBuilding.objects.all(),
-        widget=forms.Select(attrs={'list': 'purpose_building', 'placeholder': 'Выберите/Введите назначение здания'}),
+    purpose_building = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Выберите/Введите назначение здания'}),
         required=True,
     )
 

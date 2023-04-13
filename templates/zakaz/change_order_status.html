@@ -59,8 +59,9 @@
                                                     style='margin-left: 10px; text-align: center; line-height: 10px;'>
                                                 <i class='bx bxs-edit'></i></button>
 
-                                            <button id='delete{{ forloop.counter }}' type='button'
-                                                    onClick='DeleteCadastral({{ forloop.counter }})'
+                                            <button id='delete' type='button'
+                                                    onClick='DeleteCadastral({{ forloop.counter }});
+                                                    saveFormData(); reloadPage()'
                                                     class='btn btn-outline-secondary custom-button'
                                                     style='margin-left: 10px; text-align: center; line-height: 10px;'>
                                                 <i class='bx bxs-x-circle'></i></button>
@@ -298,7 +299,8 @@
                                                        class="form-label">Ширина</label>
                                                 <div class="btn-group" role="group" aria-label="Basic example">
                                                     {{ order_form.width }}
-                                                    {{ order_form.width_unit }}                                                    </div>
+                                                    {{ order_form.width_unit }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -317,7 +319,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{ order_form.purpose_building }}
                             </div>
                             <div>
                                 <div class="card-title">
@@ -440,26 +441,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
     <script>
-        function DeleteCadastral(id) {
-            let cadastral_number = document.getElementById(`cadastral_number${id}`);
-            console.log(cadastral_number)
-            let index = array.indexOf(cadastral_number.value);
-            console.log(index)
-            document.getElementById(id).remove();
-            array.splice(index, 1);
-        }
-
+        // Добавление кадастрового номера
         var addButton = document.getElementById('add-cadastral');
-
         addButton.addEventListener('click', function () {
             if (document.getElementById('new-cadastral').style.display === "none") {
                 document.getElementById('new-cadastral').style.display = "block";
             } else {
                 document.getElementById('new-cadastral').style.display = "none";
             }
-
         });
-
+    </script>
+    <script>
+        // Добавление названия объекта
         var objectName = document.getElementById('object-name');
         objectName.addEventListener('change', function () {
             var inputValue = objectName.value;
@@ -487,6 +480,7 @@
             }, 3000);
         }
 
+        // Функция сохранения данных при изменении на странице
         $(document).ready(function () {
             $('#form-data').on('input', saveFormData);
         });
