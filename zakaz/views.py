@@ -121,7 +121,6 @@ def view_order(request, company_slug: str, company_number_slug: str):
     context = {}
     square_cadastral_area = []
 
-
     user_company = get_object_or_404(
         User, company_number_slug=company_number_slug
     )
@@ -236,12 +235,18 @@ def view_change_order_status(request, order_id: int):
     if request.method == 'POST':
         order_form = OrderForm(request.POST, instance=order)
         if order_form.is_valid():
-            order.object_name = request.POST.get('object_name')
-            new_cadastral = request.POST.getlist('new_cadastral_numbers')
+            order.object_name = request.POST.get(
+                'object_name'
+            )
+            new_cadastral = request.POST.getlist(
+                'new_cadastral_numbers'
+            )
             if new_cadastral[0]:
                 order.cadastral_numbers += new_cadastral
             else:
-                order.cadastral_numbers = request.POST.getlist('cadastral_numbers')
+                order.cadastral_numbers = request.POST.getlist(
+                    'cadastral_numbers'
+                )
             for i in order.cadastral_numbers:
                 areas = GetArea(i)
                 square_cadastral_area.append(areas.attrs['area_value'])
@@ -276,7 +281,8 @@ def view_rates(request):
 
 
 # Скачивание DOCX
-def download_docx(request, document_name: str, document_path: str, document_cipher: str, placeholders: dict, coordinates_dict: dict):
+def download_docx(request, document_name: str, document_path: str, document_cipher: str, placeholders: dict,
+                  coordinates_dict: dict):
     document = generate_docx(document_path, placeholders)
 
     add_table(document, coordinates_dict)
@@ -418,7 +424,7 @@ def download_map(request, pk: int):
             response = HttpResponse(
                 fh.read(), content_type='application/octet-stream')
             response['Content-Disposition'] = 'attachment; filename=' + \
-                os.path.basename(file_path)
+                                              os.path.basename(file_path)
             return response
     except:
         raise Http404
