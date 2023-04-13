@@ -4,7 +4,7 @@ from zakaz.views import (view_order_pages, view_change_order_status, view_order_
                          view_order, view_rates,
                          download_igi_docx, city_autocomplete,
                          ajax_validate_cadastral_number, region_autocomplete,  area_autocomplete,
-                         ajax_download_map, download_map, download_xlsx, download_igdi_docx, download_all_docx)
+                         download_map, download_xlsx, download_igdi_docx, download_all_docx)
 
 app_name = 'zakaz'
 
@@ -13,7 +13,6 @@ urlpatterns = [
     path('region_autocomlete', region_autocomplete, name='region_autocomplete'),
     path('area_autocomlete', area_autocomplete, name='area_autocomplete'),
     path('city_autocomplete', city_autocomplete, name='city_autocomplete'),
-    path('download_card', ajax_download_map, name='ajax_download_map'),
     path('order/<slug:company_slug>/<slug:company_number_slug>/', view_order_cadastral, name='cadastral'),
     path('order/<slug:company_slug>/<slug:company_number_slug>/form', view_order, name='order'),
     path('order_pages/<slug:company_number_slug>/', view_order_pages, name='order_pages'),
