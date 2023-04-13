@@ -1271,6 +1271,10 @@ h6 {
   position: absolute;
   top: 0;
   right: 0;
+  cursor: pointer !important;
+}
+
+#close-icon:hover {
   cursor: pointer;
 }
 
@@ -1374,7 +1378,6 @@ h6 {
 }
 
 .no-modal-bg .modal-content {
-  pointer-events: none;
   background-color: transparent;
   border-color: transparent;
 }

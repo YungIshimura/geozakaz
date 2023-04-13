@@ -30,22 +30,23 @@
         </a>
     </div>
     <section>
-        <form action='#' method='POST' enctype='multipart/form-data'>
+        <form action='#' method='POST' enctype='multipart/form-data' id="order-form">
             {% csrf_token %}
 
-            {% if order_form.errors %}
-                {% for field in order_form %}
-                    {% for error in field.errors %}
-                        <div class="alert alert-danger text-center">
-                            {% comment %}
-                                <span>{% verbose_name_tag order_model field.name %} {{ error|lower }} </span> {% endcomment %}
-                            <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>
-                        </div>
-                    {% endfor %}
-                {% endfor %}
-            {% endif %}
+            {#            {% if order_form.errors %}#}
+            {#                {% for field in order_form %}#}
+            {#                    {% for error in field.errors %}#}
+            {#                        <div class="alert alert-danger text-center">#}
+            {#                            {% comment %}#}
+            {#                                <span>{% verbose_name_tag order_model field.name %} {{ error|lower }} </span> {% endcomment %}#}
+            {#                            <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>#}
+            {#                        </div>#}
+            {#                    {% endfor %}#}
+            {#                {% endfor %}#}
+            {#            {% endif %}#}
 
-            {% include 'inc/_alerts.html' %}
+            {#            {% include 'inc/_alerts.html' %}#}
+
             <div class="row">
                 <div class="col-sm-6 mb-sm-0">
                     <div class="card">
@@ -90,7 +91,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
-                                                    <label for="{{ form.square.id_for_label }}"
+                                                    <label for="{{ order_form.square.id_for_label }}"
                                                            class="form-label">Площадь</label>
                                                     <div class="btn-group" role="group" aria-label="Basic example">
                                                         {{ order_form.square }}
@@ -106,18 +107,18 @@
                                         <h5>Адрес объекта</h5>
                                     </div>
                                     {{ order_form.media.js }}
-                                    <label for="{{ form.region.id_for_label }}">Регион</label>
+                                    <label for="{{ order_form.region.id_for_label }}">Регион</label>
                                     {{ order_form.region }}
                                     <br>
-                                    <label for="{{ form.area.id_for_label }}">Район</label>
+                                    <label for="{{ order_form.area.id_for_label }}">Район</label>
                                     {{ order_form.area }}
                                     <br>
-                                    <label for="{{ form.city.id_for_label }}">Населенный пункт</label>
+                                    <label for="{{ order_form.city.id_for_label }}">Населенный пункт</label>
                                     {{ order_form.city }}
                                     <br>
                                     </select>
                                     <div class="mb-3">
-                                        <label for="{{ form.street.id_for_label }}">Улица</label>
+                                        <label for="{{ order_form.street.id_for_label }}">Улица</label>
                                         {{ order_form.street }}
                                     </div>
                                     <br>
@@ -127,7 +128,7 @@
                                                 <div class="card-body">
                                                     <div class="mb-3">
                                                         <label class='house_label'
-                                                               for="{{ form.house_number.id_for_label }}">Номер
+                                                               for="{{ order_form.house_number.id_for_label }}">Номер
                                                             дома</label>
                                                         {{ order_form.house_number }}
                                                     </div>
@@ -139,7 +140,7 @@
                                                 <div class="card-body">
                                                     <div class="mb-3">
                                                         <label class='building_label'
-                                                               for="{{ form.building.id_for_label }}">*
+                                                               for="{{ order_form.building.id_for_label }}">*
                                                             Корпус/Строение</label>
                                                         {{ order_form.building }}
                                                     </div>
@@ -154,7 +155,7 @@
                                                 <div class="card ">
                                                     <div class="card-body">
                                                         <div class="mb-3">
-                                                            <label for="{{ form.phone_number.id_for_label }}">Номер
+                                                            <label for="{{ order_form.phone_number.id_for_label }}">Номер
                                                                 телефона</label>
                                                             {{ order_form.phone_number }}
                                                         </div>
@@ -166,7 +167,7 @@
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <div class="mb-3">
-                                                            <label for="{{ form.email.id_for_label }}">Электронная
+                                                            <label for="{{ order_form.email.id_for_label }}">Электронная
                                                                 почта</label>
                                                             {{ order_form.email }}
                                                         </div>
@@ -181,7 +182,7 @@
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
-                                                        <label for="{{ form.name.id_for_label }}">Имя</label>
+                                                        <label for="{{ order_form.name.id_for_label }}">Имя</label>
                                                         {{ order_form.name }}
                                                     </div>
                                                 </div>
@@ -191,7 +192,7 @@
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
-                                                        <label for="{{ form.surname.id_for_label }}">Фамилия</label>
+                                                        <label for="{{ order_form.surname.id_for_label }}">Фамилия</label>
                                                         {{ order_form.surname }}
                                                     </div>
                                                 </div>
@@ -202,7 +203,7 @@
                                                 <div class="card-body">
 
                                                     <div class="mb-3">
-                                                        <label for="{{ form.father_name.id_for_label }}">*
+                                                        <label for="{{ order_form.father_name.id_for_label }}">*
                                                             Отчество</label>
                                                         {{ order_form.father_name }}
                                                     </div>
@@ -234,7 +235,6 @@
                         </div>
                     </div>
 
-
                 </div>
                 <div class="col-sm-6">
                     <div class="card" style='min-width: 300px;'>
@@ -243,7 +243,10 @@
                                 <div class="card-title">
                                     <h5>Назначение здания</h5>
                                 </div>
-                                
+
+                                <label for="{{ order_form.purpose_building.id_for_label }}" style="display: none">Назначeние
+                                    здания</label>
+
                                 {{ order_form.purpose_building }}
                             </div>
                             <div class="card-title">
@@ -254,7 +257,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="mb-3">
-                                                <label for="{{ form.length.id_for_label }}"
+                                                <label for="{{ order_form.length.id_for_label }}"
                                                        class="form-label">Длина</label>
                                                 <div class="btn-group" role="group" aria-label="Basic example">
                                                     {{ order_form.length }}
@@ -268,7 +271,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="mb-3">
-                                                <label for="{{ form.width.id_for_label }}"
+                                                <label for="{{ order_form.width.id_for_label }}"
                                                        class="form-label">Ширина</label>
                                                 <div class="btn-group" role="group" aria-label="Basic example">
                                                     {{ order_form.width }}
@@ -282,7 +285,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="mb-3" id='width'>
-                                                <label for="{{ form.height.id_for_label }}"
+                                                <label for="{{ order_form.height.id_for_label }}"
                                                        class="form-label">Высота</label>
                                                 <div class="btn-group" role="group" aria-label="Basic example">
                                                     {{ order_form.height }}
@@ -317,6 +320,8 @@
                                     <div class="card-title">
                                         <h5>Цель работ</h5>
                                     </div>
+                                    <label for="{{ order_form.work_objective.id_for_label }}" style="display: none">Цель
+                                        работ</label>
                                     {{ order_form.work_objective }}
                                 </div>
                                 <hr>
@@ -339,11 +344,27 @@
             </div>
         </form>
 
+        <div style="display: none">
+            {% if order_form.errors %}
+                {% for field in order_form %}
+                    <ul class="messages">
+                        {% for error in field.errors %}
+                            <li>Ошибка в поле {{ field.label }}: {{ error|escape }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        {% include 'inc/_popups.html' %}
+
     </section>
     <script src="{% static 'js/order.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+
+    <script src="{% static 'js/alerts.js' %}"></script>
 
     <script>
         $(document).ready(function () {
@@ -410,6 +431,44 @@
                 }
             });
 
+            checkBuildingPurpose();
+
+            function checkBuildingPurpose() {
+                const selectedValue = purposeInput.val().trim();
+                if (selectedValue.length > 0) {
+                    switch (selectedValue) {
+                        case "Трубопровод":
+                            widthInput.attr("disabled", true);
+                            widthUnit.hide();
+                            heightInput.attr("disabled", true);
+                            heightUnit.hide();
+                            lengthUnit.val("m");
+                            widthUnit.val("");
+                            heightUnit.val("");
+                            widthInput.val("");
+                            heightInput.val("");
+                            break;
+                        case "Полигон ТБО":
+                            lengthUnit.val("m");
+                            lengthUnit.find("option:eq(1)").hide();
+                            heightInput.attr("disabled", true);
+                            heightUnit.hide();
+                            widthUnit.val("m");
+                            widthUnit.find("option:eq(1)").hide();
+                            break;
+                        case "Школа":
+                        case "Жилой многоэтажный дом":
+                            lengthUnit.val("m");
+                            lengthUnit.find("option:eq(1)").hide();
+                            widthUnit.val("m");
+                            widthUnit.find("option:eq(1)").hide();
+                            heightUnit.val("floor");
+                            heightUnit.find("option:eq(0)").hide();
+                            break;
+                    }
+                }
+            }
+
             function resetFields() {
                 lengthUnit.find("option").show();
                 widthUnit.find("option").show();
@@ -432,6 +491,155 @@
     <script>
         $('#id_phone_number').on('input', function () {
             $(this).val($(this).val().replace(/[A-Za-zА-Яа-яЁё]/, ''))
+        });
+    </script>
+    <script>
+        const form = document.querySelector('#order-form');
+        const fields = form.querySelectorAll('*[name]');
+        const submitBtn = document.querySelector('#send-order');
+        const typeWork = form.querySelectorAll(`*[name="type_work"]`);
+
+        const namesArray = [
+            "square",
+            "city",
+            "street",
+            "house_number",
+            "phone_number",
+            "email",
+            "name",
+            "surname",
+            "purpose_building",
+            "length",
+            "type_work",
+            "work_objective"
+        ];
+
+        submitBtn.addEventListener('click', (event) => {
+            event.preventDefault(); // Отменяем стандартное поведение кнопки
+
+            let errorMessage = "";
+            let stopIteration = false;
+
+            namesArray.forEach(name => {
+                if (stopIteration) {
+                    return;
+                }
+
+                const field = form.querySelector(`*[name=${name}]`);
+
+                if (field.name === 'type_work') {
+                    let uncheckedCount = 0;
+
+                    typeWork.forEach(type => {
+                        if (!type.checked) {
+                            uncheckedCount++;
+                        }
+                    });
+
+                    if (uncheckedCount === typeWork.length) {
+                        errorMessage = "Укажите необходимые типы инженерных изысканий";
+                        stopIteration = true;
+                        return;
+                    }
+
+                } else if (field.name === 'purpose_building') {
+                    const lengthField = form.querySelector('*[name="length"]');
+                    const widthField = form.querySelector('*[name="width"]');
+                    const heightField = form.querySelector('*[name="height"]');
+
+                    if (!field.value) {
+                        const label = form.querySelector(`label[for=${field.id}]`);
+                        errorMessage = `Заполните поле ${label.innerText}`;
+                        stopIteration = true;
+                        return;
+                    }
+
+                    if (field.value === 'Полигон ТБО') {
+                        if (!lengthField.value) {
+                            const label = form.querySelector(`label[for=${lengthField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+
+                        if (!widthField.value) {
+                            const label = form.querySelector(`label[for=${widthField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+                    } else if (field.value === 'Школа' || field.value === 'Дом') {
+                        if (!lengthField.value) {
+                            const label = form.querySelector(`label[for=${lengthField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+
+                        if (!widthField.value) {
+                            const label = form.querySelector(`label[for=${widthField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+
+                        if (!heightField.value) {
+                            const label = form.querySelector(`label[for=${heightField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+                    } else if (field.value && field.value !== 'Полигон ТБО' && field.value !== 'Школа' && field.value !== 'Дом') {
+                        if (!lengthField.value) {
+                            const label = form.querySelector(`label[for=${lengthField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+
+                        if (!widthField.value) {
+                            const label = form.querySelector(`label[for=${widthField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+
+                        if (!heightField.value) {
+                            const label = form.querySelector(`label[for=${heightField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+                    }
+                } else if (!field.value) {
+                    const label = form.querySelector(`label[for=${field.id}]`);
+                    errorMessage = `Заполните поле ${label.innerText}`;
+                    stopIteration = true;
+                    return;
+                }
+            });
+
+            if (errorMessage) {
+                showMessageModal("error", errorMessage);
+            } else {
+                form.submit(); // Отправляем форму на сервер
+            }
+        });
+
+
+    </script>
+    <script>
+        window.addEventListener('load', function () {
+            const messages = $(".messages li");
+
+            messages.each(function (index, message) {
+                const messageText = $(message).text();
+                if (messageText === 'Ошибка в поле Phone number: Enter a valid phone number (e.g. +12125552368).') {
+                    showMessageModal('error', 'Ошибка в поле Номер телефона: введите действительный номер телефона');
+                } else {
+                    showMessageModal('error', messageText);
+                }
+            });
         });
     </script>
 
