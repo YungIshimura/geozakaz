@@ -222,6 +222,7 @@ def view_order_pages(request, company_number_slug):
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_change_order_status(request, order_id):
+    square_cadastral_area = []
     order = get_object_or_404(Order.objects.select_related(
         'city', 'area', 'region', 'work_objective', 'user'),
         id=order_id)
@@ -242,7 +243,16 @@ def view_change_order_status(request, order_id):
             order.object_name = request.POST.get('object_name')
             new_cadastral = request.POST.getlist('new_cadastral_numbers')
             if new_cadastral[0]:
-                order.cadastral_numbers += request.POST.getlist('new_cadastral_numbers')
+                order.cadastral_numbers += new_cadastral
+            else:
+                order.cadastral_numbers = request.POST.getlist('cadastral_numbers')
+            for i in order.cadastral_numbers:
+                areas = GetArea(i)
+                square_cadastral_area.append(areas.attrs['area_value'])
+            if request.POST.get('square_unit') == "hectometer":
+                order.square = sum(square_cadastral_area) / 1000
+            elif request.POST.get('square_unit') == "sq_m":
+                order.square = sum(square_cadastral_area)
             order = order_form.save()
             company_number_slug = order.user.company_number_slug
             return JsonResponse({'success': True})
