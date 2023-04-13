@@ -241,19 +241,22 @@ def view_change_order_status(request, order_id: int):
             new_cadastral = request.POST.getlist(
                 'new_cadastral_numbers'
             )
+
             if new_cadastral[0]:
                 order.cadastral_numbers += new_cadastral
             else:
                 order.cadastral_numbers = request.POST.getlist(
                     'cadastral_numbers'
                 )
+
             for i in order.cadastral_numbers:
                 areas = GetArea(i)
                 square_cadastral_area.append(areas.attrs['area_value'])
             if request.POST.get('square_unit') == "hectometer":
                 order.square = sum(square_cadastral_area) / 1000
-            elif request.POST.get('square_unit') == "sq_m":
+            else:
                 order.square = sum(square_cadastral_area)
+
             order = order_form.save()
             order.user.company_number_slug
             return JsonResponse({'success': True})
