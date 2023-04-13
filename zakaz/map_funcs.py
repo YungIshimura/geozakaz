@@ -8,13 +8,15 @@ from PIL import Image
 from .rosreestr2 import GetArea
 
 
-def get_map(number_list:list):
-    m = folium.Map(location=[55.7558, 37.6173], zoom_start=6, zoom_control=False,
+def get_map(number_list: list):
+    m = folium.Map(location=[55.7558, 37.6173], zoom_start=6,
+                   zoom_control=False,
                    control_scale=True)
 
     m.options.update({'max_width': '100%'})
     m.get_root().html.add_child(
-        folium.Element("<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
+        folium.Element(
+            "<style>.leaflet-control-attribution.leaflet-control{display:none;}</style>"))
 
     all_place_lat = []
     all_place_lng = []
@@ -37,7 +39,8 @@ def get_map(number_list:list):
                     center_point_lat = areas.center['y'],
                     folium.CircleMarker(
                         location=[center_point_lat[0], center_point_lng[0]],
-                        popup=folium.Popup(f':{number.split(":")[-1]}', show=True),
+                        popup=folium.Popup(
+                            f':{number.split(":")[-1]}', show=True),
                         opacity=0,
                     ).add_to(m)
 
@@ -60,8 +63,10 @@ def get_map(number_list:list):
 
 
 # Получаем объект карты, для сохранения скриншота к заказу
-def get_map_screenshot(number_list:list):
-    m = folium.Map(location=[55.7558, 37.6173], zoom_start=6, zoom_control=False,
+def get_map_screenshot(number_list: list):
+    m = folium.Map(location=[55.7558, 37.6173],
+                   zoom_start=6,
+                   zoom_control=False,
                    control_scale=True)
 
     m.options.update({'max_width': '100%'})
@@ -89,7 +94,8 @@ def get_map_screenshot(number_list:list):
                     center_point_lat = areas.center['y'],
                     folium.CircleMarker(
                         location=[center_point_lat[0], center_point_lng[0]],
-                        popup=folium.Popup(f':{number.split(":")[-1]}', show=True),
+                        popup=folium.Popup(
+                            f':{number.split(":")[-1]}', show=True),
                         opacity=0,
                     ).add_to(m)
 
@@ -105,10 +111,9 @@ def get_map_screenshot(number_list:list):
     return m
 
 
-
 # Выгрузка DOCX
 # Замена заполнителей значениями в абзаце.
-def replace_placeholders(paragraph:str, placeholders:dict):
+def replace_placeholders(paragraph: str, placeholders: dict):
     for placeholder, value in placeholders.items():
         if placeholder in paragraph.text:
             for run in paragraph.runs:
@@ -116,13 +121,14 @@ def replace_placeholders(paragraph:str, placeholders:dict):
                     if placeholder == '_обзорная_схема':
                         run.text = ""
                         width, height = Image.open(value).size
-                        run.add_picture(value, width=Inches(width / 192), height=Inches(height / 192))
+                        run.add_picture(value, width=Inches(
+                            width / 192), height=Inches(height / 192))
                     else:
                         run.text = run.text.replace(placeholder, value)
 
 
 # Замена заполнителей значениями в таблице.
-def replace_placeholders_in_table(table:str, placeholders:dict):
+def replace_placeholders_in_table(table: str, placeholders: dict):
     for row in table.rows:
         for cell in row.cells:
             for paragraph in cell.paragraphs:
@@ -130,7 +136,7 @@ def replace_placeholders_in_table(table:str, placeholders:dict):
 
 
 # Замена заполнителей значениями в футере документа.
-def replace_placeholders_in_footer(document, placeholders:dict):
+def replace_placeholders_in_footer(document, placeholders: dict):
     sections = document.sections
     for section in sections:
         footer = section.footer
@@ -139,7 +145,7 @@ def replace_placeholders_in_footer(document, placeholders:dict):
 
 
 # Замена заполнителей значениями во всех абзацах и таблицах документа
-def replace_placeholders_in_document(document, placeholders:dict):
+def replace_placeholders_in_document(document, placeholders: dict):
     for paragraph in document.paragraphs:
         replace_placeholders(paragraph, placeholders)
 
@@ -152,18 +158,20 @@ def replace_placeholders_in_document(document, placeholders:dict):
 
 
 # Генерация нового документа с заменой заполнителей значениями.
-def generate_docx(document_path, placeholders:dict):
+def generate_docx(document_path, placeholders: dict):
     document = Document(document_path)
     replace_placeholders_in_document(document, placeholders)
     return document
 
 
-def add_table(document, coordinates_dict:dict):
+def add_table(document, coordinates_dict: dict):
     for paragraph in document.paragraphs:
         if '_таблица_координат' in paragraph.text:
             for key in coordinates_dict:
-                document.add_paragraph(f'Координаты углов участка {key}', style='Normal')
-                table = document.add_table(rows=len(coordinates_dict[key]) + 1, cols=3)
+                document.add_paragraph(
+                    f'Координаты углов участка {key}', style='Normal')
+                table = document.add_table(
+                    rows=len(coordinates_dict[key]) + 1, cols=3)
 
                 # Добавляем границы таблицы
                 table.style = 'Table Grid'

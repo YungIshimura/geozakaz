@@ -26,7 +26,7 @@ from .models import (Area, City, Order, OrderFile, PurposeBuilding, Region,
 from .rosreestr2 import GetArea
 from .validators import validate_number
 
-# driver = webdriver.Chrome() 
+# driver = webdriver.Chrome()
 User = get_user_model()
 
 
@@ -36,7 +36,7 @@ def region_autocomplete(request):
         regions = []
         for region in qs:
             regions.append(region.name)
-        
+
         return JsonResponse(regions, safe=False)
 
 
@@ -83,11 +83,11 @@ def ajax_validate_cadastral_number(request):
     return JsonResponse(response)
 
 
-def view_order_cadastral(request, company_slug:str, company_number_slug:str):
+def view_order_cadastral(request, company_slug: str, company_number_slug: str):
     context = {}
     response = HttpResponseRedirect(
-            reverse('zakaz:order',
-                    args=[company_slug, company_number_slug]))
+        reverse('zakaz:order',
+                args=[company_slug, company_number_slug]))
 
     request.session.modified = True
     try:
@@ -116,8 +116,7 @@ def view_order_cadastral(request, company_slug:str, company_number_slug:str):
     return render(request, 'zakaz/customer_home.html', context=context)
 
 
-
-def view_order(request, company_slug:str, company_number_slug:str):
+def view_order(request, company_slug: str, company_number_slug: str):
     coordinates = []
     context = {}
 
@@ -126,7 +125,6 @@ def view_order(request, company_slug:str, company_number_slug:str):
     )
     cadastral_numbers = request.session['cadastral_numbers'] if 'cadastral_numbers' in request.session else None
     address = request.session['address'] if 'address' in request.session else None
-
 
     if address:
         region, area, city = address[0].split(', ')
@@ -150,8 +148,10 @@ def view_order(request, company_slug:str, company_number_slug:str):
                 order.coordinates = coordinates
                 order.cadastral_numbers = cadastral_numbers
 
-                tmp_html = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.html')
-                tmp_png = os.path.join(settings.BASE_DIR, 'tmp', f'map-{order.id}.png')
+                tmp_html = os.path.join(
+                    settings.BASE_DIR, 'tmp', f'map-{order.id}.html')
+                tmp_png = os.path.join(
+                    settings.BASE_DIR, 'tmp', f'map-{order.id}.png')
 
                 get_map_screenshot(order.cadastral_numbers).save(tmp_html)
 
@@ -182,15 +182,14 @@ def view_order(request, company_slug:str, company_number_slug:str):
     else:
         order_form = OrderForm(initial={
             'cadastral_numbers': cadastral_numbers if cadastral_numbers else None,
-            'region': cadastral_region.id if cadastral_numbers else Region.objects.get(name=region).id, 
+            'region': cadastral_region.id if cadastral_numbers else Region.objects.get(name=region).id,
             'area': cadastral_area.id if cadastral_numbers else Area.objects.get(name=area).id,
             'city': None if cadastral_numbers else City.objects.get(name=city).id,
             'square_unit': Order.SQUARE_UNIT[0][0],
         })
-        
 
         order_files_form = OrderFileForm()
-    
+
     context['user_company'] = user_company
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
@@ -201,7 +200,7 @@ def view_order(request, company_slug:str, company_number_slug:str):
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
-def view_order_pages(request, company_number_slug:str):
+def view_order_pages(request, company_number_slug: str):
     orders = Order.objects.filter(
         user__company_number_slug=company_number_slug
     ).select_related(
@@ -215,7 +214,7 @@ def view_order_pages(request, company_number_slug:str):
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
-def view_change_order_status(request, order_id:int):
+def view_change_order_status(request, order_id: int):
     order = get_object_or_404(Order.objects.select_related(
         'city', 'area', 'region', 'work_objective', 'user'),
         id=order_id)
@@ -235,7 +234,8 @@ def view_change_order_status(request, order_id:int):
         if order_form.is_valid():
 
             order.object_name = request.POST.get('object_name')
-            order.cadastral_numbers += request.POST.getlist('new_cadastral_numbers')
+            order.cadastral_numbers += request.POST.getlist(
+                'new_cadastral_numbers')
             order = order_form.save()
             order.user.company_number_slug
             return JsonResponse({'success': True})
@@ -264,7 +264,7 @@ def view_rates(request):
 
 
 # Скачивание DOCX
-def download_docx(request, document_name:str, document_path:str, document_cipher:str, placeholders:dict, coordinates_dict:dict):
+def download_docx(request, document_name: str, document_path: str, document_cipher: str, placeholders: dict, coordinates_dict: dict):
     document = generate_docx(document_path, placeholders)
 
     add_table(document, coordinates_dict)
@@ -284,7 +284,7 @@ def download_docx(request, document_name:str, document_path:str, document_cipher
 
 
 # Скачиваем ШИФР-ИГИ
-def download_igi_docx(request, pk:int):
+def download_igi_docx(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     department = order.region.region_department.first()
     location = f"{order.region}, {order.area}, {order.city}, {order.street}, д.{order.house_number}"
@@ -331,7 +331,7 @@ def download_igi_docx(request, pk:int):
 
 
 # Скачиваем ШИФР-ИГДИ
-def download_igdi_docx(request, pk:int):
+def download_igdi_docx(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     department = order.region.region_department.first()
     location = f"{order.region}, {order.area}, {order.city}, {order.street}, д.{order.house_number}"
@@ -378,7 +378,7 @@ def download_igdi_docx(request, pk:int):
 
 
 # Скачиваем архив с документами
-def download_all_docx(request, pk:int):
+def download_all_docx(request, pk: int):
     igi_docx = download_igi_docx(request, pk)
     igdi_docx = download_igdi_docx(request, pk)
 
@@ -398,20 +398,22 @@ def download_all_docx(request, pk:int):
 
 
 # Скачиваем карты
-def download_map(request, pk:int):
+def download_map(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     try:
         file_path = order.map.path
         with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type='application/octet-stream')
-            response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path)
+            response = HttpResponse(
+                fh.read(), content_type='application/octet-stream')
+            response['Content-Disposition'] = 'attachment; filename=' + \
+                os.path.basename(file_path)
             return response
     except:
         raise Http404
 
 
 # Скачиваем excel файл
-def download_xlsx(request, pk:int):
+def download_xlsx(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     cadastral_numbers = order.cadastral_numbers
 
@@ -442,8 +444,10 @@ def download_xlsx(request, pk:int):
     # Проходим по каждому ключу словаря coordinates_dict
     for key, coords in coordinates_dict.items():
         # Записываем заголовок строки с координатами углов участка
-        sheet.merge_cells(start_row=current_row, start_column=1, end_row=current_row, end_column=3)
-        sheet.cell(row=current_row, column=1, value=f'Координаты углов участка {key}')
+        sheet.merge_cells(start_row=current_row, start_column=1,
+                          end_row=current_row, end_column=3)
+        sheet.cell(row=current_row, column=1,
+                   value=f'Координаты углов участка {key}')
         current_row += 1
 
         # Записываем заголовки столбцов таблицы
@@ -466,7 +470,8 @@ def download_xlsx(request, pk:int):
     document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
 
     # Сохраняем файл и отправляем его пользователю
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename=coord.xlsx'
     response['Content-Disposition'] = f'attachment; filename="{document_cipher}-coord.xlsx"'
     workbook.save(response)
