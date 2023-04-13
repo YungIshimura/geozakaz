@@ -39,6 +39,7 @@ class OrderForm(forms.ModelForm):
     )
 
     square = forms.DecimalField(
+        label='Площадь',
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Площадь'}),
         required=True
@@ -50,6 +51,7 @@ class OrderForm(forms.ModelForm):
     )
 
     length = forms.DecimalField(
+        label='Длина',
         validators=[MinValueValidator(1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Длина'}),
         required=True
@@ -113,6 +115,7 @@ class OrderForm(forms.ModelForm):
     phone_number = PhoneNumberField()
 
     email = forms.EmailField(
+        label='Электронная почта',
         widget=forms.EmailInput(attrs={'placeholder': 'Введите адрес почты'}),
         required=True
     )
@@ -153,7 +156,6 @@ class OrderForm(forms.ModelForm):
         self.fields['width_unit'].widget.attrs['class'] = 'custom-btn-check'
 
         self.fields['work_objective'].widget.attrs['class'] = 'form-select'
-
 
 class OrderFileForm(forms.ModelForm):
     file = forms.FileField(

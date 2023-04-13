@@ -185,7 +185,8 @@ def view_order(request, company_slug, company_number_slug):
             return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
 
         else:
-            messages.error(request, 'Проверьте правильность введённых данных')
+            pass
+            # messages.error(request, 'Проверьте правильность введённых данных')
     else:
         order_form = OrderForm(initial={
             'cadastral_numbers': cadastral_numbers if cadastral_numbers else None,
@@ -664,3 +665,7 @@ def download_xlsx(request, pk):
     workbook.save(response)
 
     return response
+
+
+def get_message(request):
+    return messages.success(request, 'ok')

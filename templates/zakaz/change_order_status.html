@@ -420,25 +420,20 @@
             </div>
         </div>
 
-        <div class="modal fade no-modal-bg" id="message-modal" tabindex="-1" role="dialog"
-             aria-labelledby="message-modal-label"
-             aria-hidden="true" data-bs-backdrop="false">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content text-center border-0 mb-0 pt-5">
-                    <div class="modal-body" style="padding: 0;">
-                        <div id="message" class="alert" role="alert"></div>
-                        <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"
-                           style="cursor: pointer;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% include 'inc/_popups.html' %}
 
     </section>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+
+    <script src="{% static 'js/alerts.js' %}"></script>
+
     <script>
+        $(document).on('mouseenter', '#close-icon', function () {
+            $(this).css('cursor', 'pointer');
+        });
+
         function DeleteCadastral(id) {
             let cadastral_number = document.getElementById(`cadastral_number${id}`);
             console.log(cadastral_number)
@@ -494,32 +489,6 @@
             setTimeout(function () {
                 location.reload();
             }, 4000);
-        }
-
-        function showMessageModal(type, message) {
-            const messageModal = $("#message-modal");
-            const messageEl = $("#message");
-            messageEl.removeClass().addClass("alert");
-
-            if (type === "success") {
-                messageEl.addClass("alert-success");
-            } else if (type === "error") {
-                messageEl.addClass("alert-danger");
-            }
-
-            messageEl.text(message);
-            messageModal.modal("show");
-
-            const closeButton = document.getElementById("close-icon");
-            closeButton.addEventListener("click", hideModal);
-
-            // Закрываем модальное окно по истечению времени
-            setTimeout(hideModal, 1500);
-        }
-
-        function hideModal() {
-            const messageModal = $("#message-modal");
-            messageModal.modal("hide");
         }
     </script>
     <script>
