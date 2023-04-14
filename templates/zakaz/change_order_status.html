@@ -13,10 +13,8 @@
           integrity="sha512-0vvWB+X9DbyKj6fJNW6ODcFXwAT5U6/bnx+8u0mthBjblLmX7LyG1Sz+2v7ve+dZmBCjwu7JzTtTcTSTT+ruyQ=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <style>
-        .custom-btn-check {
-            border-radius: 3px;
-            background-color: white;
-            border-color: #ced4da;
+        #id_comment {
+            height: 150px;
         }
     </style>
 
@@ -76,6 +74,7 @@
                                 {% endfor %}
                                 <div id="new-cadastral" style="display: none; margin-bottom: 20px">
                                     <input type="text" name="new_cadastral_numbers"
+                                           id="new_cadastral_numbers_id"
                                            class="form-control custom-form-control"
                                            style='background-color:white; max-width: 570px'
                                            onchange="reloadPage()">
@@ -241,36 +240,6 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if map_html %}
-                        <div class="card">
-                            <h5 class="card-title" style="padding: 0 0 15px 0"></h5>
-                            <div class="card-body">
-                                <div>
-                                    {{ map_html | safe }}
-                                </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <a href="{% url 'zakaz:download_map' order.pk %}"
-                                           class="btn btn-bd-primary w-100">Скачать карту</a>
-                                    </div>
-                                    <div class="col-6">
-                                        <a href="{% url 'zakaz:download_xlsx' order.pk %}"
-                                           class="btn btn-bd-primary w-100">Скачать координаты</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title"
-                                    style="padding: 0 0 10px 0; margin-top: 25px; text-align: center">Для загрузки карты
-                                    добавьте
-                                    кадастровый номер</h5>
-                            </div>
-                        </div>
-                    {% endif %}
                 </div>
                 <div class="col-sm-6">
                     <div class="card" style='min-width: 300px'>
@@ -414,6 +383,36 @@
                             </div>
                         </div>
                     </div>
+                    {% if map_html %}
+                        <div class="card">
+                            <h5 class="card-title" style="padding: 0 0 15px 0"></h5>
+                            <div class="card-body">
+                                <div>
+                                    {{ map_html | safe }}
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a href="{% url 'zakaz:download_map' order.pk %}"
+                                           class="btn btn-bd-primary w-100">Скачать карту</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="{% url 'zakaz:download_xlsx' order.pk %}"
+                                           class="btn btn-bd-primary w-100">Скачать координаты</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"
+                                    style="padding: 0 0 10px 0; margin-top: 25px; text-align: center">Для загрузки карты
+                                    добавьте
+                                    кадастровый номер</h5>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
         </form>
 
@@ -447,9 +446,7 @@
 
         function DeleteCadastral(id) {
             let cadastral_number = document.getElementById(`cadastral_number${id}`);
-            console.log(cadastral_number)
             let index = array.indexOf(cadastral_number.value);
-            console.log(index)
             document.getElementById(id).remove();
             array.splice(index, 1);
         }
@@ -462,6 +459,10 @@
                 document.getElementById('new-cadastral').style.display = "none";
             }
         });
+
+
+
+
     </script>
     <script>
         // Добавление названия объекта
