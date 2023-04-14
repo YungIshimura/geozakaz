@@ -13,6 +13,13 @@
     <script src="/static/smart-selects/admin/js/chainedfk.js"></script>
     <script src="/static/smart-selects/admin/js/bindfields.js"></script>
     <link rel='stylesheet' href="{% static 'css/order.css' %}">
+    <style>
+    .custom-btn-check {
+        border-radius: 3px;
+        background-color: white;
+        border-color: #ced4da;
+    }
+    </style>
 
     {#    <div class="mb-5 mt-5">#}
     {#        <h1>Создайте заявку</h1>#}
@@ -20,7 +27,8 @@
     <div class="d-flex py-4">
         <a class="logo d-flex align-items-center w-auto">
             {% if user_company.company_name %}
-                <span class="d-none d-lg-block">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button
+                <span class="d-none d-lg-block"
+                      style="font-size: 20px">Вашу заявку увидит компания {{ user_company.company_name }}, а также другие подрядчики региона. <button
                         type="button" class="btn btn-primary mb-2" style='background-color: #012970;'
                         onclick="location.href='{% url 'zakaz:rates' %}'">Изменить</button></span>
             {% else %}
@@ -87,7 +95,7 @@
                             <hr>
                             <div>
                                 <div class='row justify-content-center' style='margin-top:15px;'>
-                                    <div class="col-6">
+                                    <div class="col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="mb-3">
@@ -219,22 +227,6 @@
                         </div>
                     </div>
 
-
-                    <div class="card" style="height: 230px; overflow-y: scroll;">
-                        <div class="card-body">
-                            <div class="card-title">
-                                <h5 class="card-title" style="padding: 0 0 15px 0">* Добавьте файл/файлы</h5>
-                            </div>
-                            <div class="input-file-row">
-                                <label class="input-file">
-                                    {{ order_files_form.file }}
-                                    <span>Выбрать</span>
-                                </label>
-                                <div class="input-file-list"></div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
                 <div class="col-sm-6">
                     <div class="card" style='min-width: 300px;'>
@@ -332,6 +324,24 @@
                                         {{ order_form.comment }}
                                     </div>
                                 </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="card" style="height: 230px; overflow-y: scroll;">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h5 class="card-title" style="padding: 0 0 15px 0">* Добавьте
+                                    файл/файлы</h5>
+                            </div>
+                            <div class="input-file-row">
+                                <label class="input-file">
+                                    {{ order_files_form.file }}
+                                    <span>Выбрать</span>
+                                </label>
+                                <div class="input-file-list"></div>
                             </div>
                         </div>
                     </div>
@@ -359,6 +369,28 @@
         {% include 'inc/_popups.html' %}
 
     </section>
+    <script>
+    // добавление и расчет площади
+        let listSquare =
+        {{ squares }}
+        var squareSum = 0
+
+        for (let item of listSquare) {
+            squareSum += item
+        }
+        document.getElementById('id_square_unit').addEventListener('change', function () {
+            if (document.getElementById("id_square_unit").value === 'sq_m') {
+                document.getElementById("id_square").value = squareSum;
+            } else if ((document.getElementById("id_square_unit").value === 'hectometer')) {
+                document.getElementById("id_square").value = squareSum / 1000;
+            }
+        })
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById("id_square_unit").value = 'hectometer';
+            document.getElementById("id_square").value = squareSum / 1000;
+        })
+    </script>
     <script src="{% static 'js/order.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>

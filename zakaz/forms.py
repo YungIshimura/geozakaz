@@ -40,7 +40,7 @@ class OrderForm(forms.ModelForm):
 
     square = forms.DecimalField(
         label='Площадь',
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(0.1)],
         widget=forms.NumberInput(attrs={'placeholder': 'Площадь'}),
         required=True
     )
