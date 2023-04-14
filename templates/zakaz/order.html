@@ -407,6 +407,8 @@
             div.classList.add("paragraph");
             var input = document.createElement("input");
             input.type = "text";
+            input.required = true
+            input.pattern = "[0-9]{2}:[0-9]{2}:[0-9]{5,7}:[0-9]{1,4}"
             input.name = "new_cadastral_numbers";
             input.className = "form-control custom-form-control";
             input.style.backgroundColor = "white";
