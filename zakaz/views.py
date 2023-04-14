@@ -25,7 +25,8 @@ from .models import (Area, City, Order, OrderFile, PurposeBuilding, Region,
                      get_image_path)
 from .rosreestr2 import GetArea
 from .validators import validate_number
-
+from pypdf import PdfReader 
+from io import StringIO
 # driver = webdriver.Chrome()
 User = get_user_model()
 
@@ -107,7 +108,25 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
         request.session['address'] = address
 
         return response
+    
+    if 'files' in request.FILES:
+        files = request.FILES.getlist('files')
+        cadastral_numbers = []
+        for file in files:
+            reader = PdfReader(file)
+            page = reader.pages[0]
+            pdf_text = StringIO(page.extract_text())
+            for elem in pdf_text:
+                if 'Кадастровый номер' in elem.strip():
+                    cadastral = elem.strip().split(' ')[-1]
+                    cadastral_numbers.append(cadastral)
 
+            request.session['cadastral_numbers'] = cadastral_numbers            
+        
+        if cadastral_numbers:
+            return response
+        else:
+            form = CadastralNumberForm()
     else:
         form = CadastralNumberForm()
 
