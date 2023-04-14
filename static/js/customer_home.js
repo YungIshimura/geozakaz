@@ -29,7 +29,7 @@ function AddCadastralNumber() {
         id ++;
     }
     else {
-        showMessageModal("error", 'Данный кадастровый номер уже добавлен');
+        alert('Данный кадастровый номер уже добавлен')
     }
 };
 
@@ -83,8 +83,6 @@ function VaidateCadastral(id){
     if (cadastral.checkValidity() && cadastral.value) {
         button.disabled=false;
         button.style.cssText+='background-color:transparent;'
-        button.disabled=true;
-        button.style.cssText+='background-color:lightgray; border-radius:10px;'
     }
     else {
         button.disabled=true;
@@ -97,9 +95,7 @@ function VaidateCadastralNumbers(id) {
     let cadastral = document.getElementById(`cadastral_number${id}`);
     
     if (array.includes(cadastral.value)) {
-
-        showMessageModal("error", 'Данный кадастровый номер уже добавлен');
-        document.getElementById(`cadastral_number${id}`).value = cadastral.value
+        alert('Данный кадастровый номер уже добавлен')
 
         return false
     }
