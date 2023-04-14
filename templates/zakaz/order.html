@@ -116,7 +116,7 @@
                                     </div>
                                     <br>
                                     <div class="row">
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
@@ -128,7 +128,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
@@ -144,8 +144,8 @@
                                     <hr>
                                     <div>
                                         <div class="row" style="margin-top:25px; text-align: left;">
-                                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                                <div class="card ">
+                                            <div class="col-sm">
+                                                <div class="card">
                                                     <div class="card-body">
                                                         <div class="mb-3">
                                                             <label for="{{ order_form.phone_number.id_for_label }}">Номер
@@ -156,7 +156,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm">
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <div class="mb-3">
@@ -170,8 +170,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="row mt-5">
-                                        <div class="col-sm-4 mb-3 mb-sm-0">
+                                    <div class="row justify-content-center">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
@@ -181,7 +181,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
@@ -191,7 +191,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
 
@@ -382,9 +382,6 @@
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
 
     <script src="{% static 'js/alerts.js' %}"></script>
-    <script>
-
-    </script>
 
     <script>
         $(document).ready(function () {
@@ -588,7 +585,15 @@
                             stopIteration = true;
                             return;
                         }
-                    } else if (field.value === 'Школа' || field.value === 'Дом') {
+                    }
+                    if (field.value === 'Трубопровод') {
+                        if (!lengthField.value) {
+                            const label = form.querySelector(`label[for=${lengthField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+                    } else if (field.value === 'Школа' || field.value === 'Жилой многоэтажный дом') {
                         if (!lengthField.value) {
                             const label = form.querySelector(`label[for=${lengthField.id}]`);
                             errorMessage = `Заполните поле ${label.innerText}`;
@@ -609,7 +614,7 @@
                             stopIteration = true;
                             return;
                         }
-                    } else if (field.value && field.value !== 'Полигон ТБО' && field.value !== 'Школа' && field.value !== 'Дом') {
+                    } else if (field.value && field.value !== 'Полигон ТБО' && field.value !== 'Школа' && field.value !== 'Жилой многоэтажный дом') {
                         if (!lengthField.value) {
                             const label = form.querySelector(`label[for=${lengthField.id}]`);
                             errorMessage = `Заполните поле ${label.innerText}`;
