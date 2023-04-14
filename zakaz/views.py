@@ -138,6 +138,7 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
 def view_order(request, company_slug: str, company_number_slug: str):
     coordinates = []
     context = {}
+    square_cadastral_area = []
 
     user_company = get_object_or_404(
         User, company_number_slug=company_number_slug
@@ -155,8 +156,8 @@ def view_order(request, company_slug: str, company_number_slug: str):
             cadastral_area_number=cadastral_numbers[0].split(':')[1])
         for number in cadastral_numbers:
             areas = GetArea(number)
+            square_cadastral_area.append(areas.attrs['area_value'])
             coordinates += areas.get_coord()
-
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)
@@ -209,6 +210,7 @@ def view_order(request, company_slug: str, company_number_slug: str):
 
         order_files_form = OrderFileForm()
 
+    context['squares'] = square_cadastral_area
     context['user_company'] = user_company
     context['order_form'] = order_form
     context['order_files_form'] = order_files_form
@@ -234,6 +236,7 @@ def view_order_pages(request, company_number_slug: str):
 
 @user_passes_test(lambda u: u.is_staff, login_url='users:company_login')
 def view_change_order_status(request, order_id: int):
+    square_cadastral_area = []
     order = get_object_or_404(Order.objects.select_related(
         'city', 'area', 'region', 'work_objective', 'user'),
         id=order_id)
@@ -251,10 +254,28 @@ def view_change_order_status(request, order_id: int):
     if request.method == 'POST':
         order_form = OrderForm(request.POST, instance=order)
         if order_form.is_valid():
+            order.object_name = request.POST.get(
+                'object_name'
+            )
+            new_cadastral = request.POST.getlist(
+                'new_cadastral_numbers'
+            )
 
-            order.object_name = request.POST.get('object_name')
-            order.cadastral_numbers += request.POST.getlist(
-                'new_cadastral_numbers')
+            if new_cadastral[0]:
+                order.cadastral_numbers += new_cadastral
+            else:
+                order.cadastral_numbers = request.POST.getlist(
+                    'cadastral_numbers'
+                )
+
+            for i in order.cadastral_numbers:
+                areas = GetArea(i)
+                square_cadastral_area.append(areas.attrs['area_value'])
+            if request.POST.get('square_unit') == "hectometer":
+                order.square = sum(square_cadastral_area) / 1000
+            else:
+                order.square = sum(square_cadastral_area)
+
             order = order_form.save()
             order.user.company_number_slug
             return JsonResponse({'success': True})
@@ -262,7 +283,6 @@ def view_change_order_status(request, order_id: int):
         order_form = OrderForm(instance=order)
 
     context = {
-        'purpose_building': PurposeBuilding.objects.all(),
         'type_works': order.type_work.all(),
         'files': files,
         'order_form': order_form,
@@ -283,7 +303,8 @@ def view_rates(request):
 
 
 # Скачивание DOCX
-def download_docx(request, document_name: str, document_path: str, document_cipher: str, placeholders: dict, coordinates_dict: dict):
+def download_docx(request, document_name: str, document_path: str, document_cipher: str, placeholders: dict,
+                  coordinates_dict: dict):
     document = generate_docx(document_path, placeholders)
 
     add_table(document, coordinates_dict)
@@ -425,7 +446,7 @@ def download_map(request, pk: int):
             response = HttpResponse(
                 fh.read(), content_type='application/octet-stream')
             response['Content-Disposition'] = 'attachment; filename=' + \
-                os.path.basename(file_path)
+                                              os.path.basename(file_path)
             return response
     except:
         raise Http404
