@@ -29,7 +29,7 @@ function AddCadastralNumber() {
         id ++;
     }
     else {
-        alert('Данный кадастровый номер уже добавлен')
+        showMessageModal("error", 'Данный кадастровый номер уже добавлен');
     }
 };
 
@@ -97,7 +97,9 @@ function VaidateCadastralNumbers(id) {
     let cadastral = document.getElementById(`cadastral_number${id}`);
     
     if (array.includes(cadastral.value)) {
-        alert('Данный кадастровый номер уже добавлен')
+
+        showMessageModal("error", 'Данный кадастровый номер уже добавлен');
+        document.getElementById(`cadastral_number${id}`).value = cadastral.value
 
         return false
     }

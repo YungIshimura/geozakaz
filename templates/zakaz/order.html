@@ -14,11 +14,11 @@
     <script src="/static/smart-selects/admin/js/bindfields.js"></script>
     <link rel='stylesheet' href="{% static 'css/order.css' %}">
     <style>
-    .custom-btn-check {
-        border-radius: 3px;
-        background-color: white;
-        border-color: #ced4da;
-    }
+        .custom-btn-check {
+            border-radius: 3px;
+            background-color: white;
+            border-color: #ced4da;
+        }
     </style>
 
     {#    <div class="mb-5 mt-5">#}
@@ -40,20 +40,6 @@
     <section>
         <form action='#' method='POST' enctype='multipart/form-data' id="order-form">
             {% csrf_token %}
-
-            {#            {% if order_form.errors %}#}
-            {#                {% for field in order_form %}#}
-            {#                    {% for error in field.errors %}#}
-            {#                        <div class="alert alert-danger text-center">#}
-            {#                            {% comment %}#}
-            {#                                <span>{% verbose_name_tag order_model field.name %} {{ error|lower }} </span> {% endcomment %}#}
-            {#                            <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>#}
-            {#                        </div>#}
-            {#                    {% endfor %}#}
-            {#                {% endfor %}#}
-            {#            {% endif %}#}
-
-            {#            {% include 'inc/_alerts.html' %}#}
 
             <div class="row">
                 <div class="col-sm-6 mb-sm-0">
@@ -84,7 +70,6 @@
                                                         class='btn btn-outline-secondary custom-button'
                                                         style='margin-left: 10px; text-align: center; line-height: 10px;'>
                                                     <i class='bx bxs-x-circle'></i></button>
-                                                `
                                             </div>
                                         </div>
                                     {% endfor %}
@@ -131,7 +116,7 @@
                                     </div>
                                     <br>
                                     <div class="row">
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
@@ -143,7 +128,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
@@ -159,8 +144,8 @@
                                     <hr>
                                     <div>
                                         <div class="row" style="margin-top:25px; text-align: left;">
-                                            <div class="col-sm-6 mb-3 mb-sm-0">
-                                                <div class="card ">
+                                            <div class="col-sm">
+                                                <div class="card">
                                                     <div class="card-body">
                                                         <div class="mb-3">
                                                             <label for="{{ order_form.phone_number.id_for_label }}">Номер
@@ -171,7 +156,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm">
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <div class="mb-3">
@@ -185,8 +170,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="row mt-5">
-                                        <div class="col-sm-4 mb-3 mb-sm-0">
+                                    <div class="row justify-content-center">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
@@ -196,7 +181,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="mb-3">
@@ -206,7 +191,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm">
                                             <div class="card">
                                                 <div class="card-body">
 
@@ -370,7 +355,7 @@
 
     </section>
     <script>
-    // добавление и расчет площади
+        // добавление и расчет площади
         let listSquare =
         {{ squares }}
         var squareSum = 0
@@ -392,9 +377,9 @@
         })
     </script>
     <script src="{% static 'js/order.js' %}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
 
     <script src="{% static 'js/alerts.js' %}"></script>
 
@@ -600,7 +585,15 @@
                             stopIteration = true;
                             return;
                         }
-                    } else if (field.value === 'Школа' || field.value === 'Дом') {
+                    }
+                    if (field.value === 'Трубопровод') {
+                        if (!lengthField.value) {
+                            const label = form.querySelector(`label[for=${lengthField.id}]`);
+                            errorMessage = `Заполните поле ${label.innerText}`;
+                            stopIteration = true;
+                            return;
+                        }
+                    } else if (field.value === 'Школа' || field.value === 'Жилой многоэтажный дом') {
                         if (!lengthField.value) {
                             const label = form.querySelector(`label[for=${lengthField.id}]`);
                             errorMessage = `Заполните поле ${label.innerText}`;
@@ -621,7 +614,7 @@
                             stopIteration = true;
                             return;
                         }
-                    } else if (field.value && field.value !== 'Полигон ТБО' && field.value !== 'Школа' && field.value !== 'Дом') {
+                    } else if (field.value && field.value !== 'Полигон ТБО' && field.value !== 'Школа' && field.value !== 'Жилой многоэтажный дом') {
                         if (!lengthField.value) {
                             const label = form.querySelector(`label[for=${lengthField.id}]`);
                             errorMessage = `Заполните поле ${label.innerText}`;
