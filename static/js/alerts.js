@@ -16,7 +16,7 @@ function showMessageModal(type, message) {
     closeButton.addEventListener("click", hideModal);
 
     // Закрываем модальное окно по истечению времени
-    setTimeout(hideModal, 1500);
+    setTimeout(hideModal, 2000);
 }
 
 function hideModal() {

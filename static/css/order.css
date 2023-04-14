@@ -140,7 +140,8 @@ input[type='radio']:checked::after {
     grid-column: 1 / -2;
 }
 
-@media (max-width: 459px) {
+@media (max-width: 459px),
+       (max-width: 1450px) {
     .grid {
         display: flex;
         flex-direction: column;

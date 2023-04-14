@@ -3,23 +3,19 @@
 
 {% block content %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="{% static 'css/customer-home.css' %}">
+    <script src="{% static 'js/alerts.js' %}"></script>
     <script src="{% static 'js/customer_home.js' %}"></script>
-    <style>
-    body{
-        overflow: hidden;
-    }
-    </style>
+
     <div class="container">
         <section class="section register d-flex flex-column align-items-center justify-content-center py-4"
                  style='min-height:84vh'>
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-5 col-md-6 d-flex flex-column align-items-center justify-content-center" style='border: 1px solid lightgray;' id='card'>
-
+                        
                         {% include 'inc/_alerts.html' %}
 
                         <div class="d-flex justify-content-center py-4">
@@ -30,9 +26,6 @@
                         </div>
 
                         <div class="card mb-3 border-0" style="box-shadow: none">
-                            <div class="alert alert-danger text-center" style='display:none;' id='input__error'>
-                                <span>Проверьте правильность введённых данных</span>
-                            </div>
                             <div class="card-body" style='min-width:430px; background-color: #f6f9ff'>
                                 <div class="pt-4 pb-2">
                                     <p class="text-center" style="font-size: 20px">Введите кадастровый номер или адрес
@@ -99,6 +92,9 @@
             </div>
         </section>
         <script>
+            function Test(elem) {
+                elem.oninput
+            }
             $(document).ready(function () {
                 $('#id_cadastral_number, #123').on('input', function () {
                     cadastral = document.getElementById('id_cadastral_number')
@@ -111,14 +107,14 @@
                             success: function (response) {
                                 if (response.is_valid == true || cadastral.value == '') {
                                     button.disabled = false;
-                                    setTimeout(() => {
+                                    /* setTimeout(() => {
                                         error.style.cssText = 'display:none; padding-bottom:10px;';
-                                    }, 1500);
+                                    }, 1500); */
                                 } else {
                                     button.disabled = true;
                                     setTimeout(() => {
-                                        error.style.cssText = 'display:block; padding-bottom:10px;';
-                                    }, 1500);
+                                        showMessageModal("error", 'Проверьте правильность введенных данных');
+                                    }, 2000);
                                 }
                             },
                             error: function (response) {
