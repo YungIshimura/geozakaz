@@ -19,7 +19,7 @@ function AddCadastralNumber() {
         div.style.cssText = 'display:flex;';
         div.className='input-group';
         div.id = id;
-        div.innerHTML = `<input id='cadastral_number${id}' type='text' name='cadastral_numbers' class='form-control' onchange='VaidateCadastral(${id});' readonly value='${cadatral_number.value}' style='border-radius:8px; text-align:center; font-size: 15px'>
+        div.innerHTML = `<input id='cadastral_number${id}' pattern='[0-9]{2}:[0-9]{2}:[0-9]{5,7}:[0-9]{1,4}' type='text' name='cadastral_numbers' class='form-control' onchange='VaidateCadastralNumbers(${id});' oninput='VaidateCadastral(${id});' readonly value='${cadatral_number.value}' style='border-radius:8px; text-align:center; font-size: 15px'>
         <button id='edit${id}' type='button' onClick='EditCadastral(${id})' style='margin:auto 5px auto 5px;'><i class='bx bxs-edit btn btn-outline-secondary btn-lg'></i></button>
         <button id='delete${id}' type='button' onClick='DeleteCadastral(${id});'><i class='bx bxs-x-circle btn btn-outline-secondary btn-lg' id='test_test'></i></button>`
     
@@ -49,25 +49,25 @@ function EditCadastral(id) {
     let cadastral = document.getElementById(`cadastral_number${id}`);
     let edit = document.getElementById(`edit${id}`)
     let delete_button = document.getElementById(`delete${id}`)
-    let delete_icon = document.getElementById('test_test')
+
     if (flag) {
-        edit.innerHTML = "<i class='bx bxs-check-circle btn btn-outline-secondary'></i>";
+        edit.innerHTML = "<i class='bx bxs-check-circle btn btn-outline-secondary btn-lg'></i>";
         cadastral.readOnly = false;
         cadastral.style.cssText = 'background-color:lightgray';
+        delete_button.style.cssText='background-color:lightgray; border-radius:10px;'
         delete_button.disabled = true;
-        delete_icon.style.cssText = 'background-color:lightgray';
         let index = array.indexOf(cadastral.value);
         array.splice(index);
         flag--;
     }
     else {
-        let [validate_flag, new_cadastral] = VaidateCadastral(id);
+        let [validate_flag, new_cadastral] = VaidateCadastralNumbers(id);
         if (validate_flag) {
-            edit.innerHTML = "<i class='bx bxs-edit btn btn-outline-secondary'></i>";
+            edit.innerHTML = "<i class='bx bxs-edit btn btn-outline-secondary btn-lg'></i>";
             cadastral.readOnly = true;
             cadastral.style.cssText = 'border-radius:8px; text-align:center;'
             delete_button.disabled = false;
-            delete_icon.style.cssText = 'background-color:white';
+            delete_button.style.cssText='background-color:transparent; border-radius:10px;'
             let index = array.indexOf(cadastral.value);
             array.splice(index);
             array.push(new_cadastral);
@@ -76,11 +76,27 @@ function EditCadastral(id) {
     }
 }
 
-function VaidateCadastral(id) {
+
+function VaidateCadastral(id){
     let cadastral = document.getElementById(`cadastral_number${id}`);
+    let button = document.getElementById(`edit${id}`)
+
+    if (!cadastral.checkValidity()) {
+        button.disabled=true;
+        button.style.cssText+='background-color:lightgray; border-radius:10px;'
+    }
+    else {
+        button.disabled=false;
+        button.style.cssText+='background-color:transparent;'
+    }
+}
+
+
+function VaidateCadastralNumbers(id) {
+    let cadastral = document.getElementById(`cadastral_number${id}`);
+    
     if (array.includes(cadastral.value)) {
         alert('Данный кадастровый номер уже добавлен')
-        document.getElementById(`cadastral_number${id}`).value = cadastral.value
 
         return false
     }
