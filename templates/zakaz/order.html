@@ -14,11 +14,11 @@
     <script src="/static/smart-selects/admin/js/bindfields.js"></script>
     <link rel='stylesheet' href="{% static 'css/order.css' %}">
     <style>
-    .custom-btn-check {
-        border-radius: 3px;
-        background-color: white;
-        border-color: #ced4da;
-    }
+        .custom-btn-check {
+            border-radius: 3px;
+            background-color: white;
+            border-color: #ced4da;
+        }
     </style>
 
     {#    <div class="mb-5 mt-5">#}
@@ -40,20 +40,6 @@
     <section>
         <form action='#' method='POST' enctype='multipart/form-data' id="order-form">
             {% csrf_token %}
-
-            {#            {% if order_form.errors %}#}
-            {#                {% for field in order_form %}#}
-            {#                    {% for error in field.errors %}#}
-            {#                        <div class="alert alert-danger text-center">#}
-            {#                            {% comment %}#}
-            {#                                <span>{% verbose_name_tag order_model field.name %} {{ error|lower }} </span> {% endcomment %}#}
-            {#                            <i class="ri-close-circle-fill" data-dismiss="alert" id="close-icon"></i>#}
-            {#                        </div>#}
-            {#                    {% endfor %}#}
-            {#                {% endfor %}#}
-            {#            {% endif %}#}
-
-            {#            {% include 'inc/_alerts.html' %}#}
 
             <div class="row">
                 <div class="col-sm-6 mb-sm-0">
@@ -84,7 +70,6 @@
                                                         class='btn btn-outline-secondary custom-button'
                                                         style='margin-left: 10px; text-align: center; line-height: 10px;'>
                                                     <i class='bx bxs-x-circle'></i></button>
-                                                `
                                             </div>
                                         </div>
                                     {% endfor %}
@@ -370,7 +355,7 @@
 
     </section>
     <script>
-    // добавление и расчет площади
+        // добавление и расчет площади
         let listSquare =
         {{ squares }}
         var squareSum = 0
@@ -397,6 +382,9 @@
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
 
     <script src="{% static 'js/alerts.js' %}"></script>
+    <script>
+
+    </script>
 
     <script>
         $(document).ready(function () {
