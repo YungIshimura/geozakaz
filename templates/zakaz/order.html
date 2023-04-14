@@ -69,7 +69,6 @@
                                                 <button id='edit{{ forloop.counter }}' type='button'
                                                         onClick='EditCadastral({{ forloop.counter }})'
                                                         class='btn btn-outline-secondary custom-button'
-                                                        onclick='EditCadastral();'
                                                         style='margin-left: 10px; text-align: center; line-height: 10px;'>
                                                     <i class='bx bxs-edit'></i></button>
                                                 <button id='delete{{ forloop.counter }}' type='button'
@@ -81,17 +80,17 @@
                                             </div>
                                         </div>
                                     {% endfor %}
-                                    <div id="new-cadastral" style="margin-bottom: 20px">
+                                    <div id="container">
+                                        <div class="paragraph">
+                                        </div>
                                     </div>
                                     <button id='add-cadastral' type='button'
                                             class='btn btn-outline-secondary custom-button'
                                             style='margin-left: 10px; text-align: center; line-height: 10px;'
-                                            onclick="addInput()">
+                                            onclick="addParagraph()">
                                         <i class='bi bi-plus'></i></button>
                                 {% endwith %}
                             {% endif %}
-
-
                             <hr>
                             <div>
                                 <div class='row justify-content-center' style='margin-top:15px;'>
@@ -401,23 +400,37 @@
 
         // Добавление кадастрового номера
 
-        function addInput() {
-            var container = document.getElementById("new-cadastral");
+        function addParagraph() {
+            var container = document.getElementById("container");
+            var div = document.createElement("div");
+            div.className = "input-group mb-3";
+            div.classList.add("paragraph");
             var input = document.createElement("input");
             input.type = "text";
             input.name = "new_cadastral_numbers";
             input.className = "form-control custom-form-control";
             input.style.backgroundColor = "white";
             input.style.maxWidth = "560px";
-            input.style.margin = "5px 0 5px 0"
-            input.required = true;
-            container.appendChild(input);
+            input.style.margin = "5px 0 5px 0";
+            var button = document.createElement("button");
+            button.innerHTML = "<i class='bx bxs-x-circle'></i>";
+            button.style.margin = "8px 0 0 10px"
+            button.style.borderRadius = "7px";
+            button.style.width = "43px";
+            button.style.maxHeight = "32px";
+            button.style.backgroundColor = "#012970";
+            button.style.color = "#fff";
+            button.onclick = function () {
+                removeParagraph(button);
+            };
+            div.appendChild(input);
+            div.appendChild(button);
+            container.appendChild(div);
         }
 
-        function reloadPage() {
-            setTimeout(function () {
-                location.reload();
-            }, 2000);
+        function removeParagraph(button) {
+            var paragraph = button.parentNode;
+            paragraph.parentNode.removeChild(paragraph);
         }
 
     </script>

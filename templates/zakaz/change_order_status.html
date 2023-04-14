@@ -74,6 +74,7 @@
                                 {% endfor %}
                                 <div id="new-cadastral" style="display: none; margin-bottom: 20px">
                                     <input type="text" name="new_cadastral_numbers"
+                                           id="new_cadastral_numbers_id"
                                            class="form-control custom-form-control"
                                            style='background-color:white; max-width: 570px'
                                            onchange="reloadPage()">
@@ -458,6 +459,10 @@
                 document.getElementById('new-cadastral').style.display = "none";
             }
         });
+
+
+
+
     </script>
     <script>
         // Добавление названия объекта
