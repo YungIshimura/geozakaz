@@ -80,14 +80,15 @@ function EditCadastral(id) {
 function VaidateCadastral(id){
     let cadastral = document.getElementById(`cadastral_number${id}`);
     let button = document.getElementById(`edit${id}`)
-
-    if (!cadastral.checkValidity()) {
+    if (cadastral.checkValidity() && cadastral.value) {
+        button.disabled=false;
+        button.style.cssText+='background-color:transparent;'
         button.disabled=true;
         button.style.cssText+='background-color:lightgray; border-radius:10px;'
     }
     else {
-        button.disabled=false;
-        button.style.cssText+='background-color:transparent;'
+        button.disabled=true;
+        button.style.cssText+='background-color:lightgray; border-radius:10px;'
     }
 }
 
