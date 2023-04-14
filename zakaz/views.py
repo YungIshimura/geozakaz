@@ -172,6 +172,9 @@ def view_order(request, company_slug: str, company_number_slug: str):
             order = order_form.save()
             order.user = user_company
             if cadastral_numbers:
+                new_cadastral_numbers = request.POST.getlist('new_cadastral_numbers')
+                if new_cadastral_numbers:
+                    cadastral_numbers += new_cadastral_numbers
                 order.coordinates = coordinates
                 order.cadastral_numbers = cadastral_numbers
 

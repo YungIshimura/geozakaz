@@ -13,9 +13,7 @@
     <script src="/static/smart-selects/admin/js/chainedfk.js"></script>
     <script src="/static/smart-selects/admin/js/bindfields.js"></script>
     <link rel='stylesheet' href="{% static 'css/order.css' %}">
-<style>
-id_comment
-</style>
+
     {#    <div class="mb-5 mt-5">#}
     {#        <h1>Создайте заявку</h1>#}
     {#    </div>#}
@@ -83,6 +81,13 @@ id_comment
                                             </div>
                                         </div>
                                     {% endfor %}
+                                    <div id="new-cadastral" style="margin-bottom: 20px">
+                                    </div>
+                                    <button id='add-cadastral' type='button'
+                                            class='btn btn-outline-secondary custom-button'
+                                            style='margin-left: 10px; text-align: center; line-height: 10px;'
+                                            onclick="addInput()">
+                                        <i class='bi bi-plus'></i></button>
                                 {% endwith %}
                             {% endif %}
 
@@ -365,7 +370,7 @@ id_comment
 
     </section>
     <script>
-    // добавление и расчет площади
+        // добавление и расчет площади
         let listSquare =
         {{ squares }}
         var squareSum = 0
@@ -392,7 +397,30 @@ id_comment
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
 
     <script src="{% static 'js/alerts.js' %}"></script>
+    <script>
 
+        // Добавление кадастрового номера
+
+        function addInput() {
+            var container = document.getElementById("new-cadastral");
+            var input = document.createElement("input");
+            input.type = "text";
+            input.name = "new_cadastral_numbers";
+            input.className = "form-control custom-form-control";
+            input.style.backgroundColor = "white";
+            input.style.maxWidth = "560px";
+            input.style.margin = "5px 0 5px 0"
+            input.required = true;
+            container.appendChild(input);
+        }
+
+        function reloadPage() {
+            setTimeout(function () {
+                location.reload();
+            }, 2000);
+        }
+
+    </script>
     <script>
         $(document).ready(function () {
             const phoneInput = $("#id_phone_number");
