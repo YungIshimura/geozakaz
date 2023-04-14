@@ -27,6 +27,7 @@ from .rosreestr2 import GetArea
 from .validators import validate_number
 from pypdf import PdfReader 
 from io import StringIO
+
 # driver = webdriver.Chrome()
 User = get_user_model()
 
@@ -113,20 +114,27 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
         files = request.FILES.getlist('files')
         cadastral_numbers = []
         for file in files:
-            reader = PdfReader(file)
-            page = reader.pages[0]
-            pdf_text = StringIO(page.extract_text())
-            for elem in pdf_text:
-                if 'Кадастровый номер' in elem.strip():
-                    cadastral = elem.strip().split(' ')[-1]
-                    cadastral_numbers.append(cadastral)
+            file_extension = os.path.splitext(file.name)[-1]
+            if file_extension == '.pdf':
+                reader = PdfReader(file)
+                page = reader.pages[0]
+                pdf_text = StringIO(page.extract_text())
+                for elem in pdf_text:
+                    if 'Кадастровый номер' in elem.strip():
+                        cadastral = elem.strip().split(' ')[-1]
+                        cadastral_numbers.append(cadastral)
+                request.session['cadastral_numbers'] = cadastral_numbers          
+            else:
+                file = request.FILES.get('files').close()
+                messages.error(request, 'Ошибка обработки файла')
+                break
 
-            request.session['cadastral_numbers'] = cadastral_numbers            
-        
         if cadastral_numbers:
             return response
+
         else:
             form = CadastralNumberForm()
+
     else:
         form = CadastralNumberForm()
 
@@ -154,10 +162,15 @@ def view_order(request, company_slug: str, company_number_slug: str):
             cadastral_region_number=cadastral_numbers[0].split(':')[0])
         cadastral_area = Area.objects.get(
             cadastral_area_number=cadastral_numbers[0].split(':')[1])
+
         for number in cadastral_numbers:
-            areas = GetArea(number)
-            square_cadastral_area.append(areas.attrs['area_value'])
-            coordinates += areas.get_coord()
+            try:
+                areas = GetArea(number)
+                square_cadastral_area.append(areas.attrs['area_value'])
+                coordinates += areas.get_coord()
+            except:
+                pass
+
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         order_files_form = OrderFileForm(request.POST, request.FILES)

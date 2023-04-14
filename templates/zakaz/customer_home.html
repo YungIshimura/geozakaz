@@ -19,7 +19,7 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-5 col-md-6 d-flex flex-column align-items-center justify-content-center" style='border: 1px solid lightgray;' id='card'>
-
+                        
                         {% include 'inc/_alerts.html' %}
 
                         <div class="d-flex justify-content-center py-4">
@@ -33,8 +33,7 @@
                             <div class="card-body" style='min-width:430px; background-color: #f6f9ff'>
                                 <div class="pt-4 pb-2">
                                     <p class="text-center" style="font-size: 20px">Введите кадастровый номер или адрес
-                                        участка. Есть выписка /
-                                        техническое задание?<br>Просто перетащите на это окно</p>
+                                        участка. Есть выписка ЕГРН?<br>Просто перетащите на это окно</p>
                                 </div>
                                 <div class="col-12 cadastal-container">
                                     <div class="search-bar">
@@ -97,6 +96,9 @@
             </div>
         </section>
         <script>
+            function Test(elem) {
+                elem.oninput
+            }
             $(document).ready(function () {
                 $('#id_cadastral_number, #123').on('input', function () {
                     cadastral = document.getElementById('id_cadastral_number')
