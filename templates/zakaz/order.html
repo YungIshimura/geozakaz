@@ -65,14 +65,11 @@
                                             </div>
                                         </div>
                                     {% endfor %}
-                                    <div id="container">
-                                        <div class="paragraph">
-                                        </div>
-                                    </div>
+                                    <div id="dynamic-fields"></div>
                                     <button id='add-cadastral' type='button'
                                             class='btn btn-outline-secondary custom-button'
                                             style='margin-left: 10px; text-align: center; line-height: 10px;'
-                                            onclick="addParagraph()">
+                                            onclick="addFields()">
                                         <i class='bi bi-plus'></i></button>
                                 {% endwith %}
                             {% endif %}
@@ -384,42 +381,52 @@
 
     <script src="{% static 'js/alerts.js' %}"></script>
     <script>
-        // Добавление кадастрового номера
-        function addParagraph() {
-            var container = document.getElementById("container");
-            var div = document.createElement("div");
-            div.className = "input-group mb-3";
-            div.classList.add("paragraph");
-            var input = document.createElement("input");
-            input.type = "text";
-            input.required = true
-            input.pattern = "[0-9]{2}:[0-9]{2}:[0-9]{5,7}:[0-9]{1,4}"
-            input.name = "new_cadastral_numbers";
-            input.className = "form-control custom-form-control";
-            input.style.backgroundColor = "white";
-            input.style.maxWidth = "560px";
-            input.style.margin = "5px 0 5px 0";
-            var button = document.createElement("button");
-            button.innerHTML = "<i class='bx bxs-x-circle'></i>";
-            button.style.margin = "8px 0 0 10px"
-            button.style.borderRadius = "7px";
-            button.style.width = "43px";
-            button.style.maxHeight = "32px";
-            button.style.backgroundColor = "#012970";
-            button.style.color = "#fff";
-            button.onclick = function () {
-                removeParagraph(button);
-            };
-            div.appendChild(input);
-            div.appendChild(button);
-            container.appendChild(div);
+
+        let count = 0;
+
+        function addFields() {
+            count++;
+            const dynamicFields = document.getElementById("dynamic-fields");
+
+            const newDiv = document.createElement("div");
+            newDiv.className = "input-group mb-3 custom-input-group"
+
+            newDiv.id = `field-${count}`;
+            newDiv.innerHTML = `
+<input type="text" class="form-control custom-form-control" name="new_cadastral_numbers" id="new_cadastral-${count}"
+style="max-width: 580px; background-color: lightgray" required readonly>
+<div class="input-group-append custom-input-group-append" style="margin-left: 8px">
+<button onclick="editNumber(${count})" class="btn btn-outline-secondary custom-button"
+style="line-height: 10px;" id="change-${count}"><i class='bx bxs-edit'></i></button>
+<button onclick="removeField(${count})" class="btn btn-outline-secondary custom-button"
+style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></button>
+</div>
+  `;
+            dynamicFields.appendChild(newDiv);
+
         }
 
-        function removeParagraph(button) {
-            var paragraph = button.parentNode;
-            paragraph.parentNode.removeChild(paragraph);
+        function removeField(id) {
+            const newDiv = document.getElementById(`field-${id}`);
+            newDiv.parentNode.removeChild(newDiv);
         }
 
+        function editNumber(id) {
+            const edit = document.getElementById(`change-${id}`);
+            const field = document.getElementById(`new_cadastral-${id}`);
+
+            if (flag) {
+                edit.innerHTML = "<i class='bx bxs-check-circle'></i>";
+                field.readOnly = false;
+                field.style.cssText = 'background-color:white; transition: 0.15s linear;';
+                flag--;
+            } else {
+                edit.innerHTML = "<i class='bx bxs-edit'></i>";
+                field.readOnly = true;
+                field.style.cssText = 'background-color:lightgray; transition: 0.15s linear;';
+                flag++;
+            }
+        }
     </script>
     <script>
         $(document).ready(function () {
