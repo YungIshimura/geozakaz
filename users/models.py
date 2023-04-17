@@ -4,9 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models import Q
 from phonenumber_field.modelfields import PhoneNumberField
 from pytils.translit import slugify
-from phonenumber_field.phonenumber import to_python
-from django.utils.crypto import get_random_string
-import phonenumbers
 
 
 class CustomUserManager(BaseUserManager):
