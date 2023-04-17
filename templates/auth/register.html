@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    {{ title }}
+    Регистрация
 {% endblock %}
 
 {% block content %}
@@ -52,7 +52,7 @@
 
                                     <div class="col-12">
                                         <div class="form-check">
-                                            <div class="form-check-input" style="border: 0px">
+                                            <div class="form-check-input" style="border: 0">
                                                 {{ form.agreement }}
                                             </div>
                                             <label for="{{ form.agreement.id_for_label }}">Согласен с условиями <a href="{% url 'users:agreement' %}">пользовательского
