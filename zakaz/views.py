@@ -148,7 +148,6 @@ def get_square(request):
     try:
         areas = GetArea(number)
         square_cadastral_area = areas.attrs['area_value']
-        print(square_cadastral_area)
     except:
         square_cadastral_area = 0
     return JsonResponse({'success': square_cadastral_area})

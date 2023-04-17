@@ -47,7 +47,7 @@
                                     {% for cadastral_number in cadastral_numbers %}
                                         <div class="input-group mb-3 custom-input-group" id='{{ forloop.counter }}'>
                                             <input type="text" name="cadastral_numbers" value="{{ cadastral_number }}"
-                                                   onchange='ChangeCadastral({{ forloop.counter }})'
+                                                   onchange='ChangeCadastral({{ forloop.counter }});'
                                                    class="form-control custom-form-control" readonly=''
                                                    id="cadastral_number{{ forloop.counter }}"
                                                    style='background-color:lightgray;'>
@@ -352,28 +352,7 @@
         {% include 'inc/_popups.html' %}
 
     </section>
-    <script>
-        // добавление и расчет площади
-        let listSquare =
-        {{ squares }}
-        var squareSum = 0
 
-        for (let item of listSquare) {
-            squareSum += item
-        }
-        document.getElementById('id_square_unit').addEventListener('change', function () {
-            if (document.getElementById("id_square_unit").value === 'sq_m') {
-                document.getElementById("id_square").value = squareSum;
-            } else if ((document.getElementById("id_square_unit").value === 'hectometer')) {
-                document.getElementById("id_square").value = squareSum / 1000;
-            }
-        })
-
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById("id_square_unit").value = 'hectometer';
-            document.getElementById("id_square").value = squareSum / 1000;
-        })
-    </script>
     <script src="{% static 'js/order.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -398,7 +377,7 @@ style="max-width: 580px; background-color: lightgray" required readonly>
 <div class="input-group-append custom-input-group-append" style="margin-left: 8px">
 <button onclick="editNumber(${count})" class="btn btn-outline-secondary custom-button"
 style="line-height: 10px;" id="change-${count}"><i class='bx bxs-edit'></i></button>
-<button onclick="removeField(${count})" class="btn btn-outline-secondary custom-button"
+<button onclick="removeField(${count})" id="delete_number${count}" class="btn btn-outline-secondary custom-button"
 style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></button>
 </div>
   `;
@@ -430,11 +409,11 @@ style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></but
         }
 
         function getNewNumbers(id) {
-            var input = document.getElementById(`new_cadastral-${id}`);
+            var newNumber = document.getElementById(`new_cadastral-${id}`).value;
             $.ajax({
                 url: '{% url "zakaz:get_square" %}',
                 data: {
-                    "data": input.value
+                    "data": newNumber,
                 },
                 dataType: 'json',
                 success: function (square_cadastral_area) {
@@ -446,6 +425,29 @@ style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></but
                 }
             })
         }
+    </script>
+    <script>
+        // добавление и расчет площади
+        let listSquare =
+        {{ squares }}
+        var squareSum = 0
+
+        for (let item of listSquare) {
+            squareSum += item
+        }
+        document.getElementById('id_square_unit').addEventListener('change', function () {
+            if (document.getElementById("id_square_unit").value === 'sq_m') {
+                document.getElementById("id_square").value = squareSum;
+            } else if ((document.getElementById("id_square_unit").value === 'hectometer')) {
+                document.getElementById("id_square").value = squareSum / 1000;
+                console.log(square_cadastral_area['success'])
+            }
+        })
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById("id_square_unit").value = 'hectometer';
+            document.getElementById("id_square").value = squareSum / 1000;
+        })
     </script>
     <script>
         $(document).ready(function () {
