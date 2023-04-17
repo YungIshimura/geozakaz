@@ -73,12 +73,29 @@
                                     </div>
                                 {% endfor %}
                                 <div id="new-cadastral" style="display: none; margin-bottom: 20px">
-                                    <input type="text" name="new_cadastral_numbers"
-                                           id="new_cadastral_numbers_id"
-                                           class="form-control custom-form-control"
-                                           style='background-color:white; max-width: 570px'
-                                           onchange="reloadPage()">
+                                    <div class="input-group mb-3 custom-input-group">
+
+                                        <input type="text" name="new_cadastral_numbers"
+                                               id="new_cadastral_numbers_id"
+                                               class="form-control custom-form-control"
+                                               style='background-color:lightgray; max-width: 570px' readonly=''
+                                               onchange="reloadPage()">
+                                        <div class="input-group-append custom-input-group-append"
+                                             style="margin-left: 2px">
+                                            <button id='edit' type='button'
+                                                    onClick='EditNewCadastral()'
+                                                    class='btn btn-outline-secondary custom-button'
+                                                    style='margin-left: 10px; text-align: center; line-height: 10px;'>
+                                                <i class='bx bxs-edit'></i></button>
+                                            <button id='delete' type='button'
+                                                    onClick='DeleteNewCadastral();'
+                                                    class='btn btn-outline-secondary custom-button'
+                                                    style='margin-left: 10px; text-align: center; line-height: 10px;'>
+                                                <i class='bx bxs-x-circle'></i></button>
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <button id='add-cadastral' type='button'
                                         class='btn btn-outline-secondary custom-button'
                                         style='margin-left: 10px; text-align: center; line-height: 10px;'>
@@ -446,6 +463,30 @@
             let index = array.indexOf(cadastral_number.value);
             document.getElementById(id).remove();
             array.splice(index, 1);
+        }
+
+        function EditNewCadastral() {
+            var edit = document.getElementById('edit');
+            var field = document.getElementById('new_cadastral_numbers_id');
+            if (flag) {
+                field.style.backgroundColor = "white";
+                field.readOnly = false
+                edit.innerHTML = "<i class='bx bxs-check-circle'></i>";
+                flag--;
+            } else {
+                edit.innerHTML = "<i class='bx bxs-edit'></i>";
+                field.readOnly = true;
+                field.style.cssText = 'background-color:lightgray; transition: 0.15s linear;';
+                flag++;
+            }
+        }
+
+        function DeleteNewCadastral() {
+            if (document.getElementById('new-cadastral').style.display === "none") {
+                document.getElementById('new-cadastral').style.display = "block";
+            } else {
+                document.getElementById('new-cadastral').style.display = "none";
+            }
         }
 
         var addButton = document.getElementById('add-cadastral');

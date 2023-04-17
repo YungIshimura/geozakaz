@@ -6,7 +6,8 @@ from zakaz.views import (view_order_pages, view_change_order_status,
                          ajax_validate_cadastral_number, region_autocomplete,
                          area_autocomplete,
                          download_map, download_xlsx, download_igdi_docx,
-                         download_all_docx, purpose_building_autocomplete)
+                         download_all_docx, purpose_building_autocomplete,
+                         get_square)
 
 app_name = 'zakaz'
 
@@ -35,4 +36,5 @@ urlpatterns = [
     path('download_xlsx/<int:pk>/', download_xlsx, name='download_xlsx'),
     path('purpose_building_autocomplete/', purpose_building_autocomplete,
          name='purpose_building_autocomplete'),
+    path('get_square/', get_square, name='get_square')
 ]

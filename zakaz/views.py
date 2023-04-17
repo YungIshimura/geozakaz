@@ -148,6 +148,16 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
     return render(request, 'zakaz/customer_home.html', context=context)
 
 
+def get_square(request):
+    number = request.GET.get("data")
+    try:
+        areas = GetArea(number)
+        square_cadastral_area = areas.attrs['area_value']
+    except:
+        square_cadastral_area = 0
+    return JsonResponse({'success': square_cadastral_area})
+
+
 @transaction.atomic
 def view_order(request, company_slug: str, company_number_slug: str):
     coordinates = []
