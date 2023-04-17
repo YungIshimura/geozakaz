@@ -6,6 +6,7 @@ import time
 import zipfile
 
 import openpyxl as openpyxl
+from django.db import transaction
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -147,6 +148,7 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
     return render(request, 'zakaz/customer_home.html', context=context)
 
 
+@transaction.atomic
 def view_order(request, company_slug: str, company_number_slug: str):
     coordinates = []
     context = {}
