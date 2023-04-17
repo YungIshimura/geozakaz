@@ -4,18 +4,18 @@ import json
 import os
 import time
 import zipfile
-from urllib.parse import quote as urlquote
 
 import openpyxl as openpyxl
+from django.db import transaction
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
-                              redirect, render)
+                              render)
 from django.urls import reverse
 from selenium import webdriver
 
@@ -28,25 +28,28 @@ from .validators import validate_number
 from pypdf import PdfReader
 from io import StringIO
 
-# driver = webdriver.Chrome()
 User = get_user_model()
 
 
 def region_autocomplete(request):
     if 'term' in request.GET:
-        qs = Region.objects.filter(name__icontains=request.GET.get('term'))
+        filtered_regions = Region.objects.filter(
+            name__icontains=request.GET.get('term')
+        )
         regions = []
-        for region in qs:
+        for region in filtered_regions:
             regions.append(region.name)
 
         return JsonResponse(regions, safe=False)
 
 
 def area_autocomplete(request):
-    qs = Region.objects.get(name__icontains=request.GET.get('region'))
+    region = Region.objects.get(
+        name__icontains=request.GET.get('region')
+    )
     areas = []
-    for area in qs.areas.all():
-        areas.append(f'{qs.name}, {area.name}')
+    for area in region.areas.all():
+        areas.append(f'{region.name}, {area.name}')
 
     return JsonResponse(areas, safe=False)
 
@@ -55,16 +58,18 @@ def city_autocomplete(request):
     data = request.GET.get('region').split(', ')
     data.remove('')
     region, area = data
-    qs = Area.objects.get(name=area)
+    areas = Area.objects.get(name=area)
     citys = []
-    for city in qs.citys.all():
+    for city in areas.citys.all():
         citys.append(f'{region}, {area}, {city.name}')
 
     return JsonResponse(citys, safe=False)
 
 
 def purpose_building_autocomplete(request):
-    purpose_buildings = PurposeBuilding.objects.all().values_list('purpose', flat=True)
+    purpose_buildings = PurposeBuilding.objects.all().values_list(
+        'purpose', flat=True
+    )
     purpose_building_options = list(purpose_buildings)
 
     return JsonResponse(purpose_building_options, safe=False)
@@ -72,6 +77,7 @@ def purpose_building_autocomplete(request):
 
 def ajax_validate_cadastral_number(request):
     cadastral_number = request.GET.get('cadastral_number', None)
+
     try:
         validate_number(cadastral_number)
         response = {
@@ -95,7 +101,7 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
     try:
         request.session.pop('cadastral_numbers')
         request.session.pop('address')
-    except:
+    except KeyError:
         pass
 
     if 'cadastral_numbers' in request.POST:
@@ -119,9 +125,9 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
                 reader = PdfReader(file)
                 page = reader.pages[0]
                 pdf_text = StringIO(page.extract_text())
-                for elem in pdf_text:
-                    if 'Кадастровый номер' in elem.strip():
-                        cadastral = elem.strip().split(' ')[-1]
+                for text in pdf_text:
+                    if 'Кадастровый номер' in text.strip():
+                        cadastral = text.strip().split(' ')[-1]
                         cadastral_numbers.append(cadastral)
                 request.session['cadastral_numbers'] = cadastral_numbers
             else:
@@ -131,7 +137,6 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
 
         if cadastral_numbers:
             return response
-
         else:
             form = CadastralNumberForm()
 
@@ -153,6 +158,7 @@ def get_square(request):
     return JsonResponse({'success': square_cadastral_area})
 
 
+@transaction.atomic
 def view_order(request, company_slug: str, company_number_slug: str):
     coordinates = []
     context = {}
@@ -161,8 +167,13 @@ def view_order(request, company_slug: str, company_number_slug: str):
     user_company = get_object_or_404(
         User, company_number_slug=company_number_slug
     )
-    cadastral_numbers = request.session['cadastral_numbers'] if 'cadastral_numbers' in request.session else None
-    address = request.session['address'] if 'address' in request.session else None
+
+    cadastral_numbers = request.session[
+        'cadastral_numbers'
+    ] if 'cadastral_numbers' in request.session else None
+    address = request.session[
+        'address'
+    ] if 'address' in request.session else None
 
     if address:
         region, area, city = address[0].split(', ')
@@ -178,7 +189,7 @@ def view_order(request, company_slug: str, company_number_slug: str):
                 areas = GetArea(number)
                 square_cadastral_area.append(areas.attrs['area_value'])
                 coordinates += areas.get_coord()
-            except:
+            except KeyError:
                 pass
 
     if request.method == 'POST':
@@ -188,7 +199,8 @@ def view_order(request, company_slug: str, company_number_slug: str):
             order = order_form.save()
             order.user = user_company
             if cadastral_numbers:
-                new_cadastral_numbers = request.POST.getlist('new_cadastral_numbers')
+                new_cadastral_numbers = request.POST.getlist(
+                    'new_cadastral_numbers')
                 if new_cadastral_numbers:
                     cadastral_numbers += new_cadastral_numbers
                 order.coordinates = coordinates
@@ -219,17 +231,24 @@ def view_order(request, company_slug: str, company_number_slug: str):
             for file in request.FILES.getlist('file'):
                 OrderFile.objects.create(order=order, file=file)
             messages.success(request, 'Ваша заявка отправлена')
-            return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
 
-        else:
-            pass
-            # messages.error(request, 'Проверьте правильность введённых данных')
+            return HttpResponseRedirect(reverse('zakaz:cadastral', args=[
+                company_slug, company_number_slug]))
+
     else:
         order_form = OrderForm(initial={
-            'cadastral_numbers': cadastral_numbers if cadastral_numbers else None,
-            'region': cadastral_region.id if cadastral_numbers else Region.objects.get(name=region).id,
-            'area': cadastral_area.id if cadastral_numbers else Area.objects.get(name=area).id,
-            'city': None if cadastral_numbers else City.objects.get(name=city).id,
+            'cadastral_numbers': cadastral_numbers if cadastral_numbers
+            else None,
+
+            'region': cadastral_region.id if cadastral_numbers
+            else Region.objects.get(name=region).id,
+
+            'area': cadastral_area.id if cadastral_numbers
+            else Area.objects.get(name=area).id,
+
+            'city': None if cadastral_numbers
+            else City.objects.get(name=city).id,
+
             'square_unit': Order.SQUARE_UNIT[0][0],
         })
 
@@ -271,11 +290,6 @@ def view_change_order_status(request, order_id: int):
     else:
         map_html = False
 
-    # document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
-    # screenshot_name = f"{document_cipher}-map"
-    # document_igi_name_upload = f'{document_cipher}-igi'
-    # document_igdi_name_upload = f'{document_cipher}-igdi'
-
     if request.method == 'POST':
         order_form = OrderForm(request.POST, instance=order)
         if order_form.is_valid():
@@ -285,6 +299,7 @@ def view_change_order_status(request, order_id: int):
             new_cadastral = request.POST.getlist(
                 'new_cadastral_numbers'
             )
+
             if new_cadastral[0]:
                 order.cadastral_numbers += new_cadastral
             else:
@@ -313,9 +328,6 @@ def view_change_order_status(request, order_id: int):
         'order': order,
         'map_html': map_html,
         'lengt_unit': order.get_length_unit_display(),
-        # 'screenshot_name': screenshot_name,
-        # 'document_igi_name_upload': document_igi_name_upload,
-        # 'document_igdi_name_upload': document_igdi_name_upload
     }
 
     return render(request, 'zakaz/change_order_status.html', context=context)
@@ -323,10 +335,10 @@ def view_change_order_status(request, order_id: int):
 
 def view_rates(request):
     refer = request.META.get('HTTP_REFERER')
+
     return render(request, 'zakaz/rates.html', context={'refer': refer})
 
 
-# Скачивание DOCX
 def download_docx(request, document_name: str, document_path: str, document_cipher: str, placeholders: dict,
                   coordinates_dict: dict):
     document = generate_docx(document_path, placeholders)
@@ -344,10 +356,10 @@ def download_docx(request, document_name: str, document_path: str, document_ciph
         content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )
     response['Content-Disposition'] = f'attachment; filename="{document_name_upload}.docx"'
+
     return response
 
 
-# Скачиваем ШИФР-ИГИ
 def download_igi_docx(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     department = order.region.region_department.first()
@@ -376,7 +388,8 @@ def download_igi_docx(request, pk: int):
             '_шифр-иги': f'{document_cipher}-ИГИ',
             '_должность_руководителя_ведомства': department.director_position,
             '_название_ведомства': department.name,
-            '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
+            '_фио_руководителя_ведомства': f'{department.director_surname}\
+            {department.director_name} {department.director_patronymic}',
             '_тел_ведомства': str(department.phone_number),
             '_почта_ведомства': department.email,
             '_дата_текущая': date.strftime("%Y-%m-%d"),
@@ -391,10 +404,11 @@ def download_igi_docx(request, pk: int):
     else:
         placeholders = {}
 
-    return download_docx(request, document_name, document_path, document_cipher, placeholders, coordinates_dict)
+    return download_docx(request, document_name,
+                         document_path, document_cipher,
+                         placeholders, coordinates_dict)
 
 
-# Скачиваем ШИФР-ИГДИ
 def download_igdi_docx(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     department = order.region.region_department.first()
@@ -423,7 +437,8 @@ def download_igdi_docx(request, pk: int):
             '_шифр-игди': f'{document_cipher}-ИГДИ',
             '_должность_руководителя_ведомства': department.director_position,
             '_название_ведомства': department.name,
-            '_фио_руководителя_ведомства': f'{department.director_surname} {department.director_name} {department.director_patronymic}',
+            '_фио_руководителя_ведомства': f'{department.director_surname}\
+                {department.director_name} {department.director_patronymic}',
             '_тел_ведомства': str(department.phone_number),
             '_почта_ведомства': department.email,
             '_дата_текущая': date.strftime("%Y-%m-%d"),
@@ -438,30 +453,28 @@ def download_igdi_docx(request, pk: int):
     else:
         placeholders = {}
 
-    return download_docx(request, document_name, document_path, document_cipher, placeholders, coordinates_dict)
+    return download_docx(request, document_name,
+                         document_path, document_cipher,
+                         placeholders, coordinates_dict)
 
 
-# Скачиваем архив с документами
 def download_all_docx(request, pk: int):
     igi_docx = download_igi_docx(request, pk)
     igdi_docx = download_igdi_docx(request, pk)
 
     document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{pk:03d}"
 
-    # Создаем архив и добавляем файлы в него
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, mode="w") as archive:
         archive.writestr(f"{document_cipher}-igi.docx", igi_docx.content)
         archive.writestr(f"{document_cipher}-igdi.docx", igdi_docx.content)
 
-    # Возвращаем архив пользователю
     buffer.seek(0)
     response = HttpResponse(buffer.read(), content_type="application/zip")
     response["Content-Disposition"] = f"attachment; filename={document_cipher}.zip"
     return response
 
 
-# Скачиваем карты
 def download_map(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     try:
@@ -476,7 +489,6 @@ def download_map(request, pk: int):
         raise Http404
 
 
-# Скачиваем excel файл
 def download_xlsx(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     cadastral_numbers = order.cadastral_numbers
@@ -484,56 +496,43 @@ def download_xlsx(request, pk: int):
     coordinates_list = json.loads(order.coordinates)
     coordinates_dict = {}
 
-    # Добавляем проверку на длину списка cadastral_numbers
     if len(cadastral_numbers) == 0:
         return HttpResponse('Нет кадастровых номеров для данного заказа')
 
     for i, coords in enumerate(coordinates_list):
-        # Добавляем проверку на длину списка cadastral_numbers
         if i >= len(cadastral_numbers):
             break
 
         cadastral_num = cadastral_numbers[i]
         coordinates_dict[cadastral_num] = coords[0]
 
-    # Создаем новый файл Excel
     workbook = openpyxl.Workbook()
-
-    # Получаем лист по умолчанию
     sheet = workbook.active
-
-    # Записываем заголовки строк
     current_row = 1
 
-    # Проходим по каждому ключу словаря coordinates_dict
+
     for key, coords in coordinates_dict.items():
-        # Записываем заголовок строки с координатами углов участка
         sheet.merge_cells(start_row=current_row, start_column=1,
                           end_row=current_row, end_column=3)
         sheet.cell(row=current_row, column=1,
                    value=f'Координаты углов участка {key}')
         current_row += 1
 
-        # Записываем заголовки столбцов таблицы
         sheet.cell(row=current_row, column=1, value='Номер точки')
         sheet.cell(row=current_row, column=2, value='Координата Х')
         sheet.cell(row=current_row, column=3, value='Координата У')
         current_row += 1
 
-        # Проходим по каждой координате в списке для данного ключа
         for i, coord in enumerate(coords):
-            # Записываем номер точки, координату Х и координату У
             sheet.cell(row=current_row, column=1, value=str(i + 1))
             sheet.cell(row=current_row, column=2, value=str(coord[0]))
             sheet.cell(row=current_row, column=3, value=str(coord[1]))
             current_row += 1
 
-        # Добавляем пустую строку между таблицами
         current_row += 1
 
     document_cipher = f"{datetime.datetime.now().strftime('%Y%m%d')}-{order.pk:03d}"
 
-    # Сохраняем файл и отправляем его пользователю
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename=coord.xlsx'
