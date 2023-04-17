@@ -276,7 +276,6 @@ def view_change_order_status(request, order_id: int):
             new_cadastral = request.POST.getlist(
                 'new_cadastral_numbers'
             )
-
             if new_cadastral[0]:
                 order.cadastral_numbers += new_cadastral
             else:
