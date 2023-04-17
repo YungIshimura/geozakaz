@@ -1,5 +1,7 @@
 let dt = new DataTransfer();
 let flag = 1
+let count = 0;
+
 
 $('.input-file input[type=file]').on('change', function () {
     let $files_list = $(this).closest('.input-file').next();
@@ -16,6 +18,48 @@ $('.input-file input[type=file]').on('change', function () {
     ;
     this.files = dt.files;
 });
+
+function addFieldsCadNumbers() {
+    count++;
+    const dynamicFields = document.getElementById("dynamic-fields");
+    const newDiv = document.createElement("div");
+    newDiv.className = "input-group mb-3 custom-input-group"
+    newDiv.id = `field-${count}`;
+    newDiv.innerHTML = `
+<input type="text" class="form-control custom-form-control" name="new_cadastral_numbers" id="new_cadastral-${count}"
+style="max-width: 580px; background-color: lightgray" required readonly>
+<div class="input-group-append custom-input-group-append" style="margin-left: 8px">
+<button onclick="editNumber(${count})" class="btn btn-outline-secondary custom-button"
+style="line-height: 10px;" id="change-${count}"><i class='bx bxs-edit'></i></button>
+<button onclick="removeField(${count})" id="delete_number${count}" class="btn btn-outline-secondary custom-button"
+style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></button>
+</div>
+  `;
+    dynamicFields.appendChild(newDiv);
+}
+
+function editNumber(id) {
+    const edit = document.getElementById(`change-${id}`);
+    const field = document.getElementById(`new_cadastral-${id}`);
+
+    if (flag) {
+        edit.innerHTML = "<i class='bx bxs-check-circle'></i>";
+        field.readOnly = false;
+        field.style.cssText = 'background-color:white; transition: 0.15s linear;';
+        flag--;
+    } else {
+        edit.innerHTML = "<i class='bx bxs-edit'></i>";
+        field.readOnly = true;
+        field.style.cssText = 'background-color:lightgray; transition: 0.15s linear;';
+        getNewNumbers(id)
+        flag++;
+    }
+}
+
+function removeField(id) {
+    const newDiv = document.getElementById(`field-${id}`);
+    newDiv.parentNode.removeChild(newDiv);
+}
 
 function removeFilesItem(target) {
     let name = $(target).prev().text();

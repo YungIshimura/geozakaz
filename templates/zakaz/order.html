@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Создание
+    Создание заявки
 {% endblock %}
 
 {% block content %}
@@ -66,11 +66,10 @@
                                     <button id='add-cadastral' type='button'
                                             class='btn btn-outline-secondary custom-button'
                                             style='margin-left: 10px; text-align: center; line-height: 10px;'
-                                            onclick="addFields()">
+                                            onclick="addFieldsCadNumbers()">
                                         <i class='bi bi-plus'></i></button>
                                 {% endwith %}
                             {% endif %}
-
 
                             <hr>
                             <div>
@@ -104,7 +103,6 @@
                                     <label for="{{ order_form.city.id_for_label }}">Населенный пункт</label>
                                     {{ order_form.city }}
                                     <br>
-                                    </select>
                                     <div class="mb-3">
                                         <label for="{{ order_form.street.id_for_label }}">Улица</label>
                                         {{ order_form.street }}
@@ -215,10 +213,8 @@
                                 <div class="card-title">
                                     <h5>Назначение здания</h5>
                                 </div>
-
                                 <label for="{{ order_form.purpose_building.id_for_label }}" style="display: none">Назначeние
                                     здания</label>
-
                                 {{ order_form.purpose_building }}
                             </div>
                             <div class="card-title">
@@ -297,18 +293,14 @@
                                     {{ order_form.work_objective }}
                                 </div>
                                 <hr>
-
                                 <div>
                                     <div class="card-title">
                                         <h5>Комментарий</h5>
                                         {{ order_form.comment }}
                                     </div>
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
                     <div class="card" style="height: 230px; overflow-y: scroll;">
                         <div class="card-body">
@@ -356,55 +348,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 
     <script src="{% static 'js/alerts.js' %}"></script>
+
     <script>
-
-        let count = 0;
-
-        function addFields() {
-            count++;
-            const dynamicFields = document.getElementById("dynamic-fields");
-
-            const newDiv = document.createElement("div");
-            newDiv.className = "input-group mb-3 custom-input-group"
-
-            newDiv.id = `field-${count}`;
-            newDiv.innerHTML = `
-<input type="text" class="form-control custom-form-control" name="new_cadastral_numbers" id="new_cadastral-${count}"
-style="max-width: 580px; background-color: lightgray" required readonly>
-<div class="input-group-append custom-input-group-append" style="margin-left: 8px">
-<button onclick="editNumber(${count})" class="btn btn-outline-secondary custom-button"
-style="line-height: 10px;" id="change-${count}"><i class='bx bxs-edit'></i></button>
-<button onclick="removeField(${count})" id="delete_number${count}" class="btn btn-outline-secondary custom-button"
-style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></button>
-</div>
-  `;
-            dynamicFields.appendChild(newDiv);
-
-        }
-
-        function removeField(id) {
-            const newDiv = document.getElementById(`field-${id}`);
-            newDiv.parentNode.removeChild(newDiv);
-        }
-
-        function editNumber(id) {
-            const edit = document.getElementById(`change-${id}`);
-            const field = document.getElementById(`new_cadastral-${id}`);
-
-            if (flag) {
-                edit.innerHTML = "<i class='bx bxs-check-circle'></i>";
-                field.readOnly = false;
-                field.style.cssText = 'background-color:white; transition: 0.15s linear;';
-                flag--;
-            } else {
-                edit.innerHTML = "<i class='bx bxs-edit'></i>";
-                field.readOnly = true;
-                field.style.cssText = 'background-color:lightgray; transition: 0.15s linear;';
-                getNewNumbers(id)
-                flag++;
-            }
-        }
-
         function getNewNumbers(id) {
             var newNumber = document.getElementById(`new_cadastral-${id}`).value;
             $.ajax({
@@ -424,7 +369,6 @@ style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></but
         }
     </script>
     <script>
-        // добавление и расчет площади
         let listSquare =
         {{ squares }}
         var squareSum = 0
@@ -437,7 +381,6 @@ style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></but
                 document.getElementById("id_square").value = squareSum;
             } else if ((document.getElementById("id_square_unit").value === 'hectometer')) {
                 document.getElementById("id_square").value = squareSum / 1000;
-                console.log(square_cadastral_area['success'])
             }
         })
 
@@ -457,10 +400,8 @@ style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></but
             const widthInput = $("#id_width");
             const heightInput = $("#id_height");
 
-            // Инициализируем маску на поле #id_phone_number
             phoneInput.mask("+7(999)999-99-99", {placeholder: ''});
 
-            // Задаем Autocomplete для поля #id_purpose_building
             purposeInput.autocomplete({
                 source: "{% url 'zakaz:purpose_building_autocomplete' %}",
                 minLength: 0,
@@ -503,7 +444,6 @@ style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></but
                 $(this).autocomplete("search", "");
             });
 
-            // Проверяем, если пользователь вводит значение сам, то сбрасываем поля
             purposeInput.on("input", function () {
                 const selectedValue = $(this).val().trim();
                 if (selectedValue.length > 0 && !$(this).data("ui-autocomplete").menu.active) {
@@ -595,7 +535,7 @@ style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></but
         ];
 
         submitBtn.addEventListener('click', (event) => {
-            event.preventDefault(); // Отменяем стандартное поведение кнопки
+            event.preventDefault();
 
             let errorMessage = "";
             let stopIteration = false;
