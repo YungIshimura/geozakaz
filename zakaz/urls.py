@@ -18,7 +18,7 @@ urlpatterns = [
     path('city_autocomplete', city_autocomplete, name='city_autocomplete'),
     path('order/<slug:company_slug>/<slug:company_number_slug>/',
          view_order_cadastral, name='cadastral'),
-    path('order/<slug:company_slug>/<slug:company_number_slug>/form',
+    path('order/<slug:company_slug>/<slug:company_number_slug>/form/',
          view_order, name='order'),
     path('order_pages/<slug:company_number_slug>/',
          view_order_pages, name='order_pages'),
