@@ -7,17 +7,6 @@ from urllib.parse import urlparse
 from .forms import UserRegistrationForm, UserLoginForm
 
 
-# def view_index(request):
-#     user = request.user
-#     if user.is_authenticated:
-#         if user.is_staff:
-#             return redirect('zakaz:order_pages')
-#         else:
-#             return redirect('zakaz:order')
-#     else:
-#         return redirect('users:user_login')
-
-
 # Create your views here.
 # Авторизация пользователя
 def login_user(request):
@@ -50,8 +39,7 @@ def login_user(request):
         request.session['company_number_slug'] = company_number_slug
 
     context = {
-        'form': form,
-        'title': 'Авторизация'
+        'form': form
     }
 
     return render(request, 'auth/login.html', context)
@@ -83,8 +71,7 @@ def login_company(request):
         form = UserLoginForm()
 
     context = {
-        'form': form,
-        'title': 'Вход для компаний'
+        'form': form
     }
 
     return render(request, 'auth/login_company.html', context)
@@ -114,8 +101,7 @@ def register_user(request):
     request.session['company_number_slug'] = company_number_slug
 
     context = {
-        'form': form,
-        'title': 'Регистрация'
+        'form': form
     }
     return render(request, 'auth/register.html', context)
 
