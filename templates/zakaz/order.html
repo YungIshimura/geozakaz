@@ -424,8 +424,27 @@ style="line-height: 10px; margin-left: 9px"><i class='bx bxs-x-circle'></i></but
                 edit.innerHTML = "<i class='bx bxs-edit'></i>";
                 field.readOnly = true;
                 field.style.cssText = 'background-color:lightgray; transition: 0.15s linear;';
+                getNewNumbers(id)
                 flag++;
             }
+        }
+
+        function getNewNumbers(id) {
+            var input = document.getElementById(`new_cadastral-${id}`);
+            $.ajax({
+                url: '{% url "zakaz:get_square" %}',
+                data: {
+                    "data": input.value
+                },
+                dataType: 'json',
+                success: function (square_cadastral_area) {
+                    if (document.getElementById("id_square_unit").value === 'sq_m') {
+                        document.getElementById("id_square").value = squareSum + square_cadastral_area['success'];
+                    } else if ((document.getElementById("id_square_unit").value === 'hectometer')) {
+                        document.getElementById("id_square").value = (squareSum + square_cadastral_area['success']) / 1000;
+                    }
+                }
+            })
         }
     </script>
     <script>

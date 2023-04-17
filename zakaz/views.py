@@ -25,7 +25,7 @@ from .models import (Area, City, Order, OrderFile, PurposeBuilding, Region,
                      get_image_path)
 from .rosreestr2 import GetArea
 from .validators import validate_number
-from pypdf import PdfReader 
+from pypdf import PdfReader
 from io import StringIO
 
 # driver = webdriver.Chrome()
@@ -109,7 +109,7 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
         request.session['address'] = address
 
         return response
-    
+
     if 'files' in request.FILES:
         files = request.FILES.getlist('files')
         cadastral_numbers = []
@@ -123,7 +123,7 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
                     if 'Кадастровый номер' in elem.strip():
                         cadastral = elem.strip().split(' ')[-1]
                         cadastral_numbers.append(cadastral)
-                request.session['cadastral_numbers'] = cadastral_numbers          
+                request.session['cadastral_numbers'] = cadastral_numbers
             else:
                 file = request.FILES.get('files').close()
                 messages.error(request, 'Ошибка обработки файла')
@@ -141,6 +141,17 @@ def view_order_cadastral(request, company_slug: str, company_number_slug: str):
     context['form'] = form
 
     return render(request, 'zakaz/customer_home.html', context=context)
+
+
+def get_square(request):
+    number = request.GET.get("data")
+    try:
+        areas = GetArea(number)
+        square_cadastral_area = areas.attrs['area_value']
+        print(square_cadastral_area)
+    except:
+        square_cadastral_area = 0
+    return JsonResponse({'success': square_cadastral_area})
 
 
 def view_order(request, company_slug: str, company_number_slug: str):
@@ -209,7 +220,6 @@ def view_order(request, company_slug: str, company_number_slug: str):
             for file in request.FILES.getlist('file'):
                 OrderFile.objects.create(order=order, file=file)
             messages.success(request, 'Ваша заявка отправлена')
-
             return HttpResponseRedirect(reverse('zakaz:cadastral', args=[company_slug, company_number_slug]))
 
         else:
